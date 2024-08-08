@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Mangá</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='details.css') }}">
+    <script>
+        const mangaId = "{{ manga_id }}"; // Passa o manga_id do Flask para o JavaScript
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <img id="cover-image" src="" alt="Capa do Mangá" class="cover-image"/>
+            <div class="manga-info">
+                <h1 id="manga-title"></h1>
+                <p id="manga-author"></p>
+                <p id="manga-artist"></p>
+                <p id="manga-status"></p>
+                <a id="manga-link" href="" target="_blank" class="view-link">Ver no MangaDex</a>
+                <div id="manga-tags" class="tags-container"></div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="description">
+                <h2>Sobre</h2>
+                <p id="manga-description"></p>
+            </div>
+            <div class="buttons-container">
+                <div class="language-buttons" id="language-buttons"></div>
+                <button id="download-all-btn" class="download-all-btn">Baixar Todos os Capítulos</button>
+            </div>
+            <div class="chapter-container">
+                <div class="chapter-list" id="chapter-list"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Tela de carregamento -->
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+    <script src="{{ url_for('static', filename='scripts/details.js') }}"></script>
+</body>
+</html>

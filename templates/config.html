@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='config.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Configurações</h2>
+        <form id="config-form" action="{{ url_for('config') }}" method="POST">
+            <div>
+                <label for="upload">Download/Upload Simultâneo:</label>
+                <input type="number" id="upload" name="upload" min="1" max="10" value="{{ config.upload }}">
+            </div>
+            <div>
+                <label for="max_results">Quantidade Máxima de Resultados:</label>
+                <input type="number" id="max_results" name="max_results" min="1" max="100" value="{{ config.max_results }}" required>
+            </div>
+            <div>
+                <label for="retry" style="display: none;">Máximo de Tentativas:</label>
+                <input type="number" id="retry" name="retry" min="0" max="3" value="{{ config.retry }}">
+            </div>
+            <div>
+                <label for="download_folder">Pasta de Downloads:</label>
+                <input type="text" id="download_folder" name="download_folder" value="{{ config.download_folder }}">
+            </div>            
+            <div>
+                <label for="log" style="display: none;">Log:
+                    <input type="checkbox" id="log" name="log" value="true" {% if config.log %}checked{% endif %}>
+                </label>
+            </div>
+            <div>
+                <label for="api_url">API URL:</label>
+                <input type="text" id="api_url" name="api_url" value="{{ config.api_url }}">
+            </div>
+            <div>
+                <label for="auth_url">Auth URL:</label>
+                <input type="text" id="auth_url" name="auth_url" value="{{ config.auth_url }}">
+            </div>
+            <button type="button" id="save-btn">Salvar</button>
+            <button type="button" id="tips-btn">Dicas</button>
+        </form>
+        <form action="{{ url_for('restore_defaults') }}" method="POST">
+            <button type="button" id="restore-defaults-btn">Restaurar Padrões</button>
+        </form>
+        <a href="{{ url_for('home') }}">Voltar para a Home</a>
+    </div>
+
+    <!-- Modal de dicas -->
+    <div id="tips-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Dicas</h3>
+            <ul id="tips-list">
+                <!-- As dicas serão inseridas aqui dinamicamente -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Confirmação</h3>
+            <p id="confirmation-message"></p>
+            <button id="confirm-btn">Continuar</button>
+            <button id="cancel-btn">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts/config.js') }}"></script>
+</body>
+</html>

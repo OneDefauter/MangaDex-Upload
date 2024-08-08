@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <!-- Link para os ícones do Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Bem-vindo ao MangaDex Uploader</h2>
+        <div class="button-container">
+            <div class="tooltip">
+                <button class="icon-button" id="settings-btn">
+                    <i class="fi fi-rr-settings-sliders"></i>
+                </button>
+                <span class="tooltiptext">Configurações</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="queue-btn">
+                    <i class="fi fi-rr-gallery"></i>
+                </button>
+                <span class="tooltiptext">Fila</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="upload-btn">
+                    <i class="fi fi-rr-upload"></i>
+                </button>
+                <span class="tooltiptext">Enviar</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="download-btn">
+                    <i class="fi fi-rr-download"></i>
+                </button>
+                <span class="tooltiptext">Baixar</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="updates-btn">
+                    <i class="fi fi-rr-info"></i>
+                </button>
+                <span class="tooltiptext">Atualizações</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="logout-btn">
+                    <i class="fi fi-rr-lock"></i>
+                </button>
+                <span class="tooltiptext">Sair</span>
+            </div>
+        </div>
+    </div>
+    <div id="notifications" class="notifications">
+        <!-- As notificações serão inseridas aqui pelo JavaScript -->
+    </div>
+    <script>
+        // Script para manipular cliques nos botões
+        document.getElementById('settings-btn').onclick = function() {
+            // Redireciona para a rota de configurações
+            window.location.href = "{{ url_for('config') }}";
+        };
+
+        document.getElementById('updates-btn').onclick = function() {
+            // Redireciona para a rota de configurações
+            window.location.href = "{{ url_for('updates') }}";
+        };
+
+        document.getElementById('queue-btn').onclick = function() {
+            // Redireciona para a rota de fila
+            window.location.href = "{{ url_for('queue') }}";
+        };
+
+        document.getElementById('logout-btn').onclick = function() {
+            // Redireciona para a rota de logout
+            window.location.href = "{{ url_for('logout') }}";
+        };
+
+        document.getElementById('download-btn').onclick = function() {
+            // Redireciona para a rota de download
+            window.location.href = "{{ url_for('download') }}";
+        };
+
+        document.getElementById('upload-btn').onclick = function() {
+            // Redireciona para a página de upload
+            window.location.href = "{{ url_for('upload') }}";
+        };
+
+        // Função para mostrar notificações
+        function showNotifications(messages) {
+            const notificationsContainer = document.getElementById('notifications');
+            messages.reverse().forEach((message, index) => {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.innerHTML = `<p>${message}</p>`;
+                notificationsContainer.appendChild(notification);
+                setTimeout(() => {
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 300);
+                    }, 3000 + index * 1000); // Delay entre notificações
+                }, index * 1000); // Delay entre notificações
+            });
+        }
+
+        // Verifica se existem notificações
+        const notifications = {{ notifications|tojson }};
+        if (notifications.length > 0) {
+            showNotifications(notifications);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
+body {
+    font-family: 'Signika Negative', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
+    background-size: 300% 300%;
+    animation: gradientBackground 60s ease infinite;
+    overflow: hidden;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    font-family: 'Comic Sans MS', sans-serif;
+    color: #333;
+    font-size: 2.5rem;
+}
+
+form div {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: calc(100% - 2rem); /* Ajuste para acomodar o botão */
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-right: 1rem;
+}
+
+input[type="checkbox"] {
+    margin-left: 0.5rem;
+    transform: scale(1.2);
+}
+
+button {
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #d62839;
+}
+
+button[type="button"] {
+    background-color: #e63946;
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+button[type="button"]:hover {
+    background-color: #333;
+}
+
+a {
+    display: block;
+    margin-top: 1rem;
+    color: #333;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #e63946;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos adicionais para o modal de dicas */
+.modal-content h3 {
+    margin-bottom: 1rem;
+}
+
+#tips-list {
+    list-style: none;
+    padding: 0;
+}
+
+#tips-list li {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#tips-list button {
+    width: 100px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.tip-seen {
+    background-color: #4cae4c; /* Verde para visto */
+    color: white;
+}
+
+.tip-not-seen {
+    background-color: #e63946; /* Vermelho para não visto */
+    color: white;
+}
+
+.tip-icon {
+    cursor: pointer;
+    font-size: 20px;
+    color: #555;
+    transition: color 0.3s;
+}
+
+.tip-icon:hover {
+    color: #333;
+}
+
+@keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}

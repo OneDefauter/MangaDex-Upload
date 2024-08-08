@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
+body {
+    font-family: 'Signika Negative', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
+    background-size: 300% 300%;
+    animation: gradientBackground 60s ease infinite;
+    overflow: hidden;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+h2 {
+    margin-bottom: 2rem;
+    font-family: 'Comic Sans MS', sans-serif;
+    color: #333;
+    font-size: 2rem;
+}
+
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Define 3 a 4 botões por linha */
+    gap: 1rem; /* Espaçamento entre os botões */
+    margin-top: 2rem;
+}
+
+.icon-button {
+    background-color: #e63946;
+    border: none;
+    border-radius: 15px;
+    padding: 1.5rem;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    transition: background-color 0.3s;
+}
+
+.icon-button:hover {
+    background-color: #d62839;
+}
+
+.icon-button i {
+    font-size: 2.5rem;
+}
+
+.icon-button p {
+    margin: 0;
+    font-size: 1rem;
+    color: black;
+}
+
+/* Estilos para os tooltips */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgba(0, 0, 0, 0.7); /* Define transparência com opacidade 0.7 */
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.notification {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+    margin-top: 10px; /* Espaçamento entre notificações */
+    position: relative; /* Permite empilhar as notificações */
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notifications {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    z-index: 1000;
+}
+
+@keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Mangá</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='download.css') }}">
+    <script src="{{ url_for('static', filename='scripts/download.js') }}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Buscar Mangá</h2>
+        <input type="text" id="search-input" placeholder="Digite o nome do mangá..." autofocus>
+        <div id="results-container"></div>
+        <div class="pagination">
+            <button id="prev-btn">Anterior</button>
+            <div class="page-numbers"></div>
+            <button id="next-btn">Próximo</button>
+        </div>
+    </div>
+    <!-- Tela de carregamento -->
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+</body>
+</html>

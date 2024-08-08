@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Mangá</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+    <!-- Link para os ícones do Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Enviar Mangá</h2>
+        <form id="upload-form">
+            <div>
+                <label for="project">Projeto:</label>
+                <input type="text" id="project" name="project" autocomplete="off">
+                <ul id="project-suggestions" class="suggestions-list"></ul>
+            </div>
+            <div>
+                <label for="group">Grupo:</label>
+                <input type="text" id="group" name="group" autocomplete="off">
+                <ul id="group-suggestions" class="suggestions-list"></ul>
+                <div id="selected-groups" class="tags-container"></div>
+            </div>
+            <div>
+                <label for="language">Linguagem:</label>
+                <select id="language" name="language">
+                    <option value="pt-br">Português (Brasil)</option>
+                    <option value="en">Inglês</option>
+                </select>
+            </div>
+            <div>
+                <label for="title">Título:</label>
+                <input type="text" id="title" name="title">
+            </div>            
+            <div>
+                <label for="volume">Volume:</label>
+                <input type="text" id="volume" name="volume">
+            </div>
+            <div>
+                <label for="chapter">Capítulo:</label>
+                <input type="text" id="chapter" name="chapter">
+            </div>
+            <div>
+                <label for="single_chapter">Capítulo Único:</label>
+                <input type="checkbox" id="single_chapter" name="single_chapter">
+            </div>            
+            <div>
+                <label for="folder">Pasta:</label>
+                <input type="text" id="folder" name="folder">
+            </div>
+            <div>
+                <label for="datetime">Data e Hora de Upload:</label>
+                <input type="datetime-local" id="datetime" name="datetime" min="{{ min_datetime }}" max="{{ max_datetime }}">
+            </div>
+            <button type="button" id="submit-btn">Enviar</button>
+        </form>
+    </div>
+
+    <!-- Overlay de Dicas -->
+    <div id="tip-overlay" class="tip-overlay">
+        <div class="tip-content">
+            <h3>Dica</h3>
+            <img id="tip-gif" src="" alt="GIF da dica" class="tip-gif">
+            <p id="tip-text">Use este formulário para enviar seu mangá. Preencha todos os campos obrigatórios antes de clicar em "Enviar".</p>
+            <div class="tip-navigation">
+                <button id="tip-prev-btn">Voltar</button>
+                <button id="tip-next-btn">Continuar</button>
+            </div>
+            <div id="tip-indicators" class="tip-indicators"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts/upload.js') }}"></script>
+</body>
+</html>
