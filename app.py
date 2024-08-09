@@ -600,7 +600,7 @@ def get_tips_status():
 @app.route('/updates')
 def updates():
     # URL do arquivo Markdown raw no GitHub
-    url = 'https://raw.githubusercontent.com/OneDefauter/Manga-Downloader/main/src/change_log.md'
+    url = 'https://raw.githubusercontent.com/OneDefauter/MangaDex-Upload/main/src/doc/changelog.md'
     
     # Faça a requisição para obter o conteúdo do arquivo
     response = requests.get(url)
