@@ -74,13 +74,13 @@ def upload_worker():
         if upload_core is None:
             break
         current_process_upload = upload_core
-        queue_download[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['status'] = 'Processando'
+        queue_upload[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['status'] = 'Processando'
         try:
             upload_core.setup()
-            queue_download[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['status'] = 'Concluído'
+            queue_upload[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['status'] = 'Concluído'
         except Exception as e:
-            queue_download[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['status'] = 'Erro'
-            queue_download[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['error'] = str(e)
+            queue_upload[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['status'] = 'Erro'
+            queue_upload[f'{upload_core.manga_title} - {upload_core.language} - {upload_core.chapter}']['error'] = str(e)
             print(f"Erro ao enviar capítulo {upload_core}: {e}")
         current_process_upload = None
         UPLOAD_QUEUE.task_done()
@@ -309,6 +309,8 @@ def restore_defaults():
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    global welcome_seen
+    
     data = login_core.load_data()
     config = config_core.load_config()
     
@@ -354,6 +356,7 @@ def login():
                     'client_secret': client_secret
                 })
 
+                welcome_seen = False
                 return redirect(url_for('home'))
             else:
                 flash('Falha no login, verifique suas credenciais.')
@@ -493,6 +496,23 @@ def submit():
     
     path = Path(data['folder'])
     
+    if os.path.exists(str(path)):
+        # Verifica se o diretório existe
+        if not os.path.isdir(str(path)):
+            return jsonify(success=False, message='O diretório informado não existe.')
+        
+        # Verifica se o diretório está vazio
+        if not os.listdir(str(path)):
+            return jsonify(success=False, message='O diretório está vazio.')
+        
+        # Verifica se o diretório contém apenas imagens
+        images = [file for file in os.listdir(str(path)) if file.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".avif", ".webp"))]
+        if len(images) == 0:
+            return jsonify(success=False, message='O diretório não contém imagens.')
+    
+    else:
+        return jsonify(success=False, message='O diretório informado não existe.')
+        
     manga = get_manga(data['project']['id'])
     
     if manga:
@@ -576,7 +596,10 @@ def submit():
             'error': None
         }
 
-    return jsonify(success=True)
+        return jsonify(success=True)
+    
+    else:
+        return jsonify(success=False, message='Projeto não encontrado.')
 
 @app.route('/api/check_tip_seen', methods=['GET'])
 def check_tip_seen():
@@ -612,10 +635,8 @@ def updates():
     else:
         html_content = '<p>Não foi possível carregar as atualizações.</p>'
     
-    nem_update = True
-    
     # Renderize o template com o conteúdo HTML
-    return render_template('updates.html', content=Markup(html_content), nem_update=nem_update)
+    return render_template('updates.html', content=Markup(html_content), nem_update=new_update)
 
 @app.route('/update', methods=['POST'])
 def update_route():

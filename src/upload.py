@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 class UploadChapters():
     def __init__(self, manga_id, manga_title, title, language, groups, volume, chapter, path, datetime, oneshot, config, login) -> None:
         self.manga_id = manga_id
+        self.manga_title = manga_title
         self.title = title
         self.language = language
         self.groups = groups

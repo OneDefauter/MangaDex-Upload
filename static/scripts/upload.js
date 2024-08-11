@@ -201,11 +201,34 @@ function addGroupTag(name, id) {
     tagContainer.appendChild(tag);
 }
 
+function incrementarCapitulo(chapter) {
+    const match = chapter.match(/^(\d+)(\.\d+)?$/);
+    if (match) {
+        let main = parseInt(match[1], 10);
+        let decimal = match[2] ? parseFloat(match[2]) : 0;
+
+        if (decimal > 0) {
+            decimal += 0.1;
+        } else {
+            main += 1;
+        }
+
+        return decimal > 0 ? `${main}${decimal.toFixed(1).substring(1)}` : `${main}`;
+    } else {
+        // Caso o formato do capítulo não seja reconhecido, apenas retorne o mesmo valor
+        return chapter;
+    }
+}
+
 document.getElementById('submit-btn').addEventListener('click', function () {
     const projectInput = document.getElementById('project').value.trim();
     const title = document.getElementById('title').value.trim(); // Captura o valor do título
+    const loadingScreen = document.getElementById("loading-screen");
+    
     let projectTitle = null;
     let projectId = null;
+
+    showLoadingScreen();
 
     if (projectInput.includes('(')) {
         [projectTitle, projectId] = projectInput.match(/^(.*?)\s*\((.*?)\)$/).slice(1, 3);
@@ -232,7 +255,7 @@ document.getElementById('submit-btn').addEventListener('click', function () {
 
     const language = document.getElementById('language').value;
     const volume = document.getElementById('volume').value.trim();
-    const chapter = document.getElementById('chapter').value.trim();
+    let chapter = document.getElementById('chapter').value.trim();
     const folder = document.getElementById('folder').value.trim();
     const datetime = document.getElementById('datetime').value;
     const singleChapter = document.getElementById('single_chapter').checked;
@@ -268,14 +291,31 @@ document.getElementById('submit-btn').addEventListener('click', function () {
     .then(result => {
         if (result.success) {
             alert('Dados enviados com sucesso!');
+
+            if (!singleChapter && chapter) {
+                chapter = incrementarCapitulo(chapter);
+                document.getElementById('chapter').value = chapter;
+            }
+
         } else {
             alert('Erro ao enviar dados.');
         }
     })
     .catch(error => {
         console.error('Erro:', error);
-        alert('Erro ao enviar dados.');
+        // alert('Erro ao enviar dados.');
+    })
+    .finally(() => {
+        hideLoadingScreen();
     });
+
+    function showLoadingScreen() {
+        loadingScreen.style.display = 'flex';
+    }
+
+    function hideLoadingScreen() {
+        loadingScreen.style.display = 'none';
+    }
 });
 
 
