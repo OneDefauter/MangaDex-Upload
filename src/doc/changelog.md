@@ -2,7 +2,7 @@
 
 - Versão inicial
 
-### Versão 1.0.1 (Data a ser preenchida)
+### Versão 1.0.1 (10/08/2024)
 
 - Correção no botão de atualização
 
