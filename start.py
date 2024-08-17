@@ -18,12 +18,8 @@ def install_modules():
         'flask',
         'markupsafe',
         'markdown',
-<<<<<<< HEAD
         'packaging',
         'cryptography'
-=======
-        'packaging'
->>>>>>> 7be4dca4f3cd9197a106c689493748421c59e873
     ]
 
     for module in required_modules:
