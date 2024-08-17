@@ -16,7 +16,9 @@ def install_modules():
         'Pillow',
         'tqdm',
         'flask',
-        'markupsafe'
+        'markupsafe',
+        'markdown',
+        'packaging'
     ]
 
     for module in required_modules:
