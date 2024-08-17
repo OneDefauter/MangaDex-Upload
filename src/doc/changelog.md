@@ -1,6 +1,6 @@
-### Versão 1.0.0 (08/08/2024)
+### Versão 1.0.2 (17/08/2024)
 
-- Versão inicial
+- Pequenas correções
 
 ### Versão 1.0.1 (10/08/2024)
 
@@ -13,3 +13,7 @@
 - Adicionada verificação de pasta antes do envio
 
 - Incremento automático do capítulo após um envio bem-sucedido
+
+### Versão 1.0.0 (08/08/2024)
+
+- Versão inicial

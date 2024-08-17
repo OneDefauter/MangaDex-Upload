@@ -16,7 +16,10 @@ def install_modules():
         'Pillow',
         'tqdm',
         'flask',
-        'markupsafe'
+        'markupsafe',
+        'markdown',
+        'packaging',
+        'cryptography'
     ]
 
     for module in required_modules:
@@ -51,7 +54,7 @@ def download_and_execute():
     
     if os.path.exists(path_file):
         hash_ = calculate_sha1(path_file)
-        if hash_ != "04c88594dfe32af7920111c6e0b154d13df48761":
+        if hash_ != "78fb996cdf2dd82994620e793f1362ad59ab9a87":
             os.remove(path_file)
     
     if os.path.exists(path_file):
@@ -65,25 +68,25 @@ def download_and_execute():
     else:
         __version__ = "1.0" # Initial version
     
-    remote_release = requests.get(repo)
-    
-    if remote_release.ok:
-        release = remote_release.json()
-        zip_resp = requests.get(release["zipball_url"])
-        if zip_resp.ok:
-            myzip = ZipFile(BytesIO(zip_resp.content))
-            zip_root = [z for z in myzip.infolist() if z.is_dir()][0].filename
-            zip_files = [z for z in myzip.infolist() if not z.is_dir()]
-        
-        if not os.path.exists(path_file):
-            for fileinfo in zip_files:
-                filename = os.path.join(app_folder, fileinfo.filename.replace(zip_root, ""))
-                dirname = os.path.dirname(filename)
-                os.makedirs(dirname, exist_ok=True)
-                file_data = myzip.read(fileinfo)
+    if not os.path.exists(path_file) or __version__ == "0.0":
+        remote_release = requests.get(repo)
+        if remote_release.ok:
+            release = remote_release.json()
+            zip_resp = requests.get(release["zipball_url"])
+            if zip_resp.ok:
+                myzip = ZipFile(BytesIO(zip_resp.content))
+                zip_root = [z for z in myzip.infolist() if z.is_dir()][0].filename
+                zip_files = [z for z in myzip.infolist() if not z.is_dir()]
+            
+            if not os.path.exists(path_file):
+                for fileinfo in zip_files:
+                    filename = os.path.join(app_folder, fileinfo.filename.replace(zip_root, ""))
+                    dirname = os.path.dirname(filename)
+                    os.makedirs(dirname, exist_ok=True)
+                    file_data = myzip.read(fileinfo)
 
-                with open(filename, "wb") as fopen:
-                    fopen.write(file_data)
+                    with open(filename, "wb") as fopen:
+                        fopen.write(file_data)
 
 if __name__ == "__main__":
     install_modules()

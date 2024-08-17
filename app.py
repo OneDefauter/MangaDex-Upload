@@ -31,6 +31,8 @@ app.secret_key = 'sua_chave_secreta'
 welcome_seen = False
 check_update = False
 new_update = False
+rmver_ = None
+lcver_ = None
 
 namespace = "OneDefauter"
 repo = f"https://api.github.com/repos/{namespace}/MangaDex-Upload/releases/latest"
@@ -94,6 +96,8 @@ max_datetime = (datetime.now() + timedelta(weeks=2)).strftime('%Y-%m-%dT%H:%M')
 
 def check_update_only():
     global new_update
+    global rmver_
+    global lcver_
     
     local_version = version.parse(__version__)
     remote_release = requests.get(repo)
@@ -101,10 +105,14 @@ def check_update_only():
     if remote_release.ok:
         release = remote_release.json()
         remote_version = version.parse(release["tag_name"])
+        
+        rmver_ = remote_version
+        lcver_ = local_version
     
     if remote_version > local_version:
         new_update = True
         print(f"Nova atualização disponível: {release['tag_name']}")
+    
 
 # Função para garantir que o diretório de imagens exista
 def ensure_cover_directory():
@@ -369,6 +377,8 @@ def login():
 def home():
     global welcome_seen
     global check_update
+    global rmver_
+    global lcver_
     
     notifications = []
     if not check_update:
@@ -376,11 +386,13 @@ def home():
         check_update = True
     
     if new_update:
-        notifications.append('Nova atualização disponível!')
+        notifications.append(f'Nova atualização disponível! v{rmver_}')
     
     if not welcome_seen:
         user = me()
-        notifications.append(f'Bem-vindo ao MangaDex Uploader, {user['attributes']['username']}!')
+        notifications.append(f"Bem-vindo ao MangaDex Uploader, {user['attributes']['username']}!")
+        if not welcome_seen:
+            notifications.append(f'Você está na versão mais recente! v{lcver_}')
         welcome_seen = True
     
     return render_template('home.html', notifications=notifications)
@@ -581,7 +593,7 @@ def submit():
         
         UPLOAD_QUEUE.put(upload_core)
         
-        queue_upload[f'{manga['attributes']['title']['en']} - {data['language']} - {chapter}'] = {
+        queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter}"] = {
             'manga_id': manga['id'],
             'manga_title':manga['attributes']['title']['en'],
             'title': title,
