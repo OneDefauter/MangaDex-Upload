@@ -44,7 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayMangaDetails(data);
                 createLanguageButtons(data.availableTranslatedLanguages);
             })
-            .catch(error => console.error('Erro ao buscar detalhes do mangá:', error))
+            .catch(error => {
+                console.error(translations.errorFetchingDetails, error);
+                hideLoadingScreen(); // Oculta a tela de carregamento em caso de erro
+            })
             .finally(() => {
                 hideLoadingScreen(); // Oculta a tela de carregamento após carregar os detalhes
             });
@@ -53,9 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function displayMangaDetails(data) {
         document.getElementById('cover-image').src = data.cover_url;
         document.getElementById('manga-title').textContent = data.title;
-        document.getElementById('manga-author').textContent = `Autor: ${data.author}`;
-        document.getElementById('manga-artist').textContent = `Artista: ${data.artist}`;
-        document.getElementById('manga-status').textContent = `Status: ${data.status}`;
+        document.getElementById('manga-author').textContent = `${translations.author}: ${data.author}`;
+        document.getElementById('manga-artist').textContent = `${translations.artist}: ${data.artist}`;
+        document.getElementById('manga-status').textContent = `${translations.status}: ${data.status}`;
         document.getElementById('manga-link').href = data.link;
         document.getElementById('manga-description').textContent = data.description;
 
@@ -93,7 +96,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayChapters(data.chapters, language);
                 createDownloadAllButton(data.chapters);
             })
-            .catch(error => console.error('Erro ao buscar capítulos:', error))
+            .catch(error => {
+                console.error(translations.errorFetchingChapters, error);
+                hideLoadingScreen(); // Oculta a tela de carregamento em caso de erro
+            })
             .finally(() => {
                 hideLoadingScreen(); // Oculta a tela de carregamento após carregar capítulos
             });
@@ -116,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const chapter = volumeData[chapterNum];
                 const chapterItem = document.createElement('div');
                 chapterItem.className = 'chapter-item';
-                chapterItem.textContent = `Vol.${volume} Ch.${chapterNum}`;
+                chapterItem.textContent = `${volume !== "none" ? `Vol.${volume} ` : ""}Ch.${chapterNum}`.trim();
                 chapterItem.dataset.chapterId = chapter.id; // Armazena o ID do capítulo
                 chapterItem.dataset.translatedLanguage = language; // Armazena o idioma selecionado
                 chapterItem.dataset.chapterNumber = chapterNum; // Armazena o número do capítulo

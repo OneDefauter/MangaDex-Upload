@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurações</title>
+    <title>{{ translations.get('config_title', 'Configurações') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='config.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -11,29 +11,64 @@
 </head>
 <body>
     <div class="container">
-        <h2>Configurações</h2>
+        <h2>{{ translations.get('config_title', 'Configurações') }}</h2>
         <form id="config-form" action="{{ url_for('config') }}" method="POST">
             <div>
-                <label for="upload">Download/Upload Simultâneo:</label>
+                <label for="upload">{{ translations.get('simultaneous_upload', 'Download/Upload Simultâneo:') }}</label>
                 <input type="number" id="upload" name="upload" min="1" max="10" value="{{ config.upload }}">
             </div>
             <div>
-                <label for="max_results">Quantidade Máxima de Resultados:</label>
+                <label for="max_results">{{ translations.get('max_results', 'Quantidade Máxima de Resultados:') }}</label>
                 <input type="number" id="max_results" name="max_results" min="1" max="100" value="{{ config.max_results }}" required>
             </div>
             <div>
-                <label for="retry" style="display: none;">Máximo de Tentativas:</label>
-                <input type="number" id="retry" name="retry" min="0" max="3" value="{{ config.retry }}" style="display: none;">
+                <label for="retry">{{ translations.get('max_retries', 'Máximo de Tentativas:') }}</label>
+                <input type="number" id="retry" name="retry" min="1" max="3" value="{{ config.retry }}">
             </div>
             <div>
-                <label for="download_folder">Pasta de Downloads:</label>
-                <input type="text" id="download_folder" name="download_folder" value="{{ config.download_folder }}">
+                <label for="download_folder">{{ translations.get('download_folder', 'Pasta de Downloads:') }}</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="text" id="download_folder" name="download_folder" value="{{ config.download_folder }}">
+                    <button type="button" id="folder-btn-config">
+                        <i class="fi fi-rr-folder"></i>
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label for="download_folder_scheme">{{ translations.get('download_folder_scheme', 'Esquema da Pasta de Downloads:') }}</label>
+                <select id="download_folder_scheme" name="download_folder_scheme">
+                    <option value="scheme1" {% if config.download_folder_scheme == 'scheme1' %}selected{% endif %}>{{ translations.get('scheme1', 'Idioma / título da obra / Capítulo') }}</option>
+                    <option value="scheme2" {% if config.download_folder_scheme == 'scheme2' %}selected{% endif %}>{{ translations.get('scheme2', 'Idioma / Título da obra / Volume / Capítulo') }}</option>
+                    <option value="scheme3" {% if config.download_folder_scheme == 'scheme3' %}selected{% endif %}>{{ translations.get('scheme3', 'Título da obra / Idioma / Volume / Capítulo') }}</option>
+                    <option value="scheme4" {% if config.download_folder_scheme == 'scheme4' %}selected{% endif %}>{{ translations.get('scheme4', 'Título da obra / Idioma / Capítulo') }}</option>
+                    <option value="scheme5" {% if config.download_folder_scheme == 'scheme5' %}selected{% endif %}>{{ translations.get('scheme5', 'Título da obra / Volume / Capítulo') }}</option>
+                    <option value="scheme6" {% if config.download_folder_scheme == 'scheme6' %}selected{% endif %}>{{ translations.get('scheme6', 'Título da obra / Capítulo') }}</option>
+                </select>
             </div>            
+            <div>
+                <label for="cover_image_quality">{{ translations.get('cover_image_quality', 'Imagens das covers:') }}</label>
+                <select id="cover_image_quality" name="cover_image_quality">
+                    <option value="original" {% if config.cover_image_quality == 'original' %}selected{% endif %}>{{ translations.get('original', 'Original') }}</option>
+                    <option value="reduced" {% if config.cover_image_quality == 'reduced' %}selected{% endif %}>{{ translations.get('reduced', 'Reduzida') }}</option>
+                    <option value="highly_reduced" {% if config.cover_image_quality == 'highly_reduced' %}selected{% endif %}>{{ translations.get('highly_reduced', 'Muito reduzida') }}</option>
+                </select>
+            </div>
+            <div>
+                <label for="upload_on_error">{{ translations.get('upload_on_error', 'Fazer upload de capítulos com erros nas imagens:') }}</label>
+                <input type="checkbox" id="upload_on_error" name="upload_on_error" value="true" {% if config.upload_on_error %}checked{% endif %}>
+            </div>
             <div>
                 <label for="log" style="display: none;">Log:
                     <input type="checkbox" id="log" name="log" value="true" {% if config.log %}checked{% endif %}>
                 </label>
             </div>
+            <div style="display: flex; align-items: center;">
+                <label>{{ translations.get('download_folder_size', 'Tamanho ocupado pela pasta de covers:') }}</label>
+                <p style="margin: 0 10px;">{{ "%.2f" | format(folder_size / (1024 * 1024)) }} MB</p>
+                <button type="button" id="delete-folder-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #e63946; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    {{ translations.get('delete_folder_button', 'Excluir Pasta') }}
+                </button>
+            </div>            
             <div>
                 <label for="api_url">API URL:</label>
                 <input type="text" id="api_url" name="api_url" value="{{ config.api_url }}">
@@ -42,20 +77,25 @@
                 <label for="auth_url">Auth URL:</label>
                 <input type="text" id="auth_url" name="auth_url" value="{{ config.auth_url }}">
             </div>
-            <button type="button" id="save-btn">Salvar</button>
-            <button type="button" id="tips-btn">Dicas</button>
+            <button type="button" id="save-btn">{{ translations.get('save_button', 'Salvar') }}</button>
+            <button type="button" id="tips-btn">{{ translations.get('tips_button', 'Dicas') }}</button>
         </form>
         <form action="{{ url_for('restore_defaults') }}" method="POST">
-            <button type="button" id="restore-defaults-btn">Restaurar Padrões</button>
+            <button type="button" id="restore-defaults-btn">{{ translations.get('restore_defaults_button', 'Restaurar Padrões') }}</button>
         </form>
-        <a href="{{ url_for('home') }}">Voltar para a Home</a>
+        <a href="{{ url_for('home') }}">{{ translations.get('back_home_link', 'Voltar para a Home') }}</a>
+    </div>
+
+    <!-- Tela de carregamento -->
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="loading-spinner"></div>
     </div>
 
     <!-- Modal de dicas -->
     <div id="tips-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>Dicas</h3>
+            <h3>{{ translations.get('tips_title', 'Dicas') }}</h3>
             <ul id="tips-list">
                 <!-- As dicas serão inseridas aqui dinamicamente -->
             </ul>
@@ -66,13 +106,33 @@
     <div id="confirmation-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>Confirmação</h3>
+            <h3>{{ translations.get('confirmation_title', 'Confirmação') }}</h3>
             <p id="confirmation-message"></p>
-            <button id="confirm-btn">Continuar</button>
-            <button id="cancel-btn">Cancelar</button>
+            <button id="confirm-btn">{{ translations.get('confirm_button', 'Continuar') }}</button>
+            <button id="cancel-btn">{{ translations.get('cancel_button', 'Cancelar') }}</button>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='scripts/config.js') }}"></script>
+    <script>
+        const noChangesMessage = "{{ translations.get('no_changes_detected', 'Nenhuma alteração detectada.') }}";
+        const noRestoreChangesMessage = "{{ translations.get('no_restore_changes', 'Nenhuma alteração a ser restaurada.') }}";
+    </script>
+    <script type="text/javascript">
+        const translations = {
+            tip: "{{ translations.get('tip', 'Dicas do') }}",
+            seen: "{{ translations.get('seen', 'Visto') }}",
+            not_seen: "{{ translations.get('not_seen', 'Não Visto') }}",
+            noChangesMessage: "{{ translations.get('no_changes_detected', 'Nenhuma alteração detectada.') }}",
+            noRestoreChangesMessage: "{{ translations.get('no_restore_changes', 'Nenhuma alteração a ser restaurada.') }}",
+            enabled: "{{ translations.get('enabled', 'Ativado') }}",
+            disabled: "{{ translations.get('disabled', 'Desativado') }}",
+            changesDetectedMessage: "{{ translations.get('changes_detected_message', 'Alterações detectadas:') }}",
+            restoreDefaultsMessage: "{{ translations.get('restore_defaults_message', 'Você está prestes a restaurar os seguintes valores para o padrão:') }}",
+            confirm_delete_folder: "{{ translations.get('confirm_delete_folder', 'Tem certeza que deseja excluir esta pasta?') }}",
+            folder_deleted: "{{ translations.get('folder_deleted', 'Pasta excluída com sucesso!') }}",
+            folder_delete_error: "{{ translations.get('folder_delete_error', 'Erro ao excluir a pasta.') }}"
+        };        
+    </script>
 </body>
 </html>

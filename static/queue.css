@@ -1,74 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Signika Negative', sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
+    background-size: 300% 300%;
+    animation: gradientBackground 60s ease infinite;
+    overflow: hidden;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    background-color: #ffffff; /* Mudei para branco */
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-h2, h3 {
-    text-align: center;
+h1, h3 {
     margin-bottom: 20px;
-    color: #333;
-    font-weight: bold;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-ul li {
-    margin-bottom: 15px;
-    border: 2px solid transparent;
-    border-radius: 5px;
-    padding: 10px;
-    transition: border-color 0.3s;
-}
-
-ul li strong {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 1.2em;
-}
-
-ul li ul {
-    list-style-type: none;
-    padding-left: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-}
-
-ul li ul li {
-    margin-bottom: 5px;
-}
-
-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 20px;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
+    color: #000000;
 }
 
 .menu {
@@ -77,20 +38,127 @@ button:hover {
     margin-bottom: 20px;
 }
 
-.menu button {
+.menu button,
+button.btn-login {
     width: auto;
     margin: 0 10px;
     padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
+    background-color: #e63946; /* Cor de fundo */
+    color: #ffffff; /* Texto em branco */
+    border: 2px solid transparent; /* Borda inicial transparente */
+    border-radius: 5px; /* Bordas arredondadas */
     cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border 0.3s; /* Transições suaves */
+    font-weight: bold;
+    box-sizing: border-box; /* Inclui padding e borda nas dimensões totais */
+    box-shadow: 0px 10px 40px -12px #e63946a3; /* Sombra com a nova cor */
+}
+
+.menu button:hover,
+button.btn-login:hover {
+    background-color: #ffffff; /* Fundo branco ao passar o mouse */
+    color: #e63946; /* Texto na cor original do botão */
+    border: 2px solid #e63946; /* Mantém a borda para evitar o aumento do tamanho */
+}
+
+.scrollable-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+/* Custom Scrollbar */
+.scrollable-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.scrollable-list::-webkit-scrollbar-track {
+    background: #3c344f; /* Cor do fundo da barra de rolagem */
+    border-radius: 10px;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+    background: #60577a; /* Cor da barra de rolagem */
+    border-radius: 10px;
+    border: 3px solid #3c344f; /* Espaço ao redor da barra de rolagem */
+}
+
+.scrollable-list::-webkit-scrollbar-thumb:hover {
+    background: #776e94; /* Cor da barra de rolagem ao passar o mouse */
+}
+
+.item-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.item-list li {
+    display: block;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #f0ffffde;
     transition: background-color 0.3s;
 }
 
-.menu button:hover {
-    background-color: #0056b3;
+.item-list li.Aguardando {
+    background-color: #9e9e9e; /* Cinza */
+}
+
+.item-list li.Processando {
+    background: linear-gradient(270deg, #ffa500, #ff4500); /* Amarelo alaranjado */
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.item-list li.Aguardando:hover,
+.item-list li.Concluído:hover {
+    background-color: #ff4f4f; /* Vermelho ao passar o mouse */
+    cursor: pointer;
+}
+
+.item-list li.Concluído {
+    background-color: #4caf50; /* Verde */
+}
+
+.item-list li.Erro {
+    background-color: #ff4f4f; /* Vermelho */
+}
+
+.item-list li:hover {
+    cursor: pointer;
+}
+
+.item-list .album-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.item-list .folder-path, .item-list .status, .item-list .error {
+    font-size: 12px; /* Reduzido */
+    color: #d3d3d3;
+    margin-top: 2px; /* Menor espaçamento */
+}
+
+.item-list .empty-message {
+    color: #f0ffffde;
+    font-style: italic;
+    padding: 20px;
+    background-color: #635d87;
+    border-radius: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 .section {
@@ -101,24 +169,14 @@ button:hover {
     display: block;
 }
 
-.completed {
-    border-color: #28a745; /* Verde */
-}
-
-.processing {
-    border-color: #ffc107; /* Amarelo */
-}
-
-.error {
-    border-color: #dc3545; /* Vermelho */
-}
-
-@media (max-width: 600px) {
-    .menu {
-        flex-direction: column;
+@keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
     }
-
-    .menu button {
-        margin-bottom: 10px;
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
     }
 }

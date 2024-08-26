@@ -1,53 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>{{ translations.get('home_title', 'Home') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
-    <!-- Link para os ícones do Flaticon -->
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 </head>
 <body>
     <div class="container">
-        <h2>Bem-vindo ao MangaDex Uploader</h2>
+        <h2>{{ translations.get('welcome_title', 'Bem-vindo ao MangaDex Uploader') }}</h2>
         <div class="button-container">
             <div class="tooltip">
                 <button class="icon-button" id="settings-btn">
                     <i class="fi fi-rr-settings-sliders"></i>
                 </button>
-                <span class="tooltiptext">Configurações</span>
+                <span class="tooltiptext">{{ translations.get('settings', 'Configurações') }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="queue-btn">
                     <i class="fi fi-rr-gallery"></i>
                 </button>
-                <span class="tooltiptext">Fila</span>
+                <span class="tooltiptext">{{ translations.get('queue', 'Fila') }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="upload-btn">
                     <i class="fi fi-rr-upload"></i>
                 </button>
-                <span class="tooltiptext">Enviar</span>
+                <span class="tooltiptext">{{ translations.get('upload', 'Enviar') }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="download-btn">
                     <i class="fi fi-rr-download"></i>
                 </button>
-                <span class="tooltiptext">Baixar</span>
+                <span class="tooltiptext">{{ translations.get('download', 'Baixar') }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="updates-btn">
                     <i class="fi fi-rr-info"></i>
                 </button>
-                <span class="tooltiptext">Atualizações</span>
+                <span class="tooltiptext">{{ translations.get('updates', 'Atualizações') }}</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="logs-btn">
+                    <i class="fi fi-rr-search-alt"></i>
+                </button>
+                <span class="tooltiptext">{{ translations.get('logs', 'Logs de Upload') }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="logout-btn">
                     <i class="fi fi-rr-lock"></i>
                 </button>
-                <span class="tooltiptext">Sair</span>
+                <span class="tooltiptext">{{ translations.get('logout', 'Sair') }}</span>
             </div>
         </div>
     </div>
@@ -84,6 +89,11 @@
         document.getElementById('upload-btn').onclick = function() {
             // Redireciona para a página de upload
             window.location.href = "{{ url_for('upload') }}";
+        };
+
+        document.getElementById('logs-btn').onclick = function() {
+            // Redireciona para a página de logs
+            window.location.href = "{{ url_for('logs') }}";
         };
 
         // Função para mostrar notificações

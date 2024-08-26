@@ -1,115 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fila</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='queue.css') }}">
+    <title>{{ translations.get('queue_title', 'Fila de Processos') }}</title>
 </head>
 <body>
     <div class="container">
-        <h2>Fila de Processos</h2>
+        <h1>{{ translations.get('queue_title', 'Fila de Processos') }}</h1>
         <div class="menu">
-            <button onclick="showSection('downloads')">Downloads</button>
-            <button onclick="showSection('uploads')">Uploads</button>
+            <button onclick="showSection('downloads')">{{ translations.get('downloads', 'Downloads') }}</button>
+            <button onclick="showSection('uploads')">{{ translations.get('uploads', 'Uploads') }}</button>
         </div>
-        <div id="downloads" class="section active">
-            <h3>Fila de Downloads</h3>
-            <ul id="download-list">
-                {% if not queue_download %}
-                <li>Nenhum item na fila de downloads</li>
-                {% else %}
-                {% for key, item in queue_download.items() %}
-                <li data-status="{{ item.status }}">
-                    <strong>{{ key }}</strong>
-                    <ul>
-                        {% if item.title %}
-                        <li>Título: {{ item.title }}</li>
-                        {% endif %}
-                        {% if item.translated %}
-                        <li>Traduzido: {{ item.translated }}</li>
-                        {% endif %}
-                        {% if item.chapter %}
-                        <li>Capítulo: {{ item.chapter }}</li>
-                        {% endif %}
-                        {% if item.volume and item.volume != 'none' %}
-                        <li>Volume: {{ item.volume }}</li>
-                        {% endif %}
-                        {% if item.status %}
-                        <li>Status: {{ item.status }}</li>
-                        {% endif %}
-                        {% if item.error %}
-                        <li>Erro: {{ item.error }}</li>
-                        {% endif %}
-                    </ul>
-                </li>
-                {% endfor %}
-                {% endif %}
-            </ul>
+        <div id="downloads" class="section active scrollable-list">
+            <h3>{{ translations.get('download_queue', 'Fila de Downloads') }}</h3>
+            <ul id="download-list" class="item-list"></ul>
         </div>
-        <div id="uploads" class="section">
-            <h3>Fila de Uploads</h3>
-            <ul id="upload-list">
-                {% if not queue_upload %}
-                <li>Nenhum item na fila de uploads</li>
-                {% else %}
-                {% for key, item in queue_upload.items() %}
-                <li data-status="{{ item.status }}">
-                    <strong>{{ key }}</strong>
-                    <ul>
-                        {% if item.title %}
-                        <li>Título: {{ item.title }}</li>
-                        {% endif %}
-                        {% if item.language %}
-                        <li>Idioma: {{ item.language }}</li>
-                        {% endif %}
-                        {% if item.chapter %}
-                        <li>Capítulo: {{ item.chapter }}</li>
-                        {% endif %}
-                        {% if item.volume and item.volume != 'none' %}
-                        <li>Volume: {{ item.volume }}</li>
-                        {% endif %}
-                        {% if item.status %}
-                        <li>Status: {{ item.status }}</li>
-                        {% endif %}
-                        {% if item.error %}
-                        <li>Erro: {{ item.error }}</li>
-                        {% endif %}
-                    </ul>
-                </li>
-                {% endfor %}
-                {% endif %}
-            </ul>
+        <div id="uploads" class="section scrollable-list">
+            <h3>{{ translations.get('upload_queue', 'Fila de Uploads') }}</h3>
+            <ul id="upload-list" class="item-list"></ul>
         </div>
-        <div>
-            <button onclick="window.location.href='{{ url_for('home') }}'">Voltar</button>
+        <div class="button-container">
+            <button onclick="window.location.href='{{ url_for('home') }}'" class="btn-login">{{ translations.get('back_button', 'Voltar') }}</button>
         </div>
     </div>
+    <script src="{{ url_for('static', filename='scripts/queue.js') }}"></script>
     <script>
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById(sectionId).style.display = 'block';
-        }
-
-        function applyStatusStyles() {
-            const statusClasses = {
-                'Concluído': 'completed',
-                'Processando': 'processing',
-                'Erro': 'error'
-            };
-
-            document.querySelectorAll('li[data-status]').forEach(item => {
-                const status = item.getAttribute('data-status');
-                item.classList.add(statusClasses[status] || '');
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            applyStatusStyles();
-        });
+        // Traduções para mensagens vazias
+        const emptyDownloadMessage = "{{ translations.get('no_download_items', 'Nenhum item na fila de downloads') }}";
+        const emptyUploadMessage = "{{ translations.get('no_upload_items', 'Nenhum item na fila de uploads') }}";
+        const errorDeleteMessage = "{{ translations.get('error_delete_item', 'Erro ao excluir o item.') }}";
     </script>
 </body>
 </html>

@@ -1,29 +1,29 @@
 body {
     font-family: 'Signika Negative', sans-serif;
     margin: 0;
-    height: 100vh;
+    padding: 0 10px; /* Adiciona um pequeno padding para espaçamento */
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
     background-size: 300% 300%;
     animation: gradientBackground 60s ease infinite;
-    overflow: hidden;
 }
 
 .container {
     background-color: #fff;
-    padding: 40px;
+    padding: 20px; /* Reduzido de 40px para 20px */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 700px;
-    max-width: 90%;
+    width: 100%;
+    max-width: 600px; /* Reduzi para 600px */
     position: relative;
 }
 
 h2 {
-    margin-bottom: 30px;
-    font-size: 28px;
+    margin-bottom: 20px; /* Reduzido de 30px para 20px */
+    font-size: 24px; /* Reduzi para 24px */
     color: #444;
     text-align: center;
 }
@@ -31,16 +31,16 @@ h2 {
 form {
     display: flex;
     flex-direction: column;
-    position: relative;
+    gap: 10px; /* Adiciona gap entre os elementos */
 }
 
 form div {
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Reduzi de 20px para 15px */
     position: relative;
 }
 
 label {
-    font-size: 16px;
+    font-size: 14px; /* Reduzi de 16px para 14px */
     color: #666;
     margin-bottom: 5px;
     display: block;
@@ -50,19 +50,20 @@ input[type="text"],
 input[type="date"],
 select {
     width: 100%;
-    padding: 14px;
+    padding: 10px; /* Reduzi de 14px para 10px */
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px; /* Reduzi de 16px para 14px */
     color: #333;
+    box-sizing: border-box;
 }
 
 input[type="datetime-local"] {
     width: 100%;
-    padding: 14px;
+    padding: 10px; /* Reduzi de 14px para 10px */
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px; /* Reduzi de 16px para 14px */
     color: #333;
     box-sizing: border-box;
 }
@@ -70,10 +71,10 @@ input[type="datetime-local"] {
 button {
     background-color: #5cb85c;
     color: white;
-    padding: 12px;
+    padding: 10px; /* Reduzi de 12px para 10px */
     border: none;
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 16px; /* Reduzi de 18px para 16px */
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -236,6 +237,65 @@ button:hover {
     border-top: 8px solid #3498db;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+.notification {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+    margin-top: 10px; /* Espaçamento entre notificações */
+    position: relative; /* Permite empilhar as notificações */
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notifications {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    z-index: 1000;
+}
+
+#folder {
+    padding-right: 70px; /* Espaço extra para os ícones */
+}
+
+#folder-btn, #file-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+#folder-btn {
+    right: 35px;
+}
+
+#file-btn {
+    right: 5px;
+}
+
+#folder-btn i, #file-btn i {
+    font-size: 18px;
+    color: #666;
+}
+
+#folder-btn:hover i, #file-btn:hover i {
+    color: #333;
 }
 
 @keyframes spin {

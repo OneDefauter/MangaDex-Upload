@@ -5,7 +5,10 @@ const initialConfig = {
     api_url: document.getElementById('api_url').value,
     auth_url: document.getElementById('auth_url').value,
     max_results: parseInt(document.getElementById('max_results').value, 10),
-    download_folder: document.getElementById('download_folder').value
+    download_folder: document.getElementById('download_folder').value,
+    download_folder_scheme: document.getElementById('download_folder_scheme').value,
+    cover_image_quality: document.getElementById('cover_image_quality').value,
+    upload_on_error: document.getElementById('upload_on_error').checked
 };
 
 const defaultConfig = {
@@ -15,7 +18,10 @@ const defaultConfig = {
     api_url: "https://api.mangadex.org",
     auth_url: "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token",
     max_results: 12,
-    download_folder: ""
+    download_folder: "",
+    download_folder_scheme: "scheme1",
+    cover_image_quality: "reduced",
+    upload_on_error: false
 };
 
 const modal = document.getElementById('confirmation-modal');
@@ -32,15 +38,18 @@ function getFormData() {
         api_url: document.getElementById('api_url').value,
         auth_url: document.getElementById('auth_url').value,
         max_results: parseInt(document.getElementById('max_results').value, 10),
-        download_folder: document.getElementById('download_folder').value
+        download_folder: document.getElementById('download_folder').value,
+        download_folder_scheme: document.getElementById('download_folder_scheme').value,
+        cover_image_quality: document.getElementById('cover_image_quality').value,
+        upload_on_error: document.getElementById('upload_on_error').checked
     };
 }
 
 function generateChangesMessage(changes) {
-    let message = 'Alterações detectadas:<br>';
+    let message = `${translations.changesDetectedMessage}<br>`;
     for (const [key, value] of Object.entries(changes)) {
         if (key === 'log') {
-            message += `${key.charAt(0).toUpperCase() + key.slice(1)}? ${value.oldValue ? 'Ativado' : 'Desativado'} -> ${value.newValue ? 'Ativado' : 'Desativado'}<br>`;
+            message += `${key.charAt(0).toUpperCase() + key.slice(1)}? ${value.oldValue ? translations.enabled : translations.disabled} -> ${value.newValue ? translations.enabled : translations.disabled}<br>`;
         } else {
             message += `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value.oldValue} -> ${value.newValue}<br>`;
         }
@@ -69,7 +78,7 @@ function checkChanges() {
 document.getElementById('save-btn').onclick = function() {
     const changes = checkChanges();
     if (Object.keys(changes).length === 0) {
-        alert('Nenhuma alteração detectada.');
+        alert(translations.noChangesMessage);
         return;
     }
 
@@ -97,11 +106,11 @@ document.getElementById('restore-defaults-btn').onclick = function() {
     }
 
     if (Object.keys(changes).length === 0) {
-        alert('Nenhuma alteração a ser restaurada.');
+        alert(translations.noRestoreChangesMessage);
         return;
     }
 
-    confirmationMessage.innerHTML = 'Você está prestes a restaurar os seguintes valores para o padrão:<br>' +
+    confirmationMessage.innerHTML = `${translations.restoreDefaultsMessage}<br>` +
         Object.entries(changes).map(([key, change]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${change.oldValue} -> ${change.newValue}`).join('<br>');
 
     modal.style.display = 'block';
@@ -142,7 +151,7 @@ tipsBtn.onclick = function() {
             Object.entries(tipsStatus).forEach(([tipName, seen]) => {
                 const tipItem = document.createElement('li');
                 tipItem.innerHTML = `
-                    Dicas do ${tipName} <button class="${seen ? 'tip-seen' : 'tip-not-seen'}">${seen ? 'Visto' : 'Não Visto'}</button>
+                    ${translations.tip} ${tipName} <button class="${seen ? 'tip-seen' : 'tip-not-seen'}">${seen ? translations.seen : translations.not_seen}</button>
                 `;
                 tipsList.appendChild(tipItem);
             });
@@ -163,3 +172,59 @@ window.onclick = function(event) {
         tipsModal.style.display = 'none';
     }
 };
+
+document.getElementById('folder-btn-config').addEventListener('click', function () {
+    showLoadingScreen()
+    fetch('/select_folder')  // Supondo que você tenha uma rota para selecionar a pasta
+        .then(response => response.json())
+        .then(data => {
+            if (data.folder) {
+                document.getElementById('download_folder').value = data.folder;
+                alert('Pasta selecionada: ' + data.folder);
+            } else {
+                alert('Nenhuma pasta foi selecionada');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao selecionar a pasta:', error);
+            alert('Erro ao selecionar a pasta');
+        })
+        .finally(() => {
+            hideLoadingScreen();
+        });
+});
+
+document.getElementById('delete-folder-btn').addEventListener('click', function () {
+    if (confirm(translations.confirm_delete_folder)) {
+        fetch('/delete_folder', {  // Supondo que você tenha uma rota para exclusão de pasta
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ folder: document.getElementById('download_folder').value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(translations.folder_deleted);
+                location.reload();  // Recarregar a página para atualizar as informações
+            } else {
+                alert(translations.folder_delete_error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao excluir a pasta:', error);
+            alert(translations.folder_delete_error);
+        });
+    }
+});
+
+function showLoadingScreen() {
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.style.display = 'flex';
+}
+
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.style.display = 'none';
+}

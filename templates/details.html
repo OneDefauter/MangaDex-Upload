@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalhes do Mangá</title>
+    <title>{{ translations.get('manga_details', 'Detalhes do Mangá') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='details.css') }}">
     <script>
@@ -13,24 +13,24 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <img id="cover-image" src="" alt="Capa do Mangá" class="cover-image"/>
+            <img id="cover-image" src="" alt="{{ translations.get('manga_cover_alt', 'Capa do Mangá') }}" class="cover-image"/>
             <div class="manga-info">
                 <h1 id="manga-title"></h1>
                 <p id="manga-author"></p>
                 <p id="manga-artist"></p>
                 <p id="manga-status"></p>
-                <a id="manga-link" href="" target="_blank" class="view-link">Ver no MangaDex</a>
+                <a id="manga-link" href="" target="_blank" class="view-link">{{ translations.get('view_on_mangadex', 'Ver no MangaDex') }}</a>
                 <div id="manga-tags" class="tags-container"></div>
             </div>
         </div>
         <div class="content">
             <div class="description">
-                <h2>Sobre</h2>
+                <h2>{{ translations.get('about', 'Sobre') }}</h2>
                 <p id="manga-description"></p>
             </div>
             <div class="buttons-container">
                 <div class="language-buttons" id="language-buttons"></div>
-                <button id="download-all-btn" class="download-all-btn">Baixar Todos os Capítulos</button>
+                <button id="download-all-btn" class="download-all-btn">{{ translations.get('download_all_chapters', 'Baixar Todos os Capítulos') }}</button>
             </div>
             <div class="chapter-container">
                 <div class="chapter-list" id="chapter-list"></div>
@@ -42,5 +42,14 @@
         <div class="loading-spinner"></div>
     </div>
     <script src="{{ url_for('static', filename='scripts/details.js') }}"></script>
+    <script type="text/javascript">
+        const translations = {
+            author: "{{ translations.get('author', 'Autor') }}",
+            artist: "{{ translations.get('artist', 'Artista') }}",
+            status: "{{ translations.get('status', 'Status') }}",
+            errorFetchingDetails: "{{ translations.get('error_fetching_details', 'Erro ao buscar detalhes do mangá.') }}",
+            errorFetchingChapters: "{{ translations.get('error_fetching_chapters', 'Erro ao buscar capítulos.') }}"
+        };
+    </script>
 </body>
 </html>

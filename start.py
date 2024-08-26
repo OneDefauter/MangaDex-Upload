@@ -1,6 +1,8 @@
 import os
 import sys
+import shutil
 import hashlib
+import argparse
 import tempfile
 import subprocess
 from io import BytesIO
@@ -19,7 +21,7 @@ def install_modules():
         'markupsafe',
         'markdown',
         'packaging',
-        'cryptography'
+        'pycryptodome'
     ]
 
     for module in required_modules:
@@ -43,10 +45,13 @@ def calculate_sha1(filepath):
             sha1.update(data)
     return sha1.hexdigest()
 
-def download_and_execute():
+def download_and_execute(delete_folder=False):
     temp_folder = tempfile.gettempdir()
     app_folder = os.path.join(temp_folder, "MangaDex Upload (APP)")
     path_file = os.path.join(app_folder, "run.py")
+    
+    if delete_folder and os.path.exists(app_folder):
+        shutil.rmtree(app_folder)
     
     os.makedirs(app_folder, exist_ok=True)
     os.chdir(app_folder)
@@ -89,8 +94,12 @@ def download_and_execute():
                         fopen.write(file_data)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="MangaDex Upload Script")
+    parser.add_argument('--delete-folder', '-d', '--remove-folder', action='store_true', help='Delete the app folder before starting')
+    args = parser.parse_args()
+
     install_modules()
     import requests
-    download_and_execute()
+    download_and_execute(delete_folder=args.delete_folder)
     import run
     

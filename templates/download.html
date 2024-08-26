@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscar Mangá</title>
+    <title>{{ translations.get('search_manga', 'Buscar Mangá') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='download.css') }}">
@@ -11,18 +11,25 @@
 </head>
 <body>
     <div class="container">
-        <h2>Buscar Mangá</h2>
-        <input type="text" id="search-input" placeholder="Digite o nome do mangá..." autofocus>
+        <h2>{{ translations.get('search_manga', 'Buscar Mangá') }}</h2>
+        <input type="text" id="search-input" placeholder="{{ translations.get('enter_manga_name', 'Digite o nome do mangá...') }}" autofocus>
         <div id="results-container"></div>
         <div class="pagination">
-            <button id="prev-btn">Anterior</button>
+            <button id="prev-btn">{{ translations.get('previous', 'Anterior') }}</button>
             <div class="page-numbers"></div>
-            <button id="next-btn">Próximo</button>
+            <button id="next-btn">{{ translations.get('next', 'Próximo') }}</button>
         </div>
     </div>
     <!-- Tela de carregamento -->
     <div id="loading-screen" class="loading-screen" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
+
+    <script type="text/javascript">
+        const translations = {
+            noResults: "{{ translations.get('no_results', 'Nenhum resultado encontrado.') }}",
+            searchError: "{{ translations.get('search_error', 'Erro ao buscar dados. Tente novamente mais tarde.') }}"
+        };
+    </script>
 </body>
 </html>

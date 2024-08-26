@@ -47,6 +47,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight" && currentPage < totalPages) {
+            currentPage++;
+            displayResultsForPage(currentPage);
+            updatePagination(currentPage, totalPages);
+        } else if (event.key === "ArrowLeft" && currentPage > 1) {
+            currentPage--;
+            displayResultsForPage(currentPage);
+            updatePagination(currentPage, totalPages);
+        }
+    });
+
     function fetchAllManga(query) {
         fetch(`/api/search?title=${encodeURIComponent(query)}&page=1`)
             .then(response => response.json())
@@ -55,11 +67,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     allResults = data.mangas;
                     totalPages = Math.ceil(data.totalResults / 12); // Calcula páginas com base em 12 resultados por página
                     displayResultsForPage(1);
-                    prevPageBtn.style.display = "block"; // Esconde paginação
-                    nextPageBtn.style.display = "block"; // Esconde paginação
+                    prevPageBtn.style.display = "block"; // Mostra paginação
+                    nextPageBtn.style.display = "block"; // Mostra paginação
                     updatePagination(currentPage, totalPages);
                 } else {
-                    resultsContainer.innerHTML = "<p>Nenhum resultado encontrado.</p>";
+                    resultsContainer.innerHTML = `<p>${translations.noResults}</p>`;
                     paginationContainer.style.display = "none"; // Esconde paginação se não houver resultados
                     prevPageBtn.style.display = "none"; // Esconde paginação
                     nextPageBtn.style.display = "none"; // Esconde paginação
@@ -67,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
-                resultsContainer.innerHTML = "<p>Erro ao buscar dados. Tente novamente mais tarde.</p>";
+                resultsContainer.innerHTML = `<p>${translations.searchError}</p>`;
             })
             .finally(() => {
                 hideLoadingScreen();

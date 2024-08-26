@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualizações</title>
+    <title>{{ translations.get('updates_title', 'Atualizações') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='updates.css') }}">
 </head>
 <body>
     <div class="container">
-        <h2>Atualizações</h2>
+        <h2>{{ translations.get('updates_title', 'Atualizações') }}</h2>
         <div class="markdown-content">
             {{ content|safe }}
         </div>
         <div>
-            <button onclick="window.location.href='{{ url_for('home') }}'">Voltar</button>
+            <button onclick="window.location.href='{{ url_for('home') }}'">{{ translations.get('back_button', 'Voltar') }}</button>
         </div>
-        {% if nem_update %}
+        {% if new_update %}
         <div>
-            <button id="update-button" onclick="postUpdate()">Atualizar</button>
+            <button id="update-button" onclick="postUpdate()">{{ translations.get('update_button', 'Atualizar') }}</button>
         </div>
         {% endif %}
     </div>
@@ -34,14 +34,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Atualização realizada com sucesso! Reinicie...');
+                    alert('{{ translations.get('update_success', 'Atualização realizada com sucesso! Reinicie...') }}');
                 } else {
-                    alert('Erro ao realizar atualização.');
+                    alert('{{ translations.get('update_error', 'Erro ao realizar atualização.') }}');
                 }
             })
             .catch(error => {
                 console.error('Erro:', error);
-                alert('Erro ao realizar atualização.');
+                alert('{{ translations.get('update_error', 'Erro ao realizar atualização.') }}');
             });
         }
     </script>

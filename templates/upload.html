@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enviar Mangá</title>
+    <title>{{ translations.get('upload_manga', 'Enviar Mangá') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
     <!-- Link para os ícones do Flaticon -->
@@ -11,63 +11,71 @@
 </head>
 <body>
     <div class="container">
-        <h2>Enviar Mangá</h2>
+        <h2>{{ translations.get('upload_manga', 'Enviar Mangá') }}</h2>
         <form id="upload-form">
             <div>
-                <label for="project">Projeto:</label>
+                <label for="project">{{ translations.get('project', 'Projeto:') }}</label>
                 <input type="text" id="project" name="project" autocomplete="off">
                 <ul id="project-suggestions" class="suggestions-list"></ul>
             </div>
             <div>
-                <label for="group">Grupo:</label>
+                <label for="group">{{ translations.get('group', 'Grupo:') }}</label>
                 <input type="text" id="group" name="group" autocomplete="off">
                 <ul id="group-suggestions" class="suggestions-list"></ul>
                 <div id="selected-groups" class="tags-container"></div>
             </div>
             <div>
-                <label for="language">Linguagem:</label>
+                <label for="language">{{ translations.get('language', 'Linguagem:') }}</label>
                 <select id="language" name="language">
-                    <option value="pt-br">Português (Brasil)</option>
-                    <option value="en">Inglês</option>
+                    <option value="pt-br">{{ translations.get('portuguese_brazil', 'Português (Brasil)') }}</option>
+                    <option value="en">{{ translations.get('english', 'Inglês') }}</option>
                 </select>
             </div>
             <div>
-                <label for="title">Título:</label>
+                <label for="title">{{ translations.get('title', 'Título:') }}</label>
                 <input type="text" id="title" name="title">
             </div>            
             <div>
-                <label for="volume">Volume:</label>
+                <label for="volume">{{ translations.get('volume', 'Volume:') }}</label>
                 <input type="text" id="volume" name="volume">
             </div>
             <div>
-                <label for="chapter">Capítulo:</label>
+                <label for="chapter">{{ translations.get('chapter', 'Capítulo:') }}</label>
                 <input type="text" id="chapter" name="chapter">
             </div>
             <div>
-                <label for="single_chapter">Capítulo Único:</label>
+                <label for="single_chapter">{{ translations.get('single_chapter', 'Capítulo Único:') }}</label>
                 <input type="checkbox" id="single_chapter" name="single_chapter">
             </div>            
             <div>
-                <label for="folder">Pasta:</label>
-                <input type="text" id="folder" name="folder">
-            </div>
+                <label for="folder">{{ translations.get('folder', 'Pasta:') }}</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="text" id="folder" name="folder">
+                    <button type="button" id="folder-btn">
+                        <i class="fi fi-rr-folder"></i>
+                    </button>
+                    <button type="button" id="file-btn">
+                        <i class="fi fi-rr-file"></i>
+                    </button>
+                </div>
+            </div>            
             <div>
-                <label for="datetime">Data e Hora de Upload:</label>
+                <label for="datetime">{{ translations.get('upload_datetime', 'Data e Hora de Upload:') }}</label>
                 <input type="datetime-local" id="datetime" name="datetime" min="{{ min_datetime }}" max="{{ max_datetime }}">
             </div>
-            <button type="button" id="submit-btn">Enviar</button>
+            <button type="button" id="submit-btn">{{ translations.get('submit', 'Enviar') }}</button>
         </form>
     </div>
 
     <!-- Overlay de Dicas -->
     <div id="tip-overlay" class="tip-overlay">
         <div class="tip-content">
-            <h3>Dica</h3>
-            <img id="tip-gif" src="" alt="GIF da dica" class="tip-gif">
-            <p id="tip-text">Use este formulário para enviar seu mangá. Preencha todos os campos obrigatórios antes de clicar em "Enviar".</p>
+            <h3>{{ translations.get('tip', 'Dica') }}</h3>
+            <img id="tip-gif" src="" alt="{{ translations.get('tip_gif_alt', 'GIF da dica') }}" class="tip-gif">
+            <p id="tip-text">{{ translations.get('tip_default_text', 'Use este formulário para enviar seu mangá. Preencha todos os campos obrigatórios antes de clicar em "Enviar".') }}</p>
             <div class="tip-navigation">
-                <button id="tip-prev-btn">Voltar</button>
-                <button id="tip-next-btn">Continuar</button>
+                <button id="tip-prev-btn">{{ translations.get('previous', 'Voltar') }}</button>
+                <button id="tip-next-btn">{{ translations.get('next', 'Continuar') }}</button>
             </div>
             <div id="tip-indicators" class="tip-indicators"></div>
         </div>
@@ -77,6 +85,27 @@
     <div id="loading-screen" class="loading-screen" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
+
+    <div id="notifications" class="notifications">
+        <!-- As notificações serão inseridas aqui pelo JavaScript -->
+    </div>
+
+    <!-- Translations passed to JavaScript -->
+    <script>
+        const translations = {
+            project: "{{ translations.get('tip_project', 'Projeto: Identifique o projeto ao qual este upload pertence.') }}",
+            group: "{{ translations.get('tip_group', 'Grupo: Selecione o grupo responsável por este mangá.') }}",
+            language: "{{ translations.get('tip_language', 'Linguagem: Escolha o idioma do mangá.') }}",
+            title: "{{ translations.get('tip_title', 'Título: Insira o título do capítulo, se houver.') }}",
+            volume: "{{ translations.get('tip_volume', 'Volume: Insira o volume correspondente, se aplicável.') }}",
+            chapter: "{{ translations.get('tip_chapter', 'Capítulo: Número do capítulo que está sendo enviado.') }}",
+            single_chapter: "{{ translations.get('tip_single_chapter', 'Capítulo Único: Marque se este for um capítulo único.<br><strong>Aviso:</strong> Caso esteja marcada, tanto volume quanto o capítulo não serão enviados.') | safe }}",
+            folder: "{{ translations.get('tip_folder', 'Pasta: Indique a pasta onde as imagens estão armazenadas.') }}",
+            datetime: "{{ translations.get('tip_datetime', 'Data e Hora da publicação: Selecione quando a publicação deve ocorrer.<br><strong>Aviso:</strong> O tempo máximo aceito é de 2 semanas.') | safe }}",
+            next: "{{ translations.get('next', 'Continuar') }}",
+            finish: "{{ translations.get('finish', 'Finalizar') }}"
+        };
+    </script>
 
     <script src="{{ url_for('static', filename='scripts/upload.js') }}"></script>
 </body>

@@ -2,15 +2,15 @@
 
 body {
     font-family: 'Signika Negative', sans-serif;
-    margin: 0;
-    height: 100vh;
+    margin: 20px;
+    min-height: 100vh; /* Mudei de height para min-height */
     display: flex;
     justify-content: center;
     align-items: center;
     background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
     background-size: 300% 300%;
     animation: gradientBackground 60s ease infinite;
-    overflow: hidden;
+    overflow-y: auto; /* Adicionado para permitir rolagem vertical se necessário */
 }
 
 .container {
@@ -21,6 +21,10 @@ body {
     width: 90%;
     max-width: 500px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 h2 {
@@ -59,29 +63,23 @@ input[type="checkbox"] {
 
 button {
     margin-top: 1rem;
-    padding: 0.7rem 1.5rem;
-    background-color: #e63946;
-    color: white;
-    border: none;
-    border-radius: 8px;
+    padding: 11.2px 24px; /* Mantendo o mesmo padding */
+    background-color: #e63946; /* Cor de fundo padrão */
+    color: #ffffff; /* Cor do texto */
+    border: 2px solid transparent; /* Borda inicial transparente */
+    border-radius: 5px; /* Bordas arredondadas */
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
+    font-weight: bold; /* Negrito */
+    box-sizing: border-box; /* Inclui padding e borda nas dimensões totais */
+    transition: background-color 0.3s, color 0.3s, border 0.3s; /* Transições suaves */
+    box-shadow: 0px 10px 40px -12px #e6394699; /* Sombra */
 }
 
 button:hover {
-    background-color: #d62839;
-}
-
-button[type="button"] {
-    background-color: #e63946;
-    margin-left: 10px;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-button[type="button"]:hover {
-    background-color: #333;
+    background-color: #ffffff; /* Fundo branco no hover */
+    color: #e63946; /* Cor do texto no hover */
+    border: 2px solid #e63946; /* Mantém a borda para evitar o aumento do tamanho */
 }
 
 a {
@@ -179,6 +177,93 @@ a:hover {
 
 .tip-icon:hover {
     color: #333;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    width: 100%; /* Ajusta para ocupar 100% da largura do container */
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white; /* Cor de fundo branco */
+    margin-right: 0; /* Remove a margem adicional */
+    box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+    appearance: none; /* Remove o estilo padrão do select */
+    -webkit-appearance: none; /* Remove o estilo padrão no Webkit (Chrome, Safari) */
+    -moz-appearance: none; /* Remove o estilo padrão no Firefox */
+}
+
+select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4' viewBox='0 0 292.4 292.4'%3E%3Cpath fill='%23aaa' d='M287 69.2c-3.6-3.6-7.9-5.4-12.9-5.4H18.3c-5 0-9.3 1.8-12.9 5.4S0 77 0 82s1.8 9.3 5.4 12.9l119.5 119.5c3.6 3.6 7.9 5.4 12.9 5.4s9.3-1.8 12.9-5.4l119.5-119.5c3.6-3.6 5.4-7.9 5.4-12.9s-1.8-9.3-5.5-12.8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem top 50%;
+    background-size: 1rem auto;
+}
+
+select:focus,
+input[type="number"]:focus,
+input[type="text"]:focus {
+    border-color: #e63946; /* Cor da borda ao focar */
+    outline: none; /* Remove a linha de foco padrão */
+}
+
+#download_folder {
+    padding-right: 35px; /* Ajusta o padding para acomodar o ícone */
+    height: 100%; /* Garante que o campo de texto tenha altura completa */
+    box-sizing: border-box; /* Inclui padding e borda na largura e altura do elemento */
+}
+
+#folder-btn-config {
+    position: absolute;
+    right: 10px;
+    top: 0; /* Alinha o botão com a parte superior do campo */
+    bottom: 0; /* Faz o botão ocupar a altura completa do campo */
+    margin: auto; /* Centraliza verticalmente */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex; /* Para centralizar o ícone dentro do botão */
+    align-items: center; /* Centraliza verticalmente o ícone dentro do botão */
+    justify-content: center; /* Centraliza horizontalmente o ícone dentro do botão */
+}
+
+#folder-btn-config i {
+    font-size: 18px;
+    color: #666;
+}
+
+#folder-btn-config:hover i {
+    color: #333;
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Certifique-se de que esteja acima de outros elementos */
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes gradientBackground {

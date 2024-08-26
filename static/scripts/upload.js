@@ -7,21 +7,21 @@ window.onload = function() {
     const tipIndicators = document.getElementById('tip-indicators');
 
     const tips = [
-        { id: 'project', text: 'Projeto: Identifique o projeto ao qual este upload pertence.', gif: '/static/tips/upload/project.gif' },
-        { id: 'group', text: 'Grupo: Selecione o grupo responsável por este mangá.', gif: '/static/tips/upload/group.gif' },
-        { id: 'language', text: 'Linguagem: Escolha o idioma do mangá.', gif: '/static/tips/upload/language.gif' },
-        { id: 'title', text: 'Título: Insira o título do capítulo, se houver.', gif: '/static/tips/upload/title.gif' },
-        { id: 'volume', text: 'Volume: Insira o volume correspondente, se aplicável.', gif: '/static/tips/upload/volume.gif' },
-        { id: 'chapter', text: 'Capítulo: Número do capítulo que está sendo enviado.', gif: '/static/tips/upload/chapter.gif' },
+        { id: 'project', text: translations.project, gif: '/static/tips/upload/project.gif' },
+        { id: 'group', text: translations.group, gif: '/static/tips/upload/group.gif' },
+        { id: 'language', text: translations.language, gif: '/static/tips/upload/language.gif' },
+        { id: 'title', text: translations.title, gif: '/static/tips/upload/title.gif' },
+        { id: 'volume', text: translations.volume, gif: '/static/tips/upload/volume.gif' },
+        { id: 'chapter', text: translations.chapter, gif: '/static/tips/upload/chapter.gif' },
         { 
             id: 'single_chapter', 
-            text: 'Capítulo Único: Marque se este for um capítulo único.<br><strong>Aviso:</strong> Caso esteja marcada, tanto volume quanto o capítulo não serão enviados.', 
+            text: translations.single_chapter, 
             gif: '/static/tips/upload/single_chapter.gif' 
         },
-        { id: 'folder-path', text: 'Pasta: Indique a pasta onde as imagens estão armazenadas.', gif: '/static/tips/upload/folder.gif' },
+        { id: 'folder-path', text: translations.folder, gif: '/static/tips/upload/folder.gif' },
         { 
             id: 'datetime', 
-            text: 'Data e Hora da publicação: Selecione quando a publicação deve ocorrer.<br><strong>Aviso:</strong> O tempo máximo aceito é de 2 semanas.', 
+            text: translations.datetime, 
             gif: '/static/tips/upload/datetime.gif' 
         },
     ];
@@ -60,7 +60,7 @@ window.onload = function() {
             tipGif.src = tips[index].gif;
 
             tipPrevBtn.style.display = index > 0 ? 'inline-block' : 'none'; // Esconder "Voltar" na primeira dica
-            tipNextBtn.textContent = index < tips.length - 1 ? 'Continuar' : 'Finalizar';
+            tipNextBtn.textContent = index < tips.length - 1 ? translations.next : translations.finish;
 
             updateIndicators();
         }
@@ -222,8 +222,7 @@ function incrementarCapitulo(chapter) {
 
 document.getElementById('submit-btn').addEventListener('click', function () {
     const projectInput = document.getElementById('project').value.trim();
-    const title = document.getElementById('title').value.trim(); // Captura o valor do título
-    const loadingScreen = document.getElementById("loading-screen");
+    const title = document.getElementById('title').value.trim();
     
     let projectTitle = null;
     let projectId = null;
@@ -262,6 +261,7 @@ document.getElementById('submit-btn').addEventListener('click', function () {
 
     if (!projectId || groups.length === 0 || !language || (!chapter && !singleChapter) || !folder) {
         alert('Por favor, preencha todos os campos obrigatórios.');
+        hideLoadingScreen();
         return;
     }
 
@@ -290,7 +290,14 @@ document.getElementById('submit-btn').addEventListener('click', function () {
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            alert('Dados enviados com sucesso!');
+            const notifications = [
+                `Upload enviado para fila<br>` +
+                `Projeto: ${projectTitle || 'N/A'} (ID: ${projectId})<br>` +
+                `Capítulo: ${chapter || 'N/A'}${volume ? `, Volume: ${volume}` : ''}<br>` +
+                `Linguagem: ${language}`
+            ];
+
+            showNotifications(notifications);
 
             if (!singleChapter && chapter) {
                 chapter = incrementarCapitulo(chapter);
@@ -298,26 +305,37 @@ document.getElementById('submit-btn').addEventListener('click', function () {
             }
 
         } else {
-            alert('Erro ao enviar dados.');
+            showNotifications(['Erro ao enviar dados.']);
         }
     })
     .catch(error => {
         console.error('Erro:', error);
-        // alert('Erro ao enviar dados.');
+        showNotifications(['Erro ao enviar dados.']);
     })
     .finally(() => {
         hideLoadingScreen();
     });
-
-    function showLoadingScreen() {
-        loadingScreen.style.display = 'flex';
-    }
-
-    function hideLoadingScreen() {
-        loadingScreen.style.display = 'none';
-    }
 });
 
+// Função para mostrar notificações
+function showNotifications(messages) {
+    const notificationsContainer = document.getElementById('notifications');
+    messages.reverse().forEach((message, index) => {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = `<p>${message}</p>`;
+        notificationsContainer.appendChild(notification);
+        setTimeout(() => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000 + index * 1000); // Delay entre notificações
+        }, index * 1000); // Delay entre notificações
+    });
+}
 
 // Função para desativar campos quando "Capítulo Único" estiver marcado
 document.getElementById('single_chapter').addEventListener('change', function () {
@@ -328,3 +346,55 @@ document.getElementById('single_chapter').addEventListener('change', function ()
     volumeInput.disabled = isChecked;
     chapterInput.disabled = isChecked;
 });
+
+document.getElementById('folder-btn').addEventListener('click', function () {
+    showLoadingScreen()
+    fetch('/select_folder')
+        .then(response => response.json())
+        .then(data => {
+            if (data.folder) {
+                document.getElementById('folder').value = data.folder;
+                showNotifications([`Pasta selecionada`]);
+            } else {
+                showNotifications(['Nenhuma pasta foi selecionada']);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao selecionar a pasta:', error);
+            showNotifications(['Erro ao selecionar a pasta']);
+        })
+        .finally(() => {
+            hideLoadingScreen();
+        });
+});
+
+document.getElementById('file-btn').addEventListener('click', function () {
+    showLoadingScreen()
+    fetch('/select_file')
+        .then(response => response.json())
+        .then(data => {
+            if (data.file) {
+                document.getElementById('folder').value = data.file;
+                showNotifications([`Arquivo selecionado`]);
+            } else {
+                showNotifications(['Nenhum arquivo foi selecionado']);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao selecionar o arquivo:', error);
+            showNotifications(['Erro ao selecionar o arquivo']);
+        })
+        .finally(() => {
+            hideLoadingScreen();
+        });
+});
+
+function showLoadingScreen() {
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.style.display = 'flex';
+}
+
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.style.display = 'none';
+}
