@@ -37,14 +37,14 @@
             <div>
                 <label for="download_folder_scheme">{{ translations.get('download_folder_scheme', 'Esquema da Pasta de Downloads:') }}</label>
                 <select id="download_folder_scheme" name="download_folder_scheme">
-                    <option value="scheme1" {% if config.download_folder_scheme == 'scheme1' %}selected{% endif %}>{{ translations.get('scheme1', 'Idioma / título da obra / Capítulo') }}</option>
+                    <option value="scheme1" {% if config.download_folder_scheme == 'scheme1' %}selected{% endif %}>{{ translations.get('scheme1', 'Idioma / Título da obra / Capítulo') }}</option>
                     <option value="scheme2" {% if config.download_folder_scheme == 'scheme2' %}selected{% endif %}>{{ translations.get('scheme2', 'Idioma / Título da obra / Volume / Capítulo') }}</option>
                     <option value="scheme3" {% if config.download_folder_scheme == 'scheme3' %}selected{% endif %}>{{ translations.get('scheme3', 'Título da obra / Idioma / Volume / Capítulo') }}</option>
                     <option value="scheme4" {% if config.download_folder_scheme == 'scheme4' %}selected{% endif %}>{{ translations.get('scheme4', 'Título da obra / Idioma / Capítulo') }}</option>
                     <option value="scheme5" {% if config.download_folder_scheme == 'scheme5' %}selected{% endif %}>{{ translations.get('scheme5', 'Título da obra / Volume / Capítulo') }}</option>
                     <option value="scheme6" {% if config.download_folder_scheme == 'scheme6' %}selected{% endif %}>{{ translations.get('scheme6', 'Título da obra / Capítulo') }}</option>
                 </select>
-            </div>            
+            </div>
             <div>
                 <label for="cover_image_quality">{{ translations.get('cover_image_quality', 'Imagens das covers:') }}</label>
                 <select id="cover_image_quality" name="cover_image_quality">
@@ -68,7 +68,7 @@
                 <button type="button" id="delete-folder-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #e63946; color: white; border: none; border-radius: 4px; cursor: pointer;">
                     {{ translations.get('delete_folder_button', 'Excluir Pasta') }}
                 </button>
-            </div>            
+            </div>
             <div>
                 <label for="api_url">API URL:</label>
                 <input type="text" id="api_url" name="api_url" value="{{ config.api_url }}">

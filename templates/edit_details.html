@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="{{ session['lang'] }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translations.get('manga_details_edit', 'Editar Detalhes do Mangá') }}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='edit_details.css') }}">
+    <!-- Link para os ícones do Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <script>
+        const mangaId = "{{ manga_id }}"; // Passa o manga_id do Flask para o JavaScript
+    </script>
+</head>
+<body>
+    <div class="content-container">
+        <div class="container">
+            <div class="sidebar">
+                <img id="cover-image" src="" alt="{{ translations.get('manga_cover_alt', 'Capa do Mangá') }}" class="cover-image"/>
+                <div class="manga-info">
+                    <h1 id="manga-title"></h1>
+                    <p id="manga-author"></p>
+                    <p id="manga-artist"></p>
+                    <p id="manga-status"></p>
+                    <a id="manga-link" href="" target="_blank" class="view-link">{{ translations.get('view_on_mangadex', 'Ver no MangaDex') }}</a>
+                    <div id="manga-tags" class="tags-container"></div>
+                </div>
+            </div>
+        
+            <div class="content">
+                <div class="description">
+                    <h2>{{ translations.get('about', 'Sobre') }}</h2>
+                    <p id="manga-description"></p>
+                </div>
+                <div class="buttons-container">
+                    <div class="language-buttons" id="language-buttons"></div>
+                </div>
+                <div class="chapter-container">
+                    <div class="chapter-grid" id="chapter-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay" style="display: none;"></div>
+
+    <!-- Pop-up para editar detalhes do capítulo -->
+    <div id="chapter-popup" class="chapter-popup" style="display: none;">
+        <div class="popup-content">
+            <span id="popup-close-btn">&times;</span>
+            <h3>{{ translations.get('chapter_details', 'Detalhes do Capítulo') }}</h3>
+            <p><strong>{{ translations.get('title', 'Título') }}:</strong></p>
+            <p><input id="popup-title-input" type="text" placeholder="Título"></p>
+            <p><strong>{{ translations.get('volume', 'Volume') }}:</strong></p>
+            <p><input id="popup-volume-input" type="text" placeholder="Volume"></p>
+            <p><strong>{{ translations.get('chapter', 'Capítulo') }}:</strong></p>
+            <p><input id="popup-chapter-input" type="text" placeholder="Capítulo"></p>
+            <p><strong>{{ translations.get('group', 'Grupo') }}:</strong></p>
+            <p class="cp-it">
+                <input id="popup-group-input" class="cp-it" type="text" placeholder="Grupo" autocomplete="off">
+                <ul id="popup-group-suggestions" class="suggestions-list"></ul>
+                <div id="popup-selected-groups" class="tags-container-group"></div>
+            </p>
+            <!-- Adicionando os botões -->
+            <div class="popup-buttons">
+                <button id="delete-btn" class="delete-btn">Excluir</button>
+                <button id="cancel-btn" class="cancel-btn">Cancelar</button>
+                <button id="edit-btn" class="edit-btn">Editar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de carregamento -->
+    <div id="loading-screen" class="loading-screen" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+    <script src="{{ url_for('static', filename='scripts/edit_details.js') }}"></script>
+    <script>
+        const translations = {
+            author: "{{ translations.get('author', 'Autor') }}",
+            artist: "{{ translations.get('artist', 'Artista') }}",
+            status: "{{ translations.get('status', 'Status') }}",
+            title: "{{ translations.get('placeholder_title', 'Título') }}",
+            volume: "{{ translations.get('placeholder_volume', 'Volume') }}",
+            chapter: "{{ translations.get('placeholder_chapter', 'Capítulo') }}",
+            group:  "{{ translations.get('placeholder_group', 'Grupo') }}",
+            exclude: "{{ translations.get('exclude', 'Excluir') }}",
+            cancel: "{{ translations.get('cancel', 'Cancelar') }}",
+            edit: "{{ translations.get('edit', 'Editar') }}",
+            errorFetchingDetails: "{{ translations.get('error_fetching_details', 'Erro ao buscar detalhes do mangá.') }}",
+            errorFetchingChapters: "{{ translations.get('error_fetching_chapters', 'Erro ao buscar capítulos.') }}",
+            chapter_edited_success: "{{ translations.get('chapter_edited_success', 'Capítulo editado com sucesso!') }}",
+            chapter_excluded_success: "{{ translations.get('chapter_excluded_success', 'Capítulo excluído com sucesso!') }}",
+            chapter_excluded_error: "{{ translations.get('chapter_excluded_error', 'Erro ao excluir capítulo.') }}",
+            chapter_excluded_error_detail: "{{ translations.get('chapter_excluded_error_detail', 'Erro ao excluir capítulo:') }}",
+            chapter_edited_error: "{{ translations.get('chapter_edited_error', 'Erro ao editar capítulo.') }}",
+            chapter_edited_error_detail: "{{ translations.get('chapter_edited_error_detail', 'Erro ao editar capítulo:') }}",
+            confirm_delete: "{{ translations.get('confirm_delete', 'Tem certeza que deseja excluir este capítulo?') }}",
+            group_already_added: "{{ translations.get('group_already_added', 'Este grupo já foi adicionado.') }}",
+            error_get_details_chapters: "{{ translations.get('error_get_details_chapters', 'Erro ao buscar detalhes do capítulo:') }}",
+            not_number: "{{ translations.get('not_number', 'Sem Número') }}",
+            need_required_fields: "{{ translations.get('need_required_fields', 'Por favor, preencha todos os campos obrigatórios.') }}"
+        };
+    </script>
+</body>
+</html>

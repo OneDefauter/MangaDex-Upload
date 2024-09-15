@@ -6,13 +6,16 @@
     <title>{{ translations.get('search_manga', 'Buscar Mangá') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='download.css') }}">
-    <script src="{{ url_for('static', filename='scripts/download.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
+    <script src="{{ url_for('static', filename='scripts/search.js') }}" defer></script>
 </head>
 <body>
+    <script>
+        const mode = '{{ mode }}';
+    </script>
     <div class="container">
-        <h2>{{ translations.get('search_manga', 'Buscar Mangá') }}</h2>
-        <input type="text" id="search-input" placeholder="{{ translations.get('enter_manga_name', 'Digite o nome do mangá...') }}" autofocus>
+        <h2>{{ translations.get('search_manga', 'Buscar Mangá') if mode == 'download' else translations.get('edit_manga', 'Editar Mangá') }}</h2>
+        <input type="text" id="search-input" placeholder="{{ translations.get('enter_manga_name', 'Digite o nome do mangá...') if mode == 'download' else translations.get('enter_manga_name_edit', 'Digite o nome do mangá para editar...') }}" autofocus>
         <div id="results-container"></div>
         <div class="pagination">
             <button id="prev-btn">{{ translations.get('previous', 'Anterior') }}</button>

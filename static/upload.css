@@ -68,6 +68,10 @@ input[type="datetime-local"] {
     box-sizing: border-box;
 }
 
+input {
+    background-color: #fff;
+}
+
 button {
     background-color: #5cb85c;
     color: white;

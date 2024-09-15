@@ -1,3 +1,9 @@
+### Versão 1.0.4 (15/09/2024)
+
+- Correções
+
+- Adicionado edição e exclusão de capítulos enviados
+
 ### Versão 1.0.3 (26/08/2024)
 
 - Adicionado função de cancelar download e upload na fila e remover itens concluídos

@@ -110,6 +110,83 @@ window.onload = function() {
     // Inicia com a primeira dica
     currentTipIndex = 0;
     showTip(currentTipIndex);
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    document.getElementById('folder-btn').addEventListener('click', function () {
+        if (isAndroid) {
+            openAndroidFolderSelector();
+        } else {
+            showLoadingScreen();
+            fetch('/select_folder')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.folder) {
+                        document.getElementById('folder').value = data.folder;
+                        showNotifications([`Pasta selecionada`]);
+                    } else {
+                        showNotifications(['Nenhuma pasta foi selecionada']);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao selecionar a pasta:', error);
+                    showNotifications(['Erro ao selecionar a pasta']);
+                })
+                .finally(() => {
+                    hideLoadingScreen();
+                });
+        }
+    });
+
+    document.getElementById('file-btn').addEventListener('click', function () {
+        if (isAndroid) {
+            openAndroidFileSelector();
+        } else {
+            showLoadingScreen();
+            fetch('/select_file')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.file) {
+                        document.getElementById('folder').value = data.file;
+                        showNotifications([`Arquivo selecionado`]);
+                    } else {
+                        showNotifications(['Nenhum arquivo foi selecionado']);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao selecionar o arquivo:', error);
+                    showNotifications(['Erro ao selecionar o arquivo']);
+                })
+                .finally(() => {
+                    hideLoadingScreen();
+                });
+        }
+    });
+
+    function openAndroidFolderSelector() {
+        // Aqui você pode usar a API do Android para abrir o seletor de pastas
+        // ou usar um input type="file" com o atributo 'webkitdirectory'
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.webkitdirectory = true;
+        input.onchange = function (event) {
+            const folderPath = event.target.files[0].webkitRelativePath.split('/')[0];
+            document.getElementById('folder').value = folderPath;
+            showNotifications([`Pasta selecionada`]);
+        };
+        input.click();
+    }
+
+    function openAndroidFileSelector() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = function (event) {
+            const filePath = event.target.files[0].name;
+            document.getElementById('folder').value = filePath;
+            showNotifications([`Arquivo selecionado`]);
+        };
+        input.click();
+    }
 };
 
 document.getElementById('project').addEventListener('input', function () {
@@ -185,7 +262,7 @@ function addGroupTag(name, id) {
     });
 
     if (existingTags.includes(id)) {
-        alert('Este grupo já foi adicionado.');
+        alert(translations.group_already_added);
         return; // Não adiciona duplicatas
     }
 
@@ -255,12 +332,12 @@ document.getElementById('submit-btn').addEventListener('click', function () {
     const language = document.getElementById('language').value;
     const volume = document.getElementById('volume').value.trim();
     let chapter = document.getElementById('chapter').value.trim();
-    const folder = document.getElementById('folder').value.trim();
+    let folder = document.getElementById('folder').value.trim();
     const datetime = document.getElementById('datetime').value;
     const singleChapter = document.getElementById('single_chapter').checked;
 
     if (!projectId || groups.length === 0 || !language || (!chapter && !singleChapter) || !folder) {
-        alert('Por favor, preencha todos os campos obrigatórios.');
+        alert(translations.need_required_fields);
         hideLoadingScreen();
         return;
     }
@@ -304,6 +381,30 @@ document.getElementById('submit-btn').addEventListener('click', function () {
                 document.getElementById('chapter').value = chapter;
             }
 
+            // Incrementar o número no nome da pasta ou arquivo, se aplicável
+            const folderRegex = /(.*?)(\d+)(\.(cbz|zip))?$/i; // Regex para capturar o caminho, o número, e a extensão opcional .cbz ou .zip
+            const folderMatch = folder.match(folderRegex);
+            if (folderMatch) {
+                const pathWithoutNumber = folderMatch[1]; // Parte inicial do caminho
+                const folderNumberStr = folderMatch[2]; // Número capturado como string (para preservar os zeros)
+                const folderExtension = folderMatch[3] || ''; // Extensão capturada (ou vazia se não houver)
+
+                const folderNumber = parseInt(folderNumberStr, 10); // Número capturado convertido para inteiro
+                const incrementedFolderNumber = folderNumber + 1; // Incrementa o número
+
+                // Pega a quantidade de dígitos que o número original tinha
+                const totalDigits = folderNumberStr.length;
+
+                // Formata o novo número com zeros à esquerda
+                const incrementedFolderNumberStr = incrementedFolderNumber.toString().padStart(totalDigits, '0');
+
+                // Concatena o novo caminho com o número incrementado e a extensão (se existir)
+                folder = `${pathWithoutNumber}${incrementedFolderNumberStr}${folderExtension}`;
+
+                // Atualiza o campo de pasta com o novo valor
+                document.getElementById('folder').value = folder;
+            }
+
         } else {
             showNotifications(['Erro ao enviar dados.']);
         }
@@ -345,48 +446,6 @@ document.getElementById('single_chapter').addEventListener('change', function ()
 
     volumeInput.disabled = isChecked;
     chapterInput.disabled = isChecked;
-});
-
-document.getElementById('folder-btn').addEventListener('click', function () {
-    showLoadingScreen()
-    fetch('/select_folder')
-        .then(response => response.json())
-        .then(data => {
-            if (data.folder) {
-                document.getElementById('folder').value = data.folder;
-                showNotifications([`Pasta selecionada`]);
-            } else {
-                showNotifications(['Nenhuma pasta foi selecionada']);
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao selecionar a pasta:', error);
-            showNotifications(['Erro ao selecionar a pasta']);
-        })
-        .finally(() => {
-            hideLoadingScreen();
-        });
-});
-
-document.getElementById('file-btn').addEventListener('click', function () {
-    showLoadingScreen()
-    fetch('/select_file')
-        .then(response => response.json())
-        .then(data => {
-            if (data.file) {
-                document.getElementById('folder').value = data.file;
-                showNotifications([`Arquivo selecionado`]);
-            } else {
-                showNotifications(['Nenhum arquivo foi selecionado']);
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao selecionar o arquivo:', error);
-            showNotifications(['Erro ao selecionar o arquivo']);
-        })
-        .finally(() => {
-            hideLoadingScreen();
-        });
 });
 
 function showLoadingScreen() {

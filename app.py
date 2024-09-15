@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import shutil
 import markdown
@@ -20,6 +21,8 @@ os.system('cls')
 from src.core.API.Author.author import GetAuthor
 
 ### Chapter
+from src.core.API.Chapter.chapter import GetChapter
+
 ### Cover
 from src.core.API.Cover.cover import GetCover
 
@@ -73,6 +76,7 @@ DW_Q = DownloadQueue()
 UP_Q = UploadQueue()
 
 AUTHOR = GetAuthor(config_core)
+CHAPTER = GetChapter(login_core, config_core)
 COVER = GetCover(config_core)
 MANGA = GetManga(config_core, AUTHOR, COVER)
 USER_ME = UserMe(login_core, config_core)
@@ -155,6 +159,45 @@ def get_manga_aggregate(manga_id):
     if r:
         return jsonify({'chapters': sorted_chapters})
     return jsonify({"error": "Erro ao buscar capítulos do mangá."}), 500
+
+@app.route('/edit/api/manga/<manga_id>/aggregate', methods=['GET'])
+def get_manga_aggregate_edit(manga_id):
+    translate = session.get('TRANSLATE', {})
+    user = USER_ME.get_user_me()
+    r, chapters = MANGA.manga_aggregate_uploaded(manga_id, user['id'], request.args.get('translatedLanguage'))
+    if r:
+        return jsonify({'chapters': chapters})
+
+    return jsonify({"error": translate['error_search_chapters']}), 500
+
+@app.route('/get_chapter_details/<chapter_id>', methods=['GET'])
+def get_chapter_details(chapter_id):
+    translate = session.get('TRANSLATE', {})
+    chapter_details = CHAPTER.get_chapter(chapter_id)
+    
+    if chapter_details:
+        # Acessando os detalhes dentro de 'attributes'
+        attributes = chapter_details.get('attributes', {})
+        
+        chapter_info = {
+            'version': attributes['version'],
+            'volume': attributes.get('volume', 'N/A'),
+            'chapter': attributes.get('chapter', 'N/A'),
+            'title': attributes.get('title', 'N/A'),
+            'groups': []
+        }
+
+        # Procurar pelo nome do grupo de scanlation
+        for relationship in chapter_details.get('relationships', []):
+            if relationship['type'] == 'scanlation_group':
+                group_info = relationship['attributes'].get('name', 'N/A') + f' ({relationship["id"]})'
+                chapter_info['groups'].append(group_info)
+
+        return jsonify({'success': True, 'data': chapter_info}), 200
+    else:
+        return jsonify({'success': False, 'error': translate['chapter_not_found']}), 404
+
+
 
 @app.route('/config', methods=['GET', 'POST'])
 def config():
@@ -293,7 +336,7 @@ def home():
         # Substitui o placeholder {username} com o nome real do usuário
         notifications.append(translate.get('welcome_message', "Bem-vindo ao MangaDex Uploader, {username}!").format(username=user['attributes']['username']))
         
-        if not welcome_seen:
+        if not update.new_update:
             # Substitui o placeholder {version} com o valor real de lcver_
             notifications.append(translate.get('up_to_date', 'Você está na versão mais recente! v{version}').format(version=update.lcver_))
         
@@ -317,7 +360,7 @@ def logout():
 @app.route('/download')
 def download():
     translate = session.get('TRANSLATE', {})
-    return render_template('download.html', translations=translate)
+    return render_template('search.html', translations=translate, mode='download')
 
 @app.route('/details/<manga_id>')
 def details(manga_id):
@@ -686,6 +729,36 @@ def delete_folder():
             return jsonify(success=False, error="Folder does not exist")
     except Exception as e:
         return jsonify(success=False, error=str(e))
+
+@app.route('/edit')
+def edit():
+    translate = session.get('TRANSLATE', {})
+    return render_template('search.html', translations=translate, mode='edit')
+
+@app.route('/edit_details/<manga_id>')
+def edit_details(manga_id):
+    translate = session.get('TRANSLATE', {})
+    return render_template('edit_details.html', manga_id=manga_id, translations=translate)
+
+@app.route('/edit_chapter/<chapter_id>', methods=['POST'])
+def edit_chapter(chapter_id):
+    translate = session.get('TRANSLATE', {})
+    data = request.json
+    r = CHAPTER.edit_chapter(chapter_id, data)
+    if r:
+        return jsonify({'success': True}), 200
+    return jsonify(success=False, error=translate['not_edited'])
+
+@app.route('/delete_chapter/<chapter_id>', methods=['DELETE'])
+def delete_chapter(chapter_id):
+    translate = session.get('TRANSLATE', {})
+    r = CHAPTER.delete_chapter(chapter_id)
+    if r:
+        return jsonify({'success': True}), 200
+    return jsonify(success=False, error=translate['not_excluded'])
+
+
+
 
 def setup_web():
     webbrowser.open('http://localhost:5007')

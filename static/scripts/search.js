@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextPageBtn = document.getElementById("next-btn");
     const pageNumbersContainer = document.querySelector(".page-numbers");
     const loadingScreen = document.getElementById("loading-screen");
-
+    
     let currentPage = 1;
     let totalPages = 1;
     let searchTimeout; // Timeout para controlar o delay
@@ -104,7 +104,11 @@ document.addEventListener("DOMContentLoaded", function () {
             
             mangaElement.addEventListener("click", function () {
                 const mangaId = this.dataset.mangaId;
-                window.location.href = `/details/${mangaId}`; // Redireciona para a página de detalhes
+                if (mode === 'download') {
+                    window.location.href = `/details/${mangaId}`; // Redireciona para a página de detalhes
+                } else {
+                    window.location.href = `/edit_details/${mangaId}`; // Redireciona para a página de detalhes
+                }
             });
     
             resultsContainer.appendChild(mangaElement);

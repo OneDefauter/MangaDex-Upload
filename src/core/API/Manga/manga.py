@@ -140,15 +140,65 @@ class GetManga():
         
         return None
     
-    def manga_aggregate(self, manga_id, language):
+    def manga_aggregate(self, manga_id, language = None):
         config = self.load_config()
         
-        response = requests.get(
-            f"{config['api_url']}/manga/{manga_id}/aggregate?translatedLanguage[]={language}"
-        )
+        if language:
+            response = requests.get(
+                f"{config['api_url']}/manga/{manga_id}/aggregate?translatedLanguage[]={language}"
+            )
+        else:
+            response = requests.get(
+                f"{config['api_url']}/manga/{manga_id}/aggregate"
+            )
         
         if response.status_code == 200:
             data = response.json()['volumes']
             sorted_chapters = self.sort_chapters(data)
             return True, sorted_chapters
         return False, None
+    
+    def manga_aggregate_uploaded(self, manga_id, user_id, language=None):
+        config = self.load_config()
+        
+        params = {
+            'limit': 100,
+            'uploader': user_id,
+            'manga': manga_id,
+            'contentRating[]': ['safe', 'suggestive', 'erotica', 'pornographic'],
+            'order[volume]': 'asc',
+            'order[chapter]': 'asc',
+        }
+        
+        if language:
+            params['translatedLanguage[]'] = language
+
+        all_chapters = []
+        offset = 0
+        total_chapters = None
+        
+        while True:
+            # Adiciona o offset aos parâmetros
+            params['offset'] = offset
+            
+            response = requests.get(f"{config['api_url']}/chapter", params=params)
+            
+            if response.status_code == 200:
+                response_data = response.json()
+                chapters = response_data.get('data', [])
+                total_chapters = response_data.get('total', 0)
+                
+                all_chapters.extend(chapters)
+                
+                # Incrementa o offset para a próxima página
+                offset += len(chapters)
+                
+                # Se já obteve todos os capítulos, quebra o loop
+                if offset >= total_chapters:
+                    break
+            else:
+                # Se houver um erro na resposta, retorna False
+                return False, None
+        
+        # Agora você pode retornar all_chapters diretamente
+        return True, all_chapters

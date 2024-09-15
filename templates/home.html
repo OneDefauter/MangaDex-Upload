@@ -37,6 +37,12 @@
                 <span class="tooltiptext">{{ translations.get('download', 'Baixar') }}</span>
             </div>
             <div class="tooltip">
+                <button class="icon-button" id="edit-btn">
+                    <i class="fi fi-rr-pencil"></i>
+                </button>
+                <span class="tooltiptext">{{ translations.get('edit', 'Editar') }}</span>
+            </div>
+            <div class="tooltip">
                 <button class="icon-button" id="updates-btn">
                     <i class="fi fi-rr-info"></i>
                 </button>
@@ -94,6 +100,11 @@
         document.getElementById('logs-btn').onclick = function() {
             // Redireciona para a página de logs
             window.location.href = "{{ url_for('logs') }}";
+        };
+
+        document.getElementById('edit-btn').onclick = function() {
+            // Redireciona para a página de logs
+            window.location.href = "{{ url_for('edit') }}";
         };
 
         // Função para mostrar notificações
