@@ -3,93 +3,97 @@
 body {
     font-family: 'Signika Negative', sans-serif;
     margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
+    background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
     background-size: 300% 300%;
     animation: gradientBackground 60s ease infinite;
     color: #333;
 }
 
 .container {
-    max-width: 800px;
-    width: 90%;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
     background-color: #fff;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.changelog {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    gap: 20px;
 }
 
-header h2 {
-    text-align: center;
-    font-size: 1.8rem;
-    color: #222;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 10px;
+.update-card {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.markdown-content {
-    margin-bottom: 30px;
-    line-height: 1.6;
-    color: #555;
+.update-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.markdown-content h1,
-.markdown-content h2,
-.markdown-content h3 {
-    margin-top: 20px;
+.update-card h2 {
+    font-size: 1.5rem;
+    color: #444;
     margin-bottom: 10px;
-    color: #007bff;
 }
 
-.markdown-content p,
-.markdown-content ul {
-    margin: 10px 0;
+.update-card h2 span {
+    font-size: 1rem;
+    color: #888;
+}
+
+.update-card ul {
+    margin: 0;
     padding-left: 20px;
+    list-style: disc;
+}
+
+.update-card ul li {
+    margin: 5px 0;
+}
+
+.update-card a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.update-card a:hover {
+    text-decoration: underline;
 }
 
 footer {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    margin-top: 30px;
+    text-align: center;
 }
 
 button {
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: bold;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.3s ease;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    transform: scale(1.02);
-}
-
-.btn-primary {
-    background-color: #007bff;
-    color: #fff;
-}
-
-.btn-primary:hover {
     background-color: #0056b3;
-}
-
-.btn-secondary {
-    background-color: #28a745;
-    color: #fff;
-}
-
-.btn-secondary:hover {
-    background-color: #1e7e34;
 }
 
 @keyframes gradientBackground {
@@ -101,20 +105,5 @@ button:hover {
     }
     100% {
         background-position: 0% 50%;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-    }
-
-    header h2 {
-        font-size: 1.5rem;
-    }
-
-    button {
-        font-size: 0.9rem;
-        padding: 10px;
     }
 }
