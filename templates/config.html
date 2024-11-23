@@ -12,20 +12,34 @@
 <body>
     <div class="container">
         <h2>{{ translations.get('config_title', 'Configurações') }}</h2>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="download">Download</button>
+            <button class="filter-btn" data-filter="upload">Upload</button>
+            <button class="filter-btn" data-filter="covers">Covers</button>
+            <button class="filter-btn" data-filter="search">Pesquisa</button>
+            <button class="filter-btn" data-filter="storage">Armazenamento</button>
+            <button class="filter-btn" data-filter="api">API</button>
+            <button class="filter-btn" data-filter="others">Outros</button>
+        </div>
         <form id="config-form" action="{{ url_for('config') }}" method="POST">
-            <div>
+
+            <div class="config-item upload download">
                 <label for="upload">{{ translations.get('simultaneous_upload', 'Download/Upload Simultâneo:') }}</label>
                 <input type="number" id="upload" name="upload" min="1" max="10" value="{{ config.upload }}">
             </div>
-            <div>
+
+            <div class="config-item search">
                 <label for="max_results">{{ translations.get('max_results', 'Quantidade Máxima de Resultados:') }}</label>
                 <input type="number" id="max_results" name="max_results" min="1" max="100" value="{{ config.max_results }}" required>
             </div>
-            <div>
+
+            <div class="config-item upload">
                 <label for="retry">{{ translations.get('max_retries', 'Máximo de Tentativas:') }}</label>
                 <input type="number" id="retry" name="retry" min="1" max="3" value="{{ config.retry }}">
             </div>
-            <div>
+
+            <div class="config-item download">
                 <label for="download_folder">{{ translations.get('download_folder', 'Pasta de Downloads:') }}</label>
                 <div style="position: relative; display: flex; align-items: center;">
                     <input type="text" id="download_folder" name="download_folder" value="{{ config.download_folder }}">
@@ -34,7 +48,8 @@
                     </button>
                 </div>
             </div>
-            <div>
+
+            <div class="config-item download storage">
                 <label for="download_folder_scheme">{{ translations.get('download_folder_scheme', 'Esquema da Pasta de Downloads:') }}</label>
                 <select id="download_folder_scheme" name="download_folder_scheme">
                     <option value="scheme1" {% if config.download_folder_scheme == 'scheme1' %}selected{% endif %}>{{ translations.get('scheme1', 'Idioma / Título da obra / Capítulo') }}</option>
@@ -43,9 +58,16 @@
                     <option value="scheme4" {% if config.download_folder_scheme == 'scheme4' %}selected{% endif %}>{{ translations.get('scheme4', 'Título da obra / Idioma / Capítulo') }}</option>
                     <option value="scheme5" {% if config.download_folder_scheme == 'scheme5' %}selected{% endif %}>{{ translations.get('scheme5', 'Título da obra / Volume / Capítulo') }}</option>
                     <option value="scheme6" {% if config.download_folder_scheme == 'scheme6' %}selected{% endif %}>{{ translations.get('scheme6', 'Título da obra / Capítulo') }}</option>
+                    <option value="scheme7" {% if config.download_folder_scheme == 'scheme7' %}selected{% endif %}>{{ translations.get('scheme7', 'Grupo / Título da obra / Capítulo') }}</option>
+                    <option value="scheme8" {% if config.download_folder_scheme == 'scheme8' %}selected{% endif %}>{{ translations.get('scheme8', 'Grupo / Título da obra / Volume / Capítulo') }}</option>
+                    <option value="scheme9" {% if config.download_folder_scheme == 'scheme9' %}selected{% endif %}>{{ translations.get('scheme9', 'Idioma / Grupo / Título da obra / Capítulo') }}</option>
+                    <option value="scheme10" {% if config.download_folder_scheme == 'scheme10' %}selected{% endif %}>{{ translations.get('scheme10', 'Idioma / Grupo / Título da obra / Volume / Capítulo') }}</option>
+                    <option value="scheme11" {% if config.download_folder_scheme == 'scheme11' %}selected{% endif %}>{{ translations.get('scheme11', 'Grupo / Idioma / Título da obra / Capítulo') }}</option>
+                    <option value="scheme12" {% if config.download_folder_scheme == 'scheme12' %}selected{% endif %}>{{ translations.get('scheme12', 'Grupo / Idioma / Título da obra / Volume / Capítulo') }}</option>
                 </select>
             </div>
-            <div>
+
+            <div class="config-item covers">
                 <label for="cover_image_quality">{{ translations.get('cover_image_quality', 'Imagens das covers:') }}</label>
                 <select id="cover_image_quality" name="cover_image_quality">
                     <option value="original" {% if config.cover_image_quality == 'original' %}selected{% endif %}>{{ translations.get('original', 'Original') }}</option>
@@ -53,30 +75,94 @@
                     <option value="highly_reduced" {% if config.cover_image_quality == 'highly_reduced' %}selected{% endif %}>{{ translations.get('highly_reduced', 'Muito reduzida') }}</option>
                 </select>
             </div>
-            <div>
+
+            <div  class="config-item upload">
                 <label for="upload_on_error">{{ translations.get('upload_on_error', 'Fazer upload de capítulos com erros nas imagens:') }}</label>
                 <input type="checkbox" id="upload_on_error" name="upload_on_error" value="true" {% if config.upload_on_error %}checked{% endif %}>
             </div>
-            <div>
+
+            <div class="config-item upload">
+                <label for="preprocess_images">{{ translations.get('preprocess_images', 'Pré-processar imagens antes de colocar na fila:') }}</label>
+                <input type="checkbox" id="preprocess_images" name="preprocess_images" value="true" {% if config.preprocess_images %}checked{% endif %}>
+            </div>
+
+            <div class="config-item others">
+                <label for="cutting_tool">{{ translations.get('cutting_tool', 'Ferramenta de corte:') }}</label>
+                <div style="display: flex; align-items: center;">
+                    <label class="toggle">
+                        <input type="checkbox" id="cutting_tool" name="cutting_tool" value="SmartStitch" {% if config.cutting_tool == 'SmartStitch' %}checked{% endif %}>
+                        <span class="slider round"></span>
+                    </label>
+                    <span id="cutting_tool_label" class="cutting-tool-label">
+                        {% if config.cutting_tool == 'SmartStitch' %}
+                            <a href="https://github.com/MechTechnology/SmartStitch" target="_blank" class="smartstitch-link">
+                                {{ translations.get('smart_stitch', 'SmartStitch') }}
+                            </a>
+                        {% else %}
+                            {{ translations.get('pillow', 'Pillow') }}
+                        {% endif %}
+                    </span>
+                </div>
+            </div>            
+
+            <div class="config-item others">
+                <label for="output_file_type">{{ translations.get('output_file_type', 'Tipo de arquivo de saída:') }}</label>
+                <select id="output_file_type" name="output_file_type">
+                    <option value="JPG" {% if config.output_file_type == 'JPG' %}selected{% endif %}>JPG</option>
+                    <option value="PNG" {% if config.output_file_type == 'PNG' %}selected{% endif %}>PNG</option>
+                </select>
+            </div>
+
+            <div class="config-item others">
+                <label for="output_image_quality">{{ translations.get('output_image_quality', 'Qualidade da imagem de saída:') }}</label>
+                <input type="range" id="output_image_quality" name="output_image_quality" min="0" max="100" value="{{ config.output_image_quality }}" oninput="outputImageQualityValue.value = this.value">
+                <input type="number" id="output_image_quality_field" name="output_image_quality_field" min="0" max="100" value="{{ config.output_image_quality }}" oninput="outputImageQualityRange.value = this.value">
+            </div>
+
+            <div class="config-item others">
+                <label for="queue_operations">{{ translations.get('queue_operations', 'Número de operações simultâneas para fila:') }}</label>
+                <input type="range" id="queue_operations" name="queue_operations" min="1" max="10" value="{{ config.queue_operations }}" oninput="queueOperationsValue.value = this.value">
+                <input type="number" id="queue_operations_field" name="queue_operations_field" min="1" max="10" value="{{ config.queue_operations }}" oninput="queueOperationsRange.value = this.value">
+            </div>
+
+            <div class="config-item others">
+                <label for="image_operations">{{ translations.get('image_operations', 'Número de operações simultâneas para imagens:') }}</label>
+                <input type="range" id="image_operations" name="image_operations" min="1" max="10" value="{{ config.image_operations }}" oninput="imageOperationsValue.value = this.value">
+                <input type="number" id="image_operations_field" name="image_operations_field" min="1" max="10" value="{{ config.image_operations }}" oninput="imageOperationsRange.value = this.value">
+            </div>     
+
+            <div class="config-item others">
                 <label for="log" style="display: none;">Log:
                     <input type="checkbox" id="log" name="log" value="true" {% if config.log %}checked{% endif %}>
                 </label>
             </div>
-            <div style="display: flex; align-items: center;">
+
+            <div class="config-item storage" style="display: flex; align-items: center;">
                 <label>{{ translations.get('download_folder_size', 'Tamanho ocupado pela pasta de covers:') }}</label>
                 <p style="margin: 0 10px;">{{ "%.2f" | format(folder_size / (1024 * 1024)) }} MB</p>
                 <button type="button" id="delete-folder-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #e63946; color: white; border: none; border-radius: 4px; cursor: pointer;">
                     {{ translations.get('delete_folder_button', 'Excluir Pasta') }}
                 </button>
             </div>
-            <div>
+
+            <div class="config-item storage" style="display: flex; align-items: center; margin-top: 1rem;">
+                <label>{{ translations.get('temp_folders_size', 'Tamanho ocupado por pastas temporárias:') }}</label>
+                <p style="margin: 0 10px;">{{ "%.2f" | format(temp_folders_size / (1024 * 1024)) }} MB</p>
+                <button type="button" id="delete-temp-folders-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #e63946; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    {{ translations.get('delete_temp_folders_button', 'Excluir Pastas Temporárias') }}
+                </button>
+            </div>
+
+            <div class="config-item api">
                 <label for="api_url">API URL:</label>
                 <input type="text" id="api_url" name="api_url" value="{{ config.api_url }}">
             </div>
-            <div>
+
+            <div class="config-item api">
                 <label for="auth_url">Auth URL:</label>
                 <input type="text" id="auth_url" name="auth_url" value="{{ config.auth_url }}">
             </div>
+
             <button type="button" id="save-btn">{{ translations.get('save_button', 'Salvar') }}</button>
             <button type="button" id="tips-btn">{{ translations.get('tips_button', 'Dicas') }}</button>
         </form>
@@ -134,5 +220,37 @@
             folder_delete_error: "{{ translations.get('folder_delete_error', 'Erro ao excluir a pasta.') }}"
         };        
     </script>
+    <script>
+        const outputImageQualityRange = document.getElementById('output_image_quality');
+        const outputImageQualityValue = document.getElementById('output_image_quality_field');
+    
+        const queueOperationsRange = document.getElementById('queue_operations');
+        const queueOperationsValue = document.getElementById('queue_operations_field');
+    
+        const imageOperationsRange = document.getElementById('image_operations');
+        const imageOperationsValue = document.getElementById('image_operations_field');
+    
+        // Sincronizar a escala e os campos numéricos
+        outputImageQualityRange.addEventListener('input', () => {
+            outputImageQualityValue.value = outputImageQualityRange.value;
+        });
+        outputImageQualityValue.addEventListener('input', () => {
+            outputImageQualityRange.value = outputImageQualityValue.value;
+        });
+    
+        queueOperationsRange.addEventListener('input', () => {
+            queueOperationsValue.value = queueOperationsRange.value;
+        });
+        queueOperationsValue.addEventListener('input', () => {
+            queueOperationsRange.value = queueOperationsValue.value;
+        });
+    
+        imageOperationsRange.addEventListener('input', () => {
+            imageOperationsValue.value = imageOperationsRange.value;
+        });
+        imageOperationsValue.addEventListener('input', () => {
+            imageOperationsRange.value = imageOperationsValue.value;
+        });
+    </script>    
 </body>
 </html>

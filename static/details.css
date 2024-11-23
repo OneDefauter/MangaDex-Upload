@@ -134,12 +134,12 @@ body {
     background-color: #f0f0f0;
     margin: 5px 0;
     border-radius: 5px;
-    cursor: pointer;
+    cursor: pointer; /* Indica que é clicável */
     transition: background-color 0.3s;
 }
 
 .chapter-item:hover {
-    background-color: #e0e0e0;
+    background-color: #d0e0ff; /* Destaca o item ao passar o mouse */
 }
 
 .loading-screen {
@@ -162,6 +162,17 @@ body {
     border-top: 8px solid #3498db;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+.fi-rr-file-download {
+    margin-left: 10px; /* Espaço entre o texto e o ícone */
+    color: #1e90ff; /* Cor do ícone */
+    cursor: pointer; /* Indica que é clicável */
+    transition: color 0.3s; /* Transição suave para hover */
+}
+
+.fi-rr-file-download:hover {
+    color: #0f78d0; /* Cor ao passar o mouse */
 }
 
 @keyframes spin {

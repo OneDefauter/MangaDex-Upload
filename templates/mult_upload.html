@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="{{ session['lang'] }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ translations.get('multi_upload', 'Upload Multi') }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/page.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/search_project.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/group-button.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/groups.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/loading-overlay.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/tips.css') }}">
+
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+</head>
+<body>
+    <div class="container">
+        <h2>{{ translations.get('multi_upload', 'Upload Multi') }}</h2>
+
+        <!-- Formulário inicial -->
+        <form id="multi-upload-form">
+            <div class="form-group" id="folder-input-group">
+                <!-- Campo Projeto -->
+                <label for="project">{{ translations.get('project', 'Projeto:') }}</label>
+                <input type="text" id="project" name="project" placeholder="{{ translations.get('enter_project_name', 'Digite o nome do projeto') }}" autocomplete="off">
+                <ul id="project-suggestions" class="suggestions"></ul>
+
+                <!-- Campo oculto para armazenar o ID do projeto -->
+                <input type="hidden" id="project-id" name="project-id">
+
+                <label for="language">{{ translations.get('language', 'Linguagem:') }}</label>
+                <select id="language" name="language">
+                    <option value="pt-br">{{ translations.get('portuguese_brazil', 'Português (Brasil)') }}</option>
+                    <option value="en">{{ translations.get('english', 'Inglês') }}</option>
+                </select>
+
+                <label for="parent-folder">{{ translations.get('parent_folder', 'Pasta Pai:') }}</label>
+                <input type="text" id="parent-folder" name="parent-folder" placeholder="{{ translations.get('enter_folder_path', 'Insira o caminho da pasta') }}">
+                <button type="button" id="continue-btn">{{ translations.get('continue', 'Continuar') }}</button>
+            </div>
+        </form>
+
+        <!-- Lista dinâmica de pastas/arquivos -->
+        <div id="folder-list" style="display: none;">
+            <h3>{{ translations.get('files_and_folders', 'Arquivos e Pastas Encontrados:') }}</h3>
+            <ul id="items-list"></ul>
+            <button type="button" id="upload-btn">{{ translations.get('upload', 'Enviar Todos') }}</button>
+        </div>
+    </div>
+
+    <ul id="items-list">
+        <!-- Os itens são adicionados dinamicamente pelo JavaScript -->
+    </ul>
+
+    <!-- Modal para criação/seleção de grupo -->
+    <div id="group-modal" class="group-modal">
+        <div class="group-modal-content">
+            <h3>{{ translations.get('create_or_select_group', 'Criar ou Selecionar Grupo') }}</h3>
+    
+            <div class="form-group-row">
+                <!-- Campo Nome do Grupo -->
+                <div class="form-group">
+                    <label for="group-name">{{ translations.get('group_name', 'Nome do Grupo:') }}</label>
+                    <input type="text" id="group-name" placeholder="{{ translations.get('enter_group_name', 'Digite o nome do grupo') }}" readonly>
+                </div>
+    
+                <!-- Campo Seleção de Grupo -->
+                <div class="form-group">
+                    <label for="group-select">{{ translations.get('group', 'Grupo:') }}</label>
+                    <select id="group-select">
+                        <option value="novo">{{ translations.get('create_new_group', 'Criar Novo Grupo') }}</option>
+                        <!-- Aqui serão adicionados grupos existentes dinamicamente -->
+                    </select>
+                </div>
+            </div>
+    
+            <div class="form-group-row">
+                <!-- Campo Seleção de Grupo (Scan/Equipe) -->
+                <div class="form-group">
+                    <label for="scan-group">{{ translations.get('scan_group', 'Grupo (Scan/Equipe):') }}</label>
+                    <input type="text" id="scan-group" placeholder="{{ translations.get('enter_scan_group', 'Digite o nome da Scan/Grupo') }}">
+                    <ul id="scan-suggestions" class="suggestions-list"></ul>
+                    <div id="selected-groups" class="tags-container"></div>
+                </div>
+    
+                <!-- Campo Seleção de Volume -->
+                <div class="form-group">
+                    <label for="volume">{{ translations.get('volume', 'Volume:') }}</label>
+                    <input type="text" id="volume" placeholder="{{ translations.get('enter_volume', 'Digite o volume') }}">
+                </div>
+            </div>
+    
+            <!-- Lista de Itens Selecionados -->
+            <div id="selected-items">
+                <h4>{{ translations.get('selected_items', 'Itens Selecionados:') }}</h4>
+                <ul id="selected-items-list"></ul>
+            </div>
+    
+            <!-- Botão para criar grupo -->
+            <button id="create-group-btn" class="btn-primary">{{ translations.get('create_group', 'Criar Grupo') }}</button>
+    
+            <!-- Botão para fechar o modal -->
+            <button id="close-modal-btn" class="btn-secondary">{{ translations.get('close', 'Fechar') }}</button>
+
+            <!-- Botão para excluir grupo -->
+            <button id="delete-group-btn" class="btn-danger" style="display: none;">{{ translations.get('delete_group', 'Excluir Grupo') }}</button>
+
+        </div>
+    </div>
+
+    <!-- Overlay de Dicas -->
+    <div id="tip-overlay" class="tip-overlay">
+        <div class="tip-content">
+            <h3>{{ translations.get('tip', 'Dica') }}</h3>
+            <img id="tip-gif" src="" alt="{{ translations.get('tip_gif_alt', 'GIF da dica') }}" class="tip-gif">
+            <p id="tip-text">{{ translations.get('tip_default_text', 'Use este formulário para carregar arquivos e gerenciar grupos.') }}</p>
+            <div class="tip-navigation">
+                <button id="tip-prev-btn">{{ translations.get('previous', 'Voltar') }}</button>
+                <button id="tip-next-btn">{{ translations.get('next', 'Continuar') }}</button>
+            </div>
+            <div id="tip-indicators" class="tip-indicators"></div>
+        </div>
+    </div>
+
+    <!-- Tela de carregamento -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Translations passed to JavaScript -->
+    <script>
+        const translations = {
+            project: "{{ translations.get('tip_project', 'Projeto: Identifique o projeto ao qual este upload pertence.') }}",
+            language: "{{ translations.get('tip_language', 'Linguagem: Escolha o idioma do mangá.') }}",
+            parent_folder: "{{ translations.get('tip_folder_2', 'Pasta: Indique a pasta onde os capítulos estão armazenados.') }}",
+            create_group: "{{ translations.get('tip_create_group', 'Crie grupos para enviar capítulos.<br>Selecione capítulos com o botão esquerdo do mouse e use CTRL ou SHIFT para selecionar mais de um.') }}",
+            edit_group: "{{ translations.get('tip_edit_group', 'Edite grupos selecionando um capítulo com grupo ou clique com o botão direito do mouse em um capítulo com grupo.') }}",
+            next: "{{ translations.get('next', 'Continuar') }}",
+            finish: "{{ translations.get('finish', 'Finalizar') }}",
+            group_search_error: "{{ translations.get('group_search_error', 'Erro ao buscar grupos') }}",
+            group_already_added: "{{ translations.get('group_already_added', 'Grupo já adicionado!') }}",
+            project_search_error: "{{ translations.get('project_search_error', 'Erro ao buscar projetos') }}",
+            create_group: "{{ translations.get('create_group', 'Criar Grupo') }}",
+            edit_group: "{{ translations.get('edit_group', 'Criar Grupo') }}",
+            create_new_group: "{{ translations.get('create_new_group', 'Criar Novo Grupo') }}",
+            created_group: "{{ translations.get('created_group', 'Grupo criado') }}",
+            modal_closed: "{{ translations.get('modal_closed', 'Modal fechado e seleção limpa.') }}",
+            need_project: "{{ translations.get('need_project', 'Por favor, adicione um projeto.') }}",
+            need_valid_path: "{{ translations.get('need_valid_path', 'Por favor, insira um caminho válido para a pasta.') }}",
+            error_proccess_path: "{{ translations.get('error_proccess_path', 'Erro ao processar o caminho da pasta') }}",
+            error_send_path: "{{ translations.get('error_send_path', 'Erro ao enviar o caminho da pasta.') }}",
+            upload_success: "{{ translations.get('upload_success', 'Upload concluído com sucesso!') }}",
+            error_occurred: "{{ translations.get('error_occurred', 'Ocorreu um erro') }}",
+            error_send: "{{ translations.get('error_send', 'Erro ao enviar os dados') }}",
+            error_occurred_upload: "{{ translations.get('error_occurred_upload', 'Ocorreu um erro durante o upload.') }}"
+        };
+    </script>
+
+    <script src="{{ url_for('static', filename='scripts/multi-upload/multi_upload.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/context_menu.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/search_project.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/search_groups.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/tips.js') }}"></script>
+</body>
+</html>

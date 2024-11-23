@@ -137,46 +137,52 @@ a:hover {
     margin-bottom: 1rem;
 }
 
-#tips-list {
-    list-style: none;
-    padding: 0;
+/* Botões de status: "Visto"/"Não Visto" */
+.tip-button {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Botão de status "Não Visto" */
+.tip-not-seen {
+    background-color: #e63946; /* Vermelho */
+    color: white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tip-not-seen:hover {
+    background-color: #d62839;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Botão de status "Visto" */
+.tip-seen {
+    background-color: #4caf50; /* Verde */
+    color: white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tip-seen:hover {
+    background-color: #3e8e41;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Ajuste de alinhamento para a lista de dicas */
 #tips-list li {
-    margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 #tips-list button {
-    width: 100px;
-    height: 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 10px;
-}
-
-.tip-seen {
-    background-color: #4cae4c; /* Verde para visto */
-    color: white;
-}
-
-.tip-not-seen {
-    background-color: #e63946; /* Vermelho para não visto */
-    color: white;
-}
-
-.tip-icon {
-    cursor: pointer;
-    font-size: 20px;
-    color: #555;
-    transition: color 0.3s;
-}
-
-.tip-icon:hover {
-    color: #333;
+    margin-left: 10px; /* Espaço entre o texto da dica e o botão */
 }
 
 input[type="number"],
@@ -190,6 +196,7 @@ select {
     background-color: white; /* Cor de fundo branco */
     margin-right: 0; /* Remove a margem adicional */
     box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+    transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
     appearance: none; /* Remove o estilo padrão do select */
     -webkit-appearance: none; /* Remove o estilo padrão no Webkit (Chrome, Safari) */
     -moz-appearance: none; /* Remove o estilo padrão no Firefox */
@@ -259,6 +266,162 @@ input[type="text"]:focus {
     border-top: 8px solid #3498db;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+input[type="checkbox"] {
+    margin-left: 0.5rem;
+    transform: scale(1.2); /* Ajuste o tamanho da checkbox */
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #e63946;
+}
+
+input:checked + .slider::before {
+    transform: translateX(26px);
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os botões se ajustem em várias linhas se necessário */
+    justify-content: center; /* Centraliza os botões no container */
+    gap: 15px; /* Espaçamento entre os botões */
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+/* Animação para os botões de filtro */
+.filter-btn {
+    color: #555;
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: #e63946;
+    color: white;
+    border-color: #e63946;
+}
+
+.filter-btn.active {
+    background-color: #007BFF;
+    color: white;
+    border-color: #0056b3;
+    transform: scale(1.05); /* Leve aumento ao clicar */
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+/* Configuração inicial dos itens (escondidos) */
+.config-item {
+    display: none; /* Inicialmente escondido */
+    opacity: 0;
+    transform: translateY(-20px); /* Move para cima inicialmente */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Configuração dos itens quando ativos (visíveis) */
+.config-item.active {
+    display: block; /* Garante que o item fique visível */
+    opacity: 1;
+    transform: translateY(0); /* Retorna à posição original */
+}
+
+/* Botão de salvar e restaurar com animação */
+button:active {
+    transform: scale(0.95); /* Reduz levemente ao clicar */
+    transition: transform 0.1s ease;
+}
+
+/* Animação ao focar nos inputs */
+input:focus,
+select:focus {
+    border-color: #007BFF;
+    background-color: #f0f8ff; /* Leve destaque */
+    transform: scale(1.02); /* Leve crescimento ao focar */
+}
+
+/* Especificidade para links dentro de cutting-tool-label */
+.cutting-tool-label a {
+    display: inline; /* Garante alinhamento correto */
+    color: inherit; /* Usa a cor herdada do texto pai */
+    text-decoration: none; /* Remove sublinhado por padrão */
+    font-weight: bold; /* Destaca o link */
+    transition: color 0.3s ease; /* Transição suave */
+}
+
+/* Hover para links em cutting-tool-label */
+.cutting-tool-label a:hover {
+    color: #e63946; /* Destaque no hover */
+    text-decoration: underline; /* Sublinhado ao passar o mouse */
+}
+
+/* Estilo geral do container do label da ferramenta de corte */
+.cutting-tool-label {
+    margin-left: 10px;
+    display: inline-block;
+    font-size: 1rem; /* Consistência com o texto */
+    line-height: 1.5; /* Alinhamento vertical */
+}
+
+/* Especificidade para o link de SmartStitch */
+.cutting-tool-label a {
+    text-decoration: none; /* Remove sublinhado padrão */
+    color: #333; /* Cor padrão do texto */
+    font-weight: bold; /* Destaque para o link */
+    transition: color 0.3s ease; /* Transição suave na mudança de cor */
+}
+
+/* Hover específico para o link de SmartStitch */
+.cutting-tool-label a:hover {
+    color: #e63946; /* Cor de destaque no hover */
+    text-decoration: underline; /* Adiciona sublinhado no hover */
+}
+
+/* Evita conflitos com outros links */
+.cutting-tool-label a,
+.cutting-tool-label span {
+    vertical-align: middle; /* Garante alinhamento vertical consistente */
 }
 
 @keyframes spin {

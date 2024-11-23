@@ -116,18 +116,27 @@ class GetManga():
 
     def search_manga(self, query):
         config = self.load_config()
+        content_rating = ['safe', 'suggestive', 'erotica', 'pornographic']
 
-        response = requests.get(
-            f"{config['api_url']}/manga?title={query}"
-            )
+        # Parâmetros da consulta
+        params = {'title': query, 'contentRating[]': content_rating}
+
+        # Faz a requisição à API
+        response = requests.get(f"{config['api_url']}/manga", params=params)
 
         results = []
         if response.ok:
             data = response.json()
-            results = [{'id': manga['id'], 'title': manga['attributes']['title']['en']} for manga in data['data']]
+            for manga in data['data']:
+                title = manga['attributes']['title'].get('en')  # Verifica a existência do título em inglês
+                if not title:
+                    # Usa o primeiro título alternativo disponível ou define como 'Título desconhecido'
+                    title = next(iter(manga['attributes']['title'].values()), 'Título desconhecido')
+                
+                results.append({'id': manga['id'], 'title': title})
 
         return results
-    
+
     def get_manga_id(self, manga_id):
         config = self.load_config()
         

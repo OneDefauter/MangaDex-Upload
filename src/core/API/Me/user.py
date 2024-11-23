@@ -16,8 +16,14 @@ class UserMe():
         data = self.get_login()
         config = self.load_config()
         
+        if data is None:
+            return None
+        
         access_token = self.login_core.refresh_access_token(refresh_token=data['refresh_token'], client_id=data['client_id'], client_secret=data['client_secret'])
-    
+
+        if access_token == 400:
+            return None
+
         if data:
             r = requests.get(
                 f"{config['api_url']}/user/me",

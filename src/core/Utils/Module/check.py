@@ -10,7 +10,9 @@ required_modules = [
         'markupsafe',
         'markdown',
         'packaging',
-        'pycryptodome'
+        'pycryptodome',
+        'flask-session',
+        'psd-tools'
     ]
 
 for module in required_modules:

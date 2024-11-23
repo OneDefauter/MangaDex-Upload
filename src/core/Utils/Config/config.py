@@ -17,8 +17,15 @@ class ConfigFile():
             "download_folder_scheme": "scheme1",
             "cover_image_quality": "reduced",
             "upload_on_error": False,
+            "preprocess_images": False,
+            "cutting_tool": 'Pillow',
+            "output_file_type": "JPG",
+            "output_image_quality": 100,
+            "queue_operations": 1,
+            "image_operations": 1,
             "tips_seen": {
-                "upload_page": False
+                "upload_page": False,
+                "multi_upload_page": False
             }
         }
         
@@ -47,4 +54,12 @@ class ConfigFile():
     def mark_tip_as_seen(self, tip_name):
         config = self.load_config()
         config["tips_seen"][tip_name] = True
+        self.save_config(config)
+
+    # Função para alterar o status de uma dica
+    def toggle_tip_status(self, tip_name, seen):
+        config = self.load_config()
+        if "tips_seen" not in config:
+            config["tips_seen"] = {}
+        config["tips_seen"][tip_name] = seen
         self.save_config(config)

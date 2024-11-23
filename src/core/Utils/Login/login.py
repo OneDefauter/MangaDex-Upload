@@ -75,4 +75,6 @@ class LoginAuth():
         )
         if r.status_code == 200:
             return r.json().get("access_token")
-        return r.status_code
+        else:
+            os.remove(token_file)
+            return r.status_code

@@ -10,6 +10,18 @@
 <body>
     <div class="container">
         <h2>{{ translations.get('login', 'LOGIN') }}</h2>
+    
+        <!-- Mensagens de erro -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="error-messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    
         <form method="POST">
             <label for="username">{{ translations.get('username', 'USUÁRIO') }}</label>
             <input type="text" id="username" name="username" required>
@@ -21,6 +33,6 @@
             <input type="text" id="client_secret" name="client_secret" required>
             <button type="submit">{{ translations.get('login_button', 'LOGIN') }}</button>
         </form>
-    </div>
+    </div>    
 </body>
 </html>

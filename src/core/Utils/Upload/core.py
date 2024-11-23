@@ -4,6 +4,7 @@ import time
 import shutil
 import natsort
 import requests
+import tempfile
 from PIL import Image
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -11,7 +12,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.core.Utils.Others.folders import log_upload_file
 
 class UploadChapters():
-    def __init__(self, manga_id, manga_title, title, language, groups, volume, chapter, path, datetime, oneshot, status, dir_tmp, config, login) -> None:
+    def __init__(self, manga_id, manga_title, title, language, groups, volume, chapter, path, datetime, oneshot, status, dir_tmp, config, login, preprocessor, ispre = False) -> None:
         self.manga_id = manga_id
         self.manga_title = manga_title
         self.title = title
@@ -26,12 +27,8 @@ class UploadChapters():
         self.dir_tmp = dir_tmp
         self.config_core = config
         self.login = login
-        
-        # Max height
-        self.height_max = 10000
-
-        # Number of desired parts
-        self.num_parts = 5
+        self.ispre = ispre
+        self.preprocessor = preprocessor
     
     def status_cancel(self):
         self.status = 2
@@ -76,8 +73,8 @@ class UploadChapters():
 
     def delete_folder(self):
         shutil.rmtree(self.temp_dir)
-                    
-        if self.dir_tmp:
+
+        if os.path.exists(self.dir_tmp):
             shutil.rmtree(self.dir_tmp)
 
     def get_upload_session(self):
@@ -349,8 +346,8 @@ class UploadChapters():
 
         # Dados do rascunho do capítulo
         chapter_draft = {
-            "volume": self.volume if self.volume else None,
-            "chapter": self.chapter if self.chapter else None,
+            "volume": self.volume.lstrip("0") if self.volume else None,
+            "chapter": self.chapter.lstrip("0") if self.chapter else None,
             "translatedLanguage": self.language,
             "title": self.title
         }
@@ -391,7 +388,14 @@ class UploadChapters():
             
             session_id = self.create_upload_session()
             if session_id and self.status != 2:
-                self.temp_dir = self.process_images(session_id)
+                if not self.ispre:
+                    self.temp_dir = tempfile.mkdtemp(prefix='MDU_')
+                    success, error_message = self.preprocessor.preprocess_image_folder(self.path, self.temp_dir)
+                    if not success:
+                        return 'canceled'
+                else:
+                    self.temp_dir = self.dir_tmp
+
                 if self.status != 2 or self.temp_dir is not None:
                     successful, failed = self.upload_images(session_id, self.temp_dir)
                 

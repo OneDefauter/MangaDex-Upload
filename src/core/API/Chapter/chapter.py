@@ -29,7 +29,52 @@ class GetChapter():
         
         if r.ok:
             return r.json()['data']
-    
+
+    def get_chapters_with_groups(self, manga_id, language='pt-br', limit=100):
+        """
+        Obtém todos os capítulos com informações detalhadas, incluindo grupos de tradução, lidando com o offset.
+        """
+        config = self.load_config()
+        offset = 0  # Começa do início
+        all_chapters = []  # Lista para armazenar todos os capítulos
+
+        while True:
+            # Configura os parâmetros para a API
+            params = {
+                "limit": limit,
+                "offset": offset,
+                "manga": manga_id,
+                "translatedLanguage[]": language,
+                "contentRating[]": ["safe", "suggestive", "erotica", "pornographic"],
+                "order[chapter]": "asc",
+                "includes[]": ["scanlation_group"],
+            }
+
+            # Faz a requisição para a API
+            response = requests.get(f"{config['api_url']}/chapter", params=params)
+
+            if not response.ok:
+                return {"error": response.status_code, "message": response.text}
+
+            # Parseia a resposta JSON
+            data = response.json()
+
+            # Adiciona os capítulos retornados à lista principal
+            all_chapters.extend(data['data'])
+
+            # Verifica se ainda há mais capítulos para buscar
+            if offset + limit >= data.get('total', 0):
+                break  # Sai do loop quando todos os capítulos foram obtidos
+
+            # Atualiza o offset para buscar a próxima página
+            offset += limit
+
+        return {
+            "result": "ok",
+            "total": len(all_chapters),
+            "data": all_chapters
+        }
+
     def edit_chapter(self, chapter_id, data):
         config = self.load_config()
         login = self.get_login()

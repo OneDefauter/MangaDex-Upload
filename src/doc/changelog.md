@@ -1,3 +1,16 @@
+### Versão 1.0.5 (23/11/2024)
+
+- Correção na busca de projetos +18
+
+- Adicionado Multi Upload
+
+- Adicionado opção de pré-processamento de imagens
+
+- Foi implementado o [SmartStitch](https://github.com/MechTechnology/SmartStitch)
+
+- Melhorias na página de configurações
+
+
 ### Versão 1.0.4 (15/09/2024)
 
 - Correções

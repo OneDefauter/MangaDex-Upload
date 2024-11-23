@@ -1,0 +1,50 @@
+/* Botão de Criar Grupo temporário com animação */
+.create-group-btn {
+    position: absolute;
+    top: -35px; /* Posicionar o botão acima do item */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 10; /* Garantir que o botão esteja sobre os outros elementos */
+    opacity: 0; /* Inicialmente invisível */
+}
+
+.create-group-btn:hover {
+    background-color: #218838;
+}
+
+/* Animação para o botão aparecer */
+.fade-in {
+    animation: fadeIn 0.5s forwards;
+}
+
+/* Animação para o botão desaparecer */
+.fade-out {
+    animation: fadeOut 0.5s forwards;
+}
+
+/* Definições da animação de fadeIn */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Definições da animação de fadeOut */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}

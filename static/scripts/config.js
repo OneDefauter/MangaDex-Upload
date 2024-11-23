@@ -8,7 +8,13 @@ const initialConfig = {
     download_folder: document.getElementById('download_folder').value,
     download_folder_scheme: document.getElementById('download_folder_scheme').value,
     cover_image_quality: document.getElementById('cover_image_quality').value,
-    upload_on_error: document.getElementById('upload_on_error').checked
+    upload_on_error: document.getElementById('upload_on_error').checked,
+    preprocess_images: document.getElementById('preprocess_images').checked,
+    cutting_tool: document.getElementById('cutting_tool').checked ? 'SmartStitch' : 'Pillow',
+    output_file_type: document.getElementById('output_file_type').value,
+    output_image_quality: parseInt(document.getElementById('output_image_quality').value, 10),
+    queue_operations: parseInt(document.getElementById('queue_operations').value, 10),
+    image_operations: parseInt(document.getElementById('image_operations').value, 10)
 };
 
 const defaultConfig = {
@@ -21,7 +27,13 @@ const defaultConfig = {
     download_folder: "",
     download_folder_scheme: "scheme1",
     cover_image_quality: "reduced",
-    upload_on_error: false
+    upload_on_error: false,
+    preprocess_images: false,
+    cutting_tool: 'Pillow',
+    output_file_type: "JPG",
+    output_image_quality: 100,
+    queue_operations: 1,
+    image_operations: 1
 };
 
 const modal = document.getElementById('confirmation-modal');
@@ -41,7 +53,13 @@ function getFormData() {
         download_folder: document.getElementById('download_folder').value,
         download_folder_scheme: document.getElementById('download_folder_scheme').value,
         cover_image_quality: document.getElementById('cover_image_quality').value,
-        upload_on_error: document.getElementById('upload_on_error').checked
+        upload_on_error: document.getElementById('upload_on_error').checked,
+        preprocess_images: document.getElementById('preprocess_images').checked,
+        cutting_tool: document.getElementById('cutting_tool').checked ? 'SmartStitch' : 'Pillow',
+        output_file_type: document.getElementById('output_file_type').value,
+        output_image_quality: parseInt(document.getElementById('output_image_quality').value, 10),
+        queue_operations: parseInt(document.getElementById('queue_operations').value, 10),
+        image_operations: parseInt(document.getElementById('image_operations').value, 10)
     };
 }
 
@@ -63,7 +81,7 @@ function checkChanges() {
 
     for (const [key, value] of Object.entries(currentConfig)) {
         const NowValue = initialConfig[key];
-        const isDifferent = key === 'log' ? value !== NowValue : value !== NowValue;
+        const isDifferent = key === 'log' || key === 'preprocess_images' ? value !== NowValue : value !== NowValue;
         if (isDifferent) {
             changes[key] = {
                 oldValue: NowValue,
@@ -74,6 +92,25 @@ function checkChanges() {
 
     return changes;
 }
+
+const cuttingToolCheckbox = document.getElementById('cutting_tool');
+const cuttingToolLabel = document.getElementById('cutting_tool_label');
+
+document.getElementById('cutting_tool').addEventListener('change', function () {
+    const cuttingToolLabel = document.getElementById('cutting_tool_label');
+
+    if (this.checked) {
+        // Atualiza para SmartStitch com link
+        cuttingToolLabel.innerHTML = `
+            <a href="https://github.com/MechTechnology/SmartStitch" target="_blank" class="smartstitch-link">
+                SmartStitch
+            </a>
+        `;
+    } else {
+        // Atualiza para texto simples Pillow
+        cuttingToolLabel.innerHTML = 'Pillow';
+    }
+});
 
 document.getElementById('save-btn').onclick = function() {
     const changes = checkChanges();
@@ -122,6 +159,7 @@ document.getElementById('restore-defaults-btn').onclick = function() {
         document.getElementById('auth_url').value = defaultConfig.auth_url;
         document.getElementById('max_results').value = defaultConfig.max_results;
         document.getElementById('download_folder').value = defaultConfig.download_folder;
+        document.getElementById('preprocess_images').checked = defaultConfig.preprocess_images;
         document.getElementById('config-form').submit();
         modal.style.display = 'none';
     };
@@ -137,12 +175,12 @@ window.onclick = function(event) {
     }
 };
 
-// Código para exibir dicas
+// Atualize a lista de dicas dinamicamente
 const tipsBtn = document.getElementById('tips-btn');
 const tipsModal = document.getElementById('tips-modal');
 
-tipsBtn.onclick = function() {
-    fetch('/api/get_tips_status')
+tipsBtn.onclick = function () {
+    fetch('/api/get_tips_status') // Supondo que essa rota retorna o status das dicas
         .then(response => response.json())
         .then(tipsStatus => {
             const tipsList = document.getElementById('tips-list');
@@ -151,8 +189,18 @@ tipsBtn.onclick = function() {
             Object.entries(tipsStatus).forEach(([tipName, seen]) => {
                 const tipItem = document.createElement('li');
                 tipItem.innerHTML = `
-                    ${translations.tip} ${tipName} <button class="${seen ? 'tip-seen' : 'tip-not-seen'}">${seen ? translations.seen : translations.not_seen}</button>
+                    ${translations.tip} ${tipName}
+                    <button class="${seen ? 'tip-seen' : 'tip-not-seen'}">
+                        ${seen ? translations.seen : translations.not_seen}
+                    </button>
                 `;
+
+                // Adiciona evento de clique ao botão
+                const button = tipItem.querySelector('button');
+                button.addEventListener('click', function () {
+                    toggleTipStatus(tipName, this); // Função para alternar o status
+                });
+
                 tipsList.appendChild(tipItem);
             });
 
@@ -160,14 +208,41 @@ tipsBtn.onclick = function() {
         });
 };
 
-// Fechar modal de dicas
-const closeTipsModal = document.querySelector('.close-btn');
+// Função para alternar o status da dica
+function toggleTipStatus(tipName, button) {
+    const currentStatus = button.classList.contains('tip-seen');
+    const newStatus = !currentStatus;
 
-closeTipsModal.onclick = function() {
+    // Envia a atualização para o backend
+    fetch('/api/update_tip_status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipName, seen: newStatus })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Atualiza o botão na interface
+                button.classList.toggle('tip-seen', newStatus);
+                button.classList.toggle('tip-not-seen', !newStatus);
+                button.textContent = newStatus ? translations.seen : translations.not_seen;
+            } else {
+                alert('Erro ao atualizar o status da dica.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar o status da dica:', error);
+            alert('Erro ao atualizar o status da dica.');
+        });
+}
+
+// Fechar o modal de dicas
+const closeTipsModal = document.querySelector('.close-btn');
+closeTipsModal.onclick = function () {
     tipsModal.style.display = 'none';
 };
 
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target === tipsModal) {
         tipsModal.style.display = 'none';
     }
@@ -217,6 +292,92 @@ document.getElementById('delete-folder-btn').addEventListener('click', function 
             alert(translations.folder_delete_error);
         });
     }
+});
+
+document.getElementById('delete-temp-folders-btn').addEventListener('click', function () {
+    if (confirm(translations.confirm_delete_folder)) {
+        fetch('/delete_temp_folders', {  // Supondo que você tenha uma rota para exclusão
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(translations.folder_deleted);
+                location.reload();  // Recarregar a página para atualizar as informações
+            } else {
+                alert(translations.folder_delete_error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao excluir pastas temporárias:', error);
+            alert(translations.folder_delete_error);
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const configItems = document.querySelectorAll('.config-item');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove a classe 'active' de todos os botões
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Adiciona a classe 'active' ao botão clicado
+            button.classList.add('active');
+
+            const filter = button.getAttribute('data-filter');
+
+            // Filtra os itens de configuração
+            configItems.forEach(item => {
+                if (filter === 'all') {
+                    // Mostra todos os itens
+                    item.style.display = 'block';
+                } else if (item.classList.contains(filter)) {
+                    // Mostra apenas os itens que possuem a classe correspondente ao filtro
+                    item.style.display = 'block';
+                } else {
+                    // Oculta os itens que não correspondem ao filtro
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Inicializa com todos os itens visíveis
+    document.querySelector('.filter-btn[data-filter="all"]').click();
+});
+
+// Função para alternar itens com animações
+document.querySelectorAll('.filter-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        // Remove a classe "active" de todos os botões
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+
+        // Adiciona a classe "active" no botão clicado
+        this.classList.add('active');
+
+        // Obtém o filtro selecionado
+        const filter = this.dataset.filter;
+
+        // Alterna os itens de acordo com o filtro
+        document.querySelectorAll('.config-item').forEach(item => {
+            if (filter === 'all' || item.classList.contains(filter)) {
+                item.style.display = 'block'; // Garante que o item esteja visível antes da animação
+                setTimeout(() => {
+                    item.classList.add('active'); // Adiciona a classe para iniciar a animação
+                }, 10); // Tempo para o navegador processar o display
+            } else {
+                item.classList.remove('active'); // Remove a classe para iniciar a transição de saída
+                setTimeout(() => {
+                    item.style.display = 'none'; // Esconde o item após a transição
+                }, 400); // Tempo para a transição terminar (igual ao definido no CSS)
+            }
+        });
+    });
 });
 
 function showLoadingScreen() {

@@ -1,5 +1,6 @@
+import src.core.Utils.Module.check
+
 import os
-import re
 import json
 import shutil
 import markdown
@@ -7,9 +8,13 @@ import requests
 import tempfile
 import webbrowser
 from pathlib import Path
+from functools import wraps
 from markupsafe import Markup
+from natsort import natsorted
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify, session
+from flask_session import Session
 
 import threading
 
@@ -50,11 +55,11 @@ from src.core.Utils.Config.config import ConfigFile
 from src.core.Utils.Download.core import DownloadChapters
 from src.core.Utils.Download.download import DownloadQueue
 
+### Image
+from src.core.Utils.Image.process import ImagePreprocessor
+
 ### Login
 from src.core.Utils.Login.login import LoginAuth
-
-### Module
-import src.core.Utils.Module.check
 
 ### Others
 from src.core.Utils.Others.extract_archive import extract_archive
@@ -62,6 +67,8 @@ from src.core.Utils.Others.folders import token_file, log_upload_file
 from src.core.Utils.Others.select_file_check import check_for_file
 from src.core.Utils.Others.select_folder_check import check_for_folder
 from src.core.Utils.Others.get_covers import get_folder_size
+from src.core.Utils.Others.get_temp import calculate_temp_folders_size
+from src.core.Utils.Others.process_item import process_item
 
 ### Upload
 from src.core.Utils.Upload.core import UploadChapters
@@ -83,6 +90,11 @@ USER_ME = UserMe(login_core, config_core)
 SCAN = GetScan(config_core)
 
 app = Flask(__name__)
+# Configuração do Flask-Session
+app.config['SESSION_TYPE'] = 'filesystem'  # Armazena as sessões no sistema de arquivos local
+app.config['SESSION_PERMANENT'] = True
+app.config['SESSION_FILE_DIR'] = './flask_session'  # Diretório onde os dados serão armazenados
+Session(app)
 app.secret_key = 'sua_chave_secreta'
 
 welcome_seen = False
@@ -102,6 +114,16 @@ threading.Thread(target=UP_Q.upload, daemon=True).start()
 
 min_datetime = datetime.now().strftime('%Y-%m-%dT%H:%M')
 max_datetime = (datetime.now() + timedelta(weeks=2)).strftime('%Y-%m-%dT%H:%M')
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Verifica se o usuário tem um token de acesso na sessão
+        if not session.get('access_token'):
+            flash("Você precisa estar logado para acessar esta página.")
+            return redirect(url_for('login'))  # Redireciona para a página de login
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.before_request
 def LanguageUser():
@@ -123,6 +145,14 @@ def LanguageUser():
             with open(os.path.join(app_folder, 'src', 'locale', f'{default_language}.json'), 'r', encoding='utf-8') as file:
                 session['TRANSLATE'] = json.load(file)
             session['lang'] = default_language
+
+@app.before_request
+def require_login():
+    # Lista de rotas públicas que não precisam de login
+    public_routes = ['login', 'static']  # Adicione outras rotas públicas aqui
+    if request.endpoint not in public_routes and not session.get('access_token'):
+        flash("Você precisa estar logado para acessar esta página.")
+        return redirect(url_for('login'))
 
 @app.route('/api/search', methods=['GET'])
 def api_search():
@@ -159,6 +189,19 @@ def get_manga_aggregate(manga_id):
     if r:
         return jsonify({'chapters': sorted_chapters})
     return jsonify({"error": "Erro ao buscar capítulos do mangá."}), 500
+
+@app.route('/api/manga/<manga_id>/chapters_with_groups', methods=['GET'])
+def get_chapters_with_groups(manga_id):
+    """
+    Retorna todos os capítulos com informações detalhadas, incluindo grupos de tradução.
+    """
+    language = request.args.get('language', 'pt-br')  # Idioma padrão: pt-br
+    limit = int(request.args.get('limit', 100))  # Número máximo de capítulos por página
+
+    get_chapter_service = GetChapter(login_core, config_core)
+    result = get_chapter_service.get_chapters_with_groups(manga_id, language, limit)
+
+    return jsonify(result)
 
 @app.route('/edit/api/manga/<manga_id>/aggregate', methods=['GET'])
 def get_manga_aggregate_edit(manga_id):
@@ -216,7 +259,14 @@ def config():
         download_folder_scheme = request.form.get('download_folder_scheme')
         cover_image_quality = request.form.get('cover_image_quality')
         upload_on_error = request.form.get('upload_on_error') == 'true'
+        preprocess_images = request.form.get('preprocess_images') == 'true'
+        cutting_tool = request.form.get('cutting_tool', 'Pillow')
+        output_file_type = request.form.get('output_file_type', 'JPG')
+        output_image_quality = int(request.form.get('output_image_quality'))
+        queue_operations = int(request.form.get('queue_operations'))
+        image_operations = int(request.form.get('image_operations'))
 
+        # Limites para as configurações numéricas
         if upload > 10:
             upload = 10
         elif upload < 1:
@@ -232,6 +282,21 @@ def config():
         elif max_results < 1:
             max_results = 1
 
+        if queue_operations > 10:
+            queue_operations = 10
+        elif queue_operations < 1:
+            queue_operations = 1
+
+        if image_operations > 10:
+            image_operations = 10
+        elif image_operations < 1:
+            image_operations = 1
+
+        if output_image_quality > 100:
+            output_image_quality = 100
+        elif output_image_quality < 0:
+            output_image_quality = 0
+
         # Atualiza os dados de configuração
         config_data.update({
             'upload': upload,
@@ -243,7 +308,13 @@ def config():
             'download_folder': download_folder,
             'download_folder_scheme': download_folder_scheme,
             'cover_image_quality': cover_image_quality,
-            'upload_on_error': upload_on_error
+            'upload_on_error': upload_on_error,
+            'preprocess_images': preprocess_images,
+            'cutting_tool': cutting_tool,
+            'output_file_type': output_file_type,
+            'output_image_quality': output_image_quality,
+            'queue_operations': queue_operations,
+            'image_operations': image_operations
         })
 
         # Salva a configuração
@@ -251,8 +322,16 @@ def config():
         flash(translate.get('config_saved', 'Configurações salvas com sucesso!'))
 
     folder_size = get_folder_size()
+    temp_folders_size = calculate_temp_folders_size()
 
-    return render_template('config.html', config=config_data, default_config=config_core.default_config, translations=translate, folder_size=folder_size)
+    return render_template(
+        'config.html', 
+        config=config_data, 
+        default_config=config_core.default_config, 
+        translations=translate, 
+        folder_size=folder_size, 
+        temp_folders_size=temp_folders_size
+    )
 
 @app.route('/restore_defaults', methods=['POST'])
 def restore_defaults():
@@ -265,7 +344,6 @@ def login():
     global welcome_seen
     
     translate = session.get('TRANSLATE', {})
-    
     data = login_core.load_data()
     config = config_core.load_config()
     
@@ -277,6 +355,11 @@ def login():
         if access_token:
             data['access_token'] = access_token
             login_core.save_data(data)  # Atualiza o access_token
+            
+            session['access_token'] = access_token
+            session['refresh_token'] = data['refresh_token']
+            session['logged_in'] = True
+            
             return redirect(url_for('home'))
 
     if request.method == 'POST':
@@ -285,23 +368,37 @@ def login():
         client_id = request.form.get('client_id')
         client_secret = request.form.get('client_secret')
         
-        if username and password and client_id and client_secret:
-            creds = {
-                'grant_type': 'password',
-                'username': username,
-                'password': password,
-                'client_id': client_id,
-                'client_secret': client_secret
-            }
+        if not all([username, password, client_id, client_secret]):
+            flash(translate.get('fill_all_fields', 'Por favor, preencha todos os campos.'))
+            return render_template('login.html', translations=translate)
+
+        creds = {
+            'grant_type': 'password',
+            'username': username,
+            'password': password,
+            'client_id': client_id,
+            'client_secret': client_secret
+        }
+
+        try:
             # Envia a requisição para obter os tokens
             r = requests.post(
                 config['auth_url'],
-                data=creds
+                data=creds,
+                timeout=10  # Adiciona um tempo limite para evitar travamento
             )
             if r.status_code == 200:
                 r_json = r.json()
                 access_token = r_json.get("access_token")
                 refresh_token = r_json.get("refresh_token")
+                
+                session['access_token'] = access_token
+                session['refresh_token'] = refresh_token
+                session['logged_in'] = True
+
+                if not access_token or not refresh_token:
+                    flash(translate.get('missing_tokens', 'O servidor não retornou os tokens necessários.'))
+                    return render_template('login.html', translations=translate)
 
                 # Salva os dados criptografados
                 login_core.save_data({
@@ -313,14 +410,24 @@ def login():
 
                 welcome_seen = False
                 return redirect(url_for('home'))
+
+            elif r.status_code == 401:
+                flash(translate.get('unauthorized', 'Credenciais inválidas. Por favor, tente novamente.'))
+            elif r.status_code == 403:
+                flash(translate.get('forbidden', 'Acesso negado. Verifique sua conta e permissões.'))
+            elif r.status_code == 500:
+                flash(translate.get('server_error', 'Erro no servidor. Tente novamente mais tarde.'))
             else:
-                flash(translate.get('login_failed', 'Falha no login, verifique suas credenciais.'))
-        else:
-            flash(translate.get('fill_all_fields', 'Por favor, preencha todos os campos.'))
-    
+                flash(translate.get('unexpected_error', f'Erro inesperado ({r.status_code}): {r.text}'))
+
+        except requests.exceptions.Timeout:
+            flash(translate.get('timeout', 'O servidor demorou muito para responder. Tente novamente mais tarde.'))
+        except requests.exceptions.RequestException as e:
+            flash(translate.get('connection_error', f'Erro de conexão: {str(e)}'))
+
     return render_template('login.html', translations=translate)
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     global welcome_seen
     
@@ -333,6 +440,10 @@ def home():
     
     if not welcome_seen:
         user = USER_ME.get_user_me()
+        
+        if user is None:
+            return redirect(url_for('login'))
+        
         # Substitui o placeholder {username} com o nome real do usuário
         notifications.append(translate.get('welcome_message', "Bem-vindo ao MangaDex Uploader, {username}!").format(username=user['attributes']['username']))
         
@@ -350,6 +461,8 @@ def home():
 
 @app.route('/logout')
 def logout():
+    session.clear()
+    
     # Remove o arquivo de tokens para efetuar o logout
     if os.path.exists(token_file):
         os.remove(token_file)
@@ -381,7 +494,20 @@ def download_chapters():
         translated = chapter['translatedLanguage']
         chapter_ = chapter['chapterNumber']
         volume = chapter['volume']
+        group = chapter['groups']
         
+        group_names = []
+
+        for gp_ in group:
+            r = SCAN.get_scan(gp_)
+            if r:
+                group_name = r['attributes']['name']
+                if group_name not in group_names:  # Evita adicionar nomes repetidos
+                    group_names.append(group_name)
+
+        # Concatena os nomes em uma única string separados por ", "
+        groupName = ', '.join(group_names) if group_names else None
+
         path_ = Path(config_data['download_folder']) if config_data['download_folder'] != '' else os.getcwd()
         
         if config_data['download_folder_scheme'] == 'scheme1':
@@ -408,6 +534,28 @@ def download_chapters():
                 path = os.path.join(path_, manga_title, chapter_)
         elif config_data['download_folder_scheme'] == 'scheme6':
             path = os.path.join(path_, manga_title, chapter_)
+        elif config_data['download_folder_scheme'] == 'scheme7':
+            path = os.path.join(path_, groupName, manga_title, chapter_)
+        elif config_data['download_folder_scheme'] == 'scheme8':
+            if volume and volume != 'none':
+                path = os.path.join(path_, groupName, manga_title, volume, chapter_)
+            else:
+                path = os.path.join(path_, groupName, manga_title, chapter_)
+        elif config_data['download_folder_scheme'] == 'scheme9':
+            path = os.path.join(path_, translated, groupName, manga_title, chapter_)
+        elif config_data['download_folder_scheme'] == 'scheme10':
+            if volume and volume != 'none':
+                path = os.path.join(path_, translated, groupName, manga_title, volume, chapter_)
+            else:
+                path = os.path.join(path_, translated, groupName, manga_title, chapter_)
+        elif config_data['download_folder_scheme'] == 'scheme11':
+            path = os.path.join(path_, groupName, translated, manga_title, chapter_)
+        elif config_data['download_folder_scheme'] == 'scheme12':
+            if volume and volume != 'none':
+                path = os.path.join(path_, groupName, translated, manga_title, volume, chapter_)
+            else:
+                path = os.path.join(path_, groupName, translated, manga_title, chapter_)
+
         
         download_core = DownloadChapters(
             manga_title=manga_title, 
@@ -454,10 +602,14 @@ def search_groups():
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    config = config_core.load_config()
     translate = session.get('TRANSLATE', {})
     
     dir_tmp = None
+    ispre = False
     
+    preprocessor = ImagePreprocessor(config)
+        
     data = request.get_json()
     
     path = Path(data['folder'])
@@ -469,10 +621,13 @@ def submit():
             # Se não for uma pasta, verifica se é um arquivo compactado
             if path.suffix.lower() in [".zip", ".cbz"]:
                 # Cria um diretório temporário para extrair as imagens
-                temp_dir = tempfile.mkdtemp()
-                success, error_message = extract_archive(path, temp_dir)
+                temp_dir = tempfile.mkdtemp(prefix='MDU_')
+                success, error_message = preprocessor.extract_archive(path, temp_dir)
                 if not success:
                     return jsonify(success=False, message=translate.get('extraction_failed', f'Falha na extração: {error_message}'))
+                
+                if config['preprocess_images']:
+                    ispre = True
                 
                 # Atualiza o caminho para o diretório temporário
                 path = Path(temp_dir)
@@ -488,7 +643,18 @@ def submit():
         images = [file for file in os.listdir(str(path)) if file.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".avif", ".webp"))]
         if len(images) == 0:
             return jsonify(success=False, message=translate.get('directory_contains_no_images', 'O diretório não contém imagens.'))
-    
+
+        if config['preprocess_images']:
+            ispre = True
+            temp_dir = tempfile.mkdtemp(prefix='MDU_')
+            success, error_message = preprocessor.preprocess_image_folder(path, temp_dir)
+            if not success:
+                return jsonify(success=False, message=translate.get('extraction_failed', f'Falha no pré-processamento: {error_message}'))
+
+            # Atualiza o caminho para o diretório temporário
+            path = Path(temp_dir)
+            dir_tmp = path
+
     else:
         return jsonify(success=False, message=translate.get('directory_does_not_exist', 'O diretório informado não existe.'))
         
@@ -553,7 +719,9 @@ def submit():
             status=0,
             dir_tmp=dir_tmp,
             config=config_core,
-            login=login_core
+            login=login_core,
+            preprocessor=preprocessor,
+            ispre=ispre
         )
         
         UP_Q.queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter}"] = {
@@ -596,6 +764,20 @@ def get_tips_status():
     config = config_core.load_config()
     tips_status = config.get("tips_seen", {})
     return jsonify(tips_status)
+
+@app.route('/api/update_tip_status', methods=['POST'])
+def update_tip_status():
+    data = request.get_json()
+    tip_name = data.get('tipName')
+    seen = data.get('seen', False)  # Novo status (True ou False)
+
+    if not tip_name:
+        return jsonify({'success': False, 'message': 'Nome da dica não fornecido.'}), 400
+
+    # Atualiza o status da dica no arquivo de configuração
+    config_core.toggle_tip_status(tip_name, seen)
+
+    return jsonify({'success': True})
 
 @app.route('/updates')
 def updates():
@@ -730,6 +912,20 @@ def delete_folder():
     except Exception as e:
         return jsonify(success=False, error=str(e))
 
+@app.route('/delete_temp_folders', methods=['POST'])
+def delete_temp_folders():
+    temp_dir = tempfile.gettempdir()
+
+    try:
+        for folder_name in os.listdir(temp_dir):
+            if folder_name.startswith('MDU_'):  # Verifica o prefixo
+                folder_path = os.path.join(temp_dir, folder_name)
+                if os.path.isdir(folder_path):  # Confirma que é uma pasta
+                    shutil.rmtree(folder_path)  # Remove a pasta e todo o conteúdo
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route('/edit')
 def edit():
     translate = session.get('TRANSLATE', {})
@@ -757,6 +953,109 @@ def delete_chapter(chapter_id):
         return jsonify({'success': True}), 200
     return jsonify(success=False, error=translate['not_excluded'])
 
+@app.route('/mult_upload')
+def mult_upload():
+    translate = session.get('TRANSLATE', {})
+
+    return render_template('mult_upload.html', translations=translate)
+
+@app.route('/multi-upload-step', methods=['POST'])
+def multi_upload_step():
+    data = request.json
+    folder_path = data.get('folder_path')
+
+    if not folder_path or not os.path.exists(folder_path):
+        return jsonify({'success': False, 'error': 'Pasta inválida ou inexistente.'})
+
+    # Listar arquivos e pastas no diretório
+    items = []
+    for item in os.listdir(folder_path):
+        item_path = os.path.join(folder_path, item)
+        items.append({
+            'name': item,
+            'path': item_path,
+            'is_directory': os.path.isdir(item_path)
+        })
+
+    return jsonify({'success': True, 'items': items})
+
+@app.route('/mult-upload-send', methods=['POST'])
+def multi_upload_send():
+    config = config_core.load_config()
+    translate = session.get('TRANSLATE', {})
+    
+    # Receber os dados da requisição
+    data = request.json
+    groups = data.get('groups')  # Grupos recebidos no formato de dicionário
+    folderpath = Path(data.get('folder_path'))
+    language = data.get('language', 'pt-br')
+
+    if not folderpath.exists() or not folderpath.is_dir():
+        return jsonify({'error': 'Invalid folder path'}), 400
+
+    manga = MANGA.get_manga_id(data['project'])
+    
+    if not manga:
+        return jsonify(success=False, message=translate['manga_not_found']), 404
+
+    # Inicializa o preprocessor e prepara os argumentos
+    preprocessor = ImagePreprocessor(config)
+    items = natsorted(os.listdir(folderpath))
+    args = [(item, folderpath, groups, config, preprocessor, language, SCAN) for item in items]
+
+    # Usa ThreadPoolExecutor
+    result = {}
+    max_workers = config.get('queue_operations', 1)  # Valor padrão de 4 workers
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(process_item, arg): arg[0] for arg in args}
+        for future in futures:
+            try:
+                item_result = future.result()
+                if 'error' in item_result:
+                    return jsonify(success=False, message=item_result['error']), 400
+                result.update(item_result)
+            except Exception as e:
+                return jsonify(success=False, message=str(e)), 400
+
+    for x, chapters in result.items():
+        for chapter in chapters:
+            upload_core = UploadChapters(
+                manga_id=manga['id'],
+                manga_title=manga['attributes']['title']['en'],
+                title=chapter['title'],
+                language=data['language'],
+                groups=chapter['group'],
+                volume=chapter['volume'],
+                chapter=chapter['chapter'],
+                path=chapter['path'],
+                datetime=None,
+                oneshot=None,
+                status=0,
+                dir_tmp=chapter['path'],
+                config=config_core,
+                login=login_core,
+                preprocessor=preprocessor,
+                ispre=chapter['ispre']
+            )
+            
+            UP_Q.queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter}"] = {
+                'manga_id': manga['id'],
+                'manga_title': manga['attributes']['title']['en'],
+                'title': chapter['title'],
+                'language': data['language'],
+                'groups': chapter['group'],
+                'volume': chapter['volume'],
+                'chapter': chapter['chapter'],
+                'path': chapter['path'],
+                'datetime': None,
+                'oneshot': None,
+                'status': translate.get('waiting', 'Aguardando'),
+                'error': None
+            }
+            
+            UP_Q.add(upload_core)
+
+    return jsonify(success=True, message=translate.get('upload_added_to_queue', 'Upload enviado para fila.'))
 
 
 

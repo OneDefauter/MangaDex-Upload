@@ -31,6 +31,12 @@
                 <span class="tooltiptext">{{ translations.get('upload', 'Enviar') }}</span>
             </div>
             <div class="tooltip">
+                <button class="icon-button" id="upload-mult-btn">
+                    <i class="fi fi-rr-cloud-upload"></i>
+                </button>
+                <span class="tooltiptext">{{ translations.get('upload_mult', 'Enviar - Multi') }}</span>
+            </div>
+            <div class="tooltip">
                 <button class="icon-button" id="download-btn">
                     <i class="fi fi-rr-download"></i>
                 </button>
@@ -105,6 +111,11 @@
         document.getElementById('edit-btn').onclick = function() {
             // Redireciona para a página de logs
             window.location.href = "{{ url_for('edit') }}";
+        };
+
+        document.getElementById('upload-mult-btn').onclick = function() {
+            // Redireciona para a página de logs
+            window.location.href = "{{ url_for('mult_upload') }}";
         };
 
         // Função para mostrar notificações

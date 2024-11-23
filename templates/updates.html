@@ -9,18 +9,22 @@
 </head>
 <body>
     <div class="container">
-        <h2>{{ translations.get('updates_title', 'Atualizações') }}</h2>
-        <div class="markdown-content">
+        <header>
+            <h2>{{ translations.get('updates_title', 'Atualizações') }}</h2>
+        </header>
+        <main class="markdown-content">
             {{ content|safe }}
-        </div>
-        <div>
-            <button onclick="window.location.href='{{ url_for('home') }}'">{{ translations.get('back_button', 'Voltar') }}</button>
-        </div>
-        {% if new_update %}
-        <div>
-            <button id="update-button" onclick="postUpdate()">{{ translations.get('update_button', 'Atualizar') }}</button>
-        </div>
-        {% endif %}
+        </main>
+        <footer>
+            <button class="btn-primary" onclick="window.location.href='{{ url_for('home') }}'">
+                {{ translations.get('back_button', 'Voltar') }}
+            </button>
+            {% if new_update %}
+            <button class="btn-secondary" id="update-button" onclick="postUpdate()">
+                {{ translations.get('update_button', 'Atualizar') }}
+            </button>
+            {% endif %}
+        </footer>
     </div>
     <script>
         function postUpdate() {
