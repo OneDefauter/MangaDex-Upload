@@ -24,15 +24,14 @@ def process_item(args):
                         return {'error': f"Extraction failed for {file_path.name}: {error_message}"}
                 
                 scans = []
-                for x, chapters in groups.items():
-                    for scan in chapters['scans']:
-                        group_ = SCAN.get_scan(scan['id'])
-                        if group_:
-                            scans.append({
-                                'id': group_['id'],
-                                'name': group_['attributes']['name'],
-                                'lang': group_['attributes']['focusedLanguages']
-                            })
+                for scan in group_data['scans']:
+                    group_ = SCAN.get_scan(scan['id'])
+                    if group_:
+                        scans.append({
+                            'id': group_['id'],
+                            'name': group_['attributes']['name'],
+                            'lang': group_['attributes']['focusedLanguages']
+                        })
                 
                 # Atualiza o resultado
                 result_key = file_path.name.replace('.', '_').replace(' ', '_')
@@ -65,15 +64,14 @@ def process_item(args):
                         return {'error': f"Preprocessing failed for {file_path.name}"}
                 
                 scans = []
-                for x, chapters in groups.items():
-                    for scan in chapters['scans']:
-                        group_ = SCAN.get_scan(scan['id'])
-                        if group_:
-                            scans.append({
-                                'id': group_['id'],
-                                'name': group_['attributes']['name'],
-                                'lang': group_['attributes']['focusedLanguages']
-                            })
+                for scan in group_data['scans']:
+                    group_ = SCAN.get_scan(scan['id'])
+                    if group_:
+                        scans.append({
+                            'id': group_['id'],
+                            'name': group_['attributes']['name'],
+                            'lang': group_['attributes']['focusedLanguages']
+                        })
                 
                 # Atualiza o resultado
                 result_key = file_path.name

@@ -1,3 +1,7 @@
+### Versão 1.0.6 (24/11/2024)
+
+- Correções
+
 ### Versão 1.0.5 (23/11/2024)
 
 - Correção na busca de projetos +18

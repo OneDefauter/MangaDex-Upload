@@ -23,7 +23,7 @@ document.getElementById('scan-group').addEventListener('input', function () {
                 suggestionsList.style.display = 'block'; // Mostrar sugestões
             })
             .catch(error => {
-                console.error('${translations.group_search_error}:', error);
+                console.error(`${translations.group_search_error}:`, error);
                 suggestionsList.innerHTML = '<li>${translations.group_search_error}</li>';
                 suggestionsList.style.display = 'block';
             });

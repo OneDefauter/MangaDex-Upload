@@ -183,7 +183,6 @@ class ImagePreprocessor:
         max_workers = self.config.get("image_operations", 1)
         cutting_tool = self.config.get("cutting_tool", "Pillow")
         prex_ = self.config.get('preprocess_images', False)
-        os.makedirs(extract_to, exist_ok=True)
 
         try:
             with zipfile.ZipFile(archive_path, 'r') as zip_ref:
@@ -191,13 +190,14 @@ class ImagePreprocessor:
                 
                 if prex_:
                     if cutting_tool == "Pillow":
+                        temp_dir = tempfile.mkdtemp(prefix='MDU_')
                         with ThreadPoolExecutor(max_workers=max_workers) as executor:
                             futures = []
                             for extracted_file in natsorted(os.listdir(extract_to)):
                                 extracted_path = Path(extract_to) / extracted_file
                                 if self.is_valid_image(extracted_path):
                                     # Submete o processamento da imagem como tarefa paralela
-                                    futures.append(executor.submit(self.preprocess_image, extracted_path, extract_to))
+                                    futures.append(executor.submit(self.preprocess_image, extracted_path, temp_dir))
                             
                             # Aguarda a conclusão de todas as tarefas
                             for future in futures:
@@ -208,12 +208,38 @@ class ImagePreprocessor:
                             
                             # Renomeia as imagens no diretório temporário após o processamento
                             self.rename_images_in_order(temp_dir)
+                            
+                            # Limpa o diretório 'extract_to'
+                            for filename in os.listdir(extract_to):
+                                file_path = os.path.join(extract_to, filename)
+                                try:
+                                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                                        os.unlink(file_path)  # Remove arquivos ou links simbólicos
+                                    elif os.path.isdir(file_path):
+                                        shutil.rmtree(file_path)  # Remove diretórios
+                                except Exception as e:
+                                    print(f"Erro ao deletar {file_path}: {e}")
+
+                            # Move os arquivos de 'temp_dir' para 'extract_to'
+                            for filename in os.listdir(temp_dir):
+                                temp_file_path = os.path.join(temp_dir, filename)
+                                dest_file_path = os.path.join(extract_to, filename)
+                                try:
+                                    shutil.move(temp_file_path, dest_file_path)
+                                except Exception as e:
+                                    print(f"Erro ao mover {temp_file_path} para {dest_file_path}: {e}")
+
+                            # Remove o diretório 'temp_dir'
+                            try:
+                                shutil.rmtree(temp_dir)
+                            except Exception as e:
+                                print(f"Erro ao remover o diretório temporário {temp_dir}: {e}")
                     
                     elif cutting_tool == "SmartStitch":
                         temp_dir = tempfile.mkdtemp(prefix='MDU_')
 
                         # Processa a pasta
-                        self.preprocess_image_folder(extract_to, temp_dir)
+                        x, y = self.preprocess_image_folder(extract_to, temp_dir)
 
                         # Limpa o diretório 'extract_to'
                         for filename in os.listdir(extract_to):

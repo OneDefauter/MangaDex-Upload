@@ -969,7 +969,7 @@ def multi_upload_step():
 
     # Listar arquivos e pastas no diretório
     items = []
-    for item in os.listdir(folder_path):
+    for item in natsorted(os.listdir(folder_path)):
         item_path = os.path.join(folder_path, item)
         items.append({
             'name': item,
@@ -1019,10 +1019,31 @@ def multi_upload_send():
 
     for x, chapters in result.items():
         for chapter in chapters:
+            # Flag para verificar se o upload já existe
+            upload_exists = False
+
+            # Itera sobre os uploads na fila
+            for item in list(UP_Q.get()):
+                if (
+                    item.manga_id == manga['id'] and
+                    item.language == data['language'] and
+                    item.groups == chapter['group'] and
+                    item.volume == chapter['volume'] and
+                    item.chapter == chapter['chapter']
+                ):
+                    # Upload já existe na fila
+                    upload_exists = True
+                    break
+
+            # Se o upload já existe, pule para o próximo capítulo
+            if upload_exists:
+                continue
+
+            # Criar o objeto UploadChapters
             upload_core = UploadChapters(
                 manga_id=manga['id'],
                 manga_title=manga['attributes']['title']['en'],
-                title=chapter['title'],
+                title=chapter.get('title', ''),
                 language=data['language'],
                 groups=chapter['group'],
                 volume=chapter['volume'],
@@ -1035,13 +1056,14 @@ def multi_upload_send():
                 config=config_core,
                 login=login_core,
                 preprocessor=preprocessor,
-                ispre=chapter['ispre']
+                ispre=chapter.get('ispre', False)
             )
             
+            # Adiciona à fila e atualiza o dicionário de status
             UP_Q.queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter}"] = {
                 'manga_id': manga['id'],
                 'manga_title': manga['attributes']['title']['en'],
-                'title': chapter['title'],
+                'title': chapter.get('title', ''),
                 'language': data['language'],
                 'groups': chapter['group'],
                 'volume': chapter['volume'],
@@ -1052,9 +1074,10 @@ def multi_upload_send():
                 'status': translate.get('waiting', 'Aguardando'),
                 'error': None
             }
-            
+
             UP_Q.add(upload_core)
 
+    # Retorna a resposta
     return jsonify(success=True, message=translate.get('upload_added_to_queue', 'Upload enviado para fila.'))
 
 

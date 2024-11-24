@@ -383,7 +383,7 @@ function showGroupModal() {
 
     // Selecionar "Criar Novo Grupo" no <select>
     const groupSelect = document.getElementById('group-select');
-    groupSelect.value = '${translations.create_new_group}';
+    groupSelect.value = `${translations.create_new_group}`;
 
     modal.style.display = 'flex'; // Exibir o modal
     modal.classList.remove('hide'); // Remover classe de saída (se presente)
@@ -394,7 +394,7 @@ function showGroupModal() {
 
     // Gerenciar o evento de clique para o botão "Criar Grupo"
     const createGroupButton = document.getElementById('create-group-btn');
-    createGroupButton.textContent = '${translations.create_group}';
+    createGroupButton.textContent = `${translations.create_group}`;
 
     // **Remover event listeners antigos para evitar múltiplas execuções**
     createGroupButton.replaceWith(createGroupButton.cloneNode(true)); // Limpar eventos antigos
@@ -430,7 +430,7 @@ function showGroupModal() {
             items.push({ chapter, title, filename });
         });
 
-        console.log('${translations.created_group}:', { groupName, scans: scanTags, volume, color, items });
+        console.log(`${translations.created_group}:`, { groupName, scans: scanTags, volume, color, items });
 
         // Adicionar o grupo na seleção de grupos apenas se ele não existir
         const existingOption = Array.from(groupSelect.options).find(option => option.value === groupName);
@@ -561,7 +561,7 @@ document.getElementById('continue-btn').addEventListener('click', function () {
                 document.getElementById('folder-input-group').style.display = 'none';
                 document.getElementById('folder-list').style.display = 'block';
             } else {
-                alert('${translations.error_proccess_path}: ' + data.error);
+                alert(`${translations.error_proccess_path}: ` + data.error);
             }
         })
         .catch(error => {
@@ -592,11 +592,11 @@ document.getElementById('upload-btn').addEventListener('click', function () {
             if (data.success) {
                 alert(translations.upload_success);
             } else {
-                alert('${translations.error_occurred}: ' + data.message);
+                alert(`${translations.error_occurred}: ` + data.message);
             }
         })
         .catch(error => {
-            console.error('${translations.error_send}:', error);
+            console.error(`${translations.error_send}:`, error);
             alert(translations.error_occurred_upload);
         })
         .finally(() => {

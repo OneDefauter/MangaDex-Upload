@@ -20,7 +20,7 @@ class ConfigFile():
             "preprocess_images": False,
             "cutting_tool": 'Pillow',
             "output_file_type": "JPG",
-            "output_image_quality": 100,
+            "output_image_quality": 80,
             "queue_operations": 1,
             "image_operations": 1,
             "tips_seen": {

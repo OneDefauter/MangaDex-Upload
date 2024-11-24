@@ -24,7 +24,7 @@ document.getElementById('project').addEventListener('input', function () {
                 suggestionsList.style.display = 'block'; // Mostrar sugestões
             })
             .catch(error => {
-                console.error('${translations.project_search_error}:', error);
+                console.error(`${translations.project_search_error}:`, error);
                 suggestionsList.innerHTML = '<li>${translations.project_search_error}</li>';
                 suggestionsList.style.display = 'block';
             });
