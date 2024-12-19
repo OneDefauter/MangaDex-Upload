@@ -102,6 +102,11 @@ button.btn-login:hover {
     transition: background-color 0.3s;
 }
 
+.item-list ul li {
+    padding: 0;
+    margin: 0;
+}
+
 .item-list li.Aguardando {
     background-color: #9e9e9e; /* Cinza */
 }

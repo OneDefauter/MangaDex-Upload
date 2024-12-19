@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/groups.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/loading-overlay.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/tips.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
 
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 </head>
@@ -47,7 +48,11 @@
         <div id="folder-list" style="display: none;">
             <h3>{{ translations.get('files_and_folders', 'Arquivos e Pastas Encontrados:') }}</h3>
             <ul id="items-list"></ul>
-            <button type="button" id="upload-btn">{{ translations.get('upload', 'Enviar Todos') }}</button>
+            <p id="no-items-message" style="display: none; color: red; text-align: center;">
+                Nenhum item com imagens foi encontrado.
+            </p>
+            <button type="button" id="upload-btn">{{ translations.get('upload', 'Enviar') }}</button>
+            <button type="button" id="reload-btn">{{ translations.get('reload_folder', 'Recarregar pasta') }}</button>
         </div>
     </div>
 
@@ -130,6 +135,9 @@
         <div class="loading-spinner"></div>
     </div>
 
+    <!-- Container de notificações -->
+    <div id="notifications" class="notifications"></div>
+
     <!-- Translations passed to JavaScript -->
     <script>
         const translations = {
@@ -164,5 +172,6 @@
     <script src="{{ url_for('static', filename='scripts/multi-upload/search_project.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/search_groups.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/tips.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
 </body>
 </html>

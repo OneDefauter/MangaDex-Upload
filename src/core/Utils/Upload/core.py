@@ -2,11 +2,11 @@ import os
 import json
 import time
 import shutil
-import natsort
 import requests
 import tempfile
 from PIL import Image
 from tqdm import tqdm
+from natsort import natsorted
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from src.core.Utils.Others.folders import log_upload_file
@@ -74,7 +74,7 @@ class UploadChapters():
     def delete_folder(self):
         shutil.rmtree(self.temp_dir)
 
-        if os.path.exists(self.dir_tmp):
+        if os.path.exists(self.dir_tmp) and self.ispre:
             shutil.rmtree(self.dir_tmp)
 
     def get_upload_session(self):
@@ -139,63 +139,50 @@ class UploadChapters():
                 print("Token expirado") if access_token == 403 else None
                 print("Token não encontrado") if access_token == 404 else None
                 return None
-    
-    def process_images(self, session_id):
-        valid_image_extensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "avif", "webp"]
-        
-        # Criar uma pasta temporária
-        temp_dir = os.path.join("temp", session_id)
-        os.makedirs(temp_dir, exist_ok=True)
 
-        # Iterar sobre os arquivos na pasta self.path
-        for filename in os.listdir(self.path):
-            if self.status != 2:
-                filepath = os.path.join(self.path, filename)
-                file_extension = filename.split(".")[-1].lower()
-                
-                if not file_extension in valid_image_extensions:
-                    continue
-                
-                # Verificar se o arquivo é uma imagem válida
-                if "." in filename and filename.split(".")[-1].lower() in ["jpg", "jpeg", "png", "gif"]:
-                    # Verificar o tamanho da imagem
-                    n = self.check_image(filepath, temp_dir, file_extension)
-                    if n == 1:
-                        # Copiar a imagem para o diretório temporário
-                        shutil.copy(filepath, temp_dir)
-                else:
-                    # Verificar o tamanho da imagem
-                    n = self.check_image(filepath, temp_dir, "jpg")
-                    if n == 1:
-                        # Converter outros formatos para JPG
-                        try:
-                            with Image.open(filepath) as img:
-                                # Converter e salvar como JPG
-                                rgb_im = img.convert('RGB')
-                                new_filename = os.path.splitext(filename)[0] + '.jpg'
-                                rgb_im.save(os.path.join(temp_dir, new_filename))
-                        except Exception as e:
-                            print(f"Erro ao converter {filename}: {e}")
+    def check_image(self, filepath, destination_folder, extension="jpg"):
+        """
+        Verifica a altura da imagem. Se a altura for maior que 10.000 pixels:
+        - A imagem é processada usando 'cup_image'.
+        - O arquivo original é removido.
+        - Os arquivos processados são movidos para a pasta de destino.
 
-        if self.status != 2:
-            print(f"Imagens processadas e salvas em {temp_dir}")
-            return temp_dir
-        else:
-            shutil.rmtree(temp_dir)
-            return None
-
-    def check_image(self, filepath, temp_dir, extension = "jpg"):
+        :param filepath: Caminho da imagem.
+        :param destination_folder: Pasta de destino para os arquivos processados.
+        :param extension: Extensão dos arquivos gerados (padrão: 'jpg').
+        """
+        temp_dir = None
         try:
-            image_size = Image.open(filepath)
-            height = image_size.height
-            image_size.close()
-            if height > self.height_max:
+            # Cria diretório temporário
+            temp_dir = tempfile.mkdtemp(prefix='MDU_')
+
+            # Obtém altura da imagem
+            with Image.open(filepath) as img:
+                height = img.height
+
+            # Se altura for maior que 10.000, processa a imagem
+            if height > 10000:
+                print(f"Processando imagem {filepath}, altura: {height}")
                 self.cup_image(filepath, temp_dir, extension)
-                return 0
-        except:
-            return 1
-        
-        return 1
+
+                # Remove o arquivo original
+                os.remove(filepath)
+
+                # Move arquivos processados para a pasta de destino
+                for file in natsorted(os.listdir(temp_dir)):
+                    source_item = os.path.join(temp_dir, file)
+                    destination_item = os.path.join(destination_folder, file)
+                    shutil.move(source_item, destination_item)
+
+                print(f"Arquivos processados movidos para: {destination_folder}")
+
+        except Exception as e:
+            print(f"Erro ao processar a imagem '{filepath}': {e}")
+
+        finally:
+            # Remove o diretório temporário, se existir
+            if temp_dir and os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
     
     def cup_image(self, filepath, temp_dir, extension):
         # Open the image
@@ -205,10 +192,10 @@ class UploadChapters():
         width, height = image_size.size
         
         # Height of each part
-        height_part = height // self.num_parts
+        height_part = height // 3
         
         # Loop to crop the image into parts
-        for i in range(self.num_parts):
+        for i in range(3):
             # Set the cropping coordinates for the current part
             left = 0
             top = i * height_part
@@ -295,7 +282,7 @@ class UploadChapters():
         return file_size_mb
 
     def upload_images(self, session_id, temp_dir):
-        filenames = natsort.natsorted(os.listdir(temp_dir))
+        filenames = natsorted(os.listdir(temp_dir))
         
         successful = []
         failed = []
@@ -333,13 +320,13 @@ class UploadChapters():
                 else:
                     failed.append(filename)
         
-        successful = natsort.natsorted(successful, key=lambda x: x[1])
+        successful = natsorted(successful, key=lambda x: x[1])
         
         return successful, failed
     
     def commit_upload_session(self, session_id, successful):
         # Ordenar a lista de uploads bem-sucedidos por nome de arquivo
-        successful = natsort.natsorted(successful, key=lambda x: x[1])  # Ordenar por filename
+        successful = natsorted(successful, key=lambda x: x[1])  # Ordenar por filename
 
         # Criar a ordem das páginas
         page_order = [page[0] for page in successful]  # Extrair apenas os IDs das imagens
@@ -369,7 +356,7 @@ class UploadChapters():
 
         if r.ok:
             self.chapter_id_post = r.json()["data"]["id"]
-            print("Sessão de upload enviada com sucesso, ID da entidade é:", r.json()["data"]["id"])
+            print("Sessão de upload enviada com sucesso, ID do capítulo é:", r.json()["data"]["id"])
         else:
             print("Ocorreu um erro ao enviar a sessão de upload.")
             print("Status Code:", r.status_code)
@@ -397,6 +384,11 @@ class UploadChapters():
                     self.temp_dir = self.dir_tmp
 
                 if self.status != 2 or self.temp_dir is not None:
+                    for filename in natsorted(os.listdir(self.temp_dir)):
+                        filepath = os.path.join(self.temp_dir, filename)
+                        # Verificar tamanho da imagem
+                        self.check_image(filepath, self.temp_dir)
+                    
                     successful, failed = self.upload_images(session_id, self.temp_dir)
                 
                     print(f"Imagens enviadas com sucesso: {len(successful)}")

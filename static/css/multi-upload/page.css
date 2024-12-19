@@ -103,11 +103,34 @@ h2 {
     font-size: 16px;
     cursor: pointer;
     margin-top: 20px;
+    margin-right: 20px;
     transition: background-color 0.3s ease;
 }
 
 #upload-btn:hover {
     background-color: #0056b3;
+}
+
+#upload-btn:disabled {
+    background-color: #1a2a6c;
+    cursor: not-allowed;
+}
+
+#reload-btn {
+    background-color: #627080;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-left: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#reload-btn:hover {
+    background-color: #1a3655;
 }
 
 /* Estilo base dos itens */

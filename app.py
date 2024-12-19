@@ -69,6 +69,8 @@ from src.core.Utils.Others.select_folder_check import check_for_folder
 from src.core.Utils.Others.get_covers import get_folder_size
 from src.core.Utils.Others.get_temp import calculate_temp_folders_size
 from src.core.Utils.Others.process_item import process_item
+from src.core.Utils.Others.check_path import check_path
+from src.core.Utils.Others.check_image import contains_images_in_folder, contains_images_in_zip
 
 ### Upload
 from src.core.Utils.Upload.core import UploadChapters
@@ -102,7 +104,7 @@ lang = None
 TRANSLATE = None
 
 temp_folder = tempfile.gettempdir()
-app_folder = os.path.join(temp_folder, "MangaDex Upload (APP)")
+app_folder = check_path()
 
 last_folder = None
 last_file = None
@@ -967,15 +969,27 @@ def multi_upload_step():
     if not folder_path or not os.path.exists(folder_path):
         return jsonify({'success': False, 'error': 'Pasta inválida ou inexistente.'})
 
+    # Extensões permitidas para compactados
+    allowed_extensions = {'.zip', '.cbz'}
+
     # Listar arquivos e pastas no diretório
     items = []
     for item in natsorted(os.listdir(folder_path)):
         item_path = os.path.join(folder_path, item)
-        items.append({
-            'name': item,
-            'path': item_path,
-            'is_directory': os.path.isdir(item_path)
-        })
+
+        # Filtrar apenas pastas ou arquivos compactados que contêm imagens
+        if os.path.isdir(item_path) and contains_images_in_folder(item_path):
+            items.append({
+                'name': item,
+                'path': item_path,
+                'is_directory': True
+            })
+        elif os.path.splitext(item)[1].lower() in allowed_extensions and contains_images_in_zip(item_path):
+            items.append({
+                'name': item,
+                'path': item_path,
+                'is_directory': False
+            })
 
     return jsonify({'success': True, 'items': items})
 
@@ -1017,26 +1031,39 @@ def multi_upload_send():
             except Exception as e:
                 return jsonify(success=False, message=str(e)), 400
 
+    skipped_uploads = []  # Lista de uploads que já existem
+
     for x, chapters in result.items():
         for chapter in chapters:
             # Flag para verificar se o upload já existe
             upload_exists = False
 
+            queues_list = UP_Q.queue_upload
+
             # Itera sobre os uploads na fila
-            for item in list(UP_Q.get()):
+            for item in queues_list.values():
                 if (
-                    item.manga_id == manga['id'] and
-                    item.language == data['language'] and
-                    item.groups == chapter['group'] and
-                    item.volume == chapter['volume'] and
-                    item.chapter == chapter['chapter']
+                    item['manga_id'] == manga['id'] and
+                    item['language'] == data['language'] and
+                    item['groups'] == chapter['group'] and
+                    item['volume'] == chapter['volume'] and
+                    item['chapter'] == chapter['chapter']
                 ):
                     # Upload já existe na fila
                     upload_exists = True
+                    skipped_uploads.append({
+                        'title': manga['attributes']['title']['en'],
+                        'language': data['language'],
+                        'group': chapter['group'],
+                        'volume': chapter['volume'],
+                        'chapter': chapter['chapter']
+                    })
                     break
 
             # Se o upload já existe, pule para o próximo capítulo
             if upload_exists:
+                if chapter['ispre']:
+                    shutil.rmtree(chapter['path'])
                 continue
 
             # Criar o objeto UploadChapters
@@ -1060,7 +1087,7 @@ def multi_upload_send():
             )
             
             # Adiciona à fila e atualiza o dicionário de status
-            UP_Q.queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter}"] = {
+            UP_Q.queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter['chapter']}"] = {
                 'manga_id': manga['id'],
                 'manga_title': manga['attributes']['title']['en'],
                 'title': chapter.get('title', ''),
@@ -1077,8 +1104,12 @@ def multi_upload_send():
 
             UP_Q.add(upload_core)
 
-    # Retorna a resposta
-    return jsonify(success=True, message=translate.get('upload_added_to_queue', 'Upload enviado para fila.'))
+    # Retorna a resposta incluindo os capítulos que foram pulados
+    return jsonify(
+        success=True, 
+        message=translate.get('upload_added_to_queue', 'Upload enviado para fila.'),
+        skipped_uploads=skipped_uploads  # Capítulos não enviados
+    )
 
 
 

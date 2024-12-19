@@ -22,6 +22,12 @@ def process_item(args):
                     success, error_message = preprocessor.extract_archive(file_path, temp_dir)
                     if not success:
                         return {'error': f"Extraction failed for {file_path.name}: {error_message}"}
+                    
+                else:
+                    temp_dir = tempfile.mkdtemp(prefix='MDU_')
+                    success, error_message = preprocessor.extract_archive(file_path, temp_dir)
+                    if not success:
+                        return {'error': f"Extraction failed for {file_path.name}: {error_message}"}
                 
                 scans = []
                 for scan in group_data['scans']:
@@ -58,10 +64,12 @@ def process_item(args):
                 if config['preprocess_images']:
                     ispre = True
                     temp_dir = tempfile.mkdtemp(prefix='MDU_')
-                    
                     success = preprocessor.preprocess_image_folder(file_path, temp_dir)
                     if not success:
                         return {'error': f"Preprocessing failed for {file_path.name}"}
+                
+                else:
+                    temp_dir = file_path
                 
                 scans = []
                 for scan in group_data['scans']:

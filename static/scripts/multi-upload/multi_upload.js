@@ -350,8 +350,10 @@ function showGroupModal() {
     const modal = document.getElementById('group-modal');
     const selectedItemsList = document.getElementById('selected-items-list');
     const scanTagsContainer = document.getElementById('selected-groups'); // Container para as tags de scan
+    const VolumeContainer = document.getElementById('volume');
     selectedItemsList.innerHTML = '';
     scanTagsContainer.innerHTML = ''; // Limpar grupos/scan selecionados
+    VolumeContainer.value = '';
 
     // Obter todos os itens selecionados
     const selectedItems = document.querySelectorAll('.file-item.selected');
@@ -484,7 +486,7 @@ function closeModal() {
 
 // Função para extrair o número do capítulo do nome do item
 function extractChapterNumber(name) {
-    const match = name.match(/\d+/);
+    const match = name.match(/\d+(\.\d+)?/);
     return match ? match[0] : '';
 }
 
@@ -507,6 +509,8 @@ function generateUniqueColor() {
 document.getElementById('continue-btn').addEventListener('click', function () {
     const project = document.getElementById('project-id').value.trim();
     const folderPath = document.getElementById('parent-folder').value.trim();
+    const sendButton = document.getElementById('upload-btn'); // Botão Enviar Todos
+    const noItemsMessage = document.getElementById('no-items-message'); // Mensagem vazia
 
     if (!project) {
         alert(translations.need_project);
@@ -529,37 +533,52 @@ document.getElementById('continue-btn').addEventListener('click', function () {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Atualizar a interface com os itens encontrados
-                itemsList.innerHTML = ''; // Limpar a lista atual
+                itemsList.innerHTML = ''; // Limpa a lista
 
-                // Adicionar os itens à lista
-                data.items.forEach((item, index) => {
-                    const listItem = document.createElement('li');
+                // Verifica se há itens retornados
+                if (data.items.length === 0) {
+                    // Exibe mensagem de nenhum item encontrado
+                    noItemsMessage.style.display = 'block';
+                    sendButton.disabled = true; // Desativa botão Enviar Todos
 
-                    // Adicionar classe base
-                    listItem.classList.add('file-item');
+                    // Ocultar o formulário e exibir a lista
+                    document.getElementById('folder-input-group').style.display = 'none';
+                    document.getElementById('folder-list').style.display = 'block';
 
-                    // Ícone e nome do item
-                    const icon = document.createElement('i');
-                    icon.className = item.is_directory ? 'fi fi-rr-folder' : 'fi fi-rr-file';
+                } else {
+                    // Oculta mensagem e habilita botão
+                    noItemsMessage.style.display = 'none';
+                    sendButton.disabled = false;
 
-                    const itemName = document.createElement('p');
-                    itemName.textContent = item.name;
-
-                    // Adicionar ícone e nome ao item
-                    listItem.appendChild(icon);
-                    listItem.appendChild(itemName);
-
-                    // Adicionar evento de clique para seleção
-                    listItem.addEventListener('click', (event) => handleItemClick(event, index));
-
-                    // Adicionar o item à lista
-                    itemsList.appendChild(listItem);
-                });
-
-                // Ocultar o formulário e exibir a lista
-                document.getElementById('folder-input-group').style.display = 'none';
-                document.getElementById('folder-list').style.display = 'block';
+                    // Adiciona itens à lista
+                    data.items.forEach((item, index) => {
+                        const listItem = document.createElement('li');
+    
+                        // Adicionar classe base
+                        listItem.classList.add('file-item');
+    
+                        // Ícone e nome do item
+                        const icon = document.createElement('i');
+                        icon.className = item.is_directory ? 'fi fi-rr-folder' : 'fi fi-rr-file';
+    
+                        const itemName = document.createElement('p');
+                        itemName.textContent = item.name;
+    
+                        // Adicionar ícone e nome ao item
+                        listItem.appendChild(icon);
+                        listItem.appendChild(itemName);
+    
+                        // Adicionar evento de clique para seleção
+                        listItem.addEventListener('click', (event) => handleItemClick(event, index));
+    
+                        // Adicionar o item à lista
+                        itemsList.appendChild(listItem);
+                    });
+                
+                    // Ocultar o formulário e exibir a lista
+                    document.getElementById('folder-input-group').style.display = 'none';
+                    document.getElementById('folder-list').style.display = 'block';
+                }
             } else {
                 alert(`${translations.error_proccess_path}: ` + data.error);
             }
@@ -590,9 +609,21 @@ document.getElementById('upload-btn').addEventListener('click', function () {
         .then(data => {
             // Processa a resposta do servidor
             if (data.success) {
-                alert(translations.upload_success);
+                // alert(translations.upload_success);
+                showNotifications([translations.upload_success]); // Exibe mensagem de sucesso
+                // Verifica se há capítulos pulados
+                if (data.skipped_uploads && data.skipped_uploads.length > 0) {
+                    const skippedMessages = data.skipped_uploads.map(chapter => 
+                        `Capítulo pulado<br>` +
+                        `Projeto: ${chapter.title}<br>` +
+                        `Capítulo: ${chapter.chapter}<br>` +
+                        `Linguagem: ${chapter.language}`
+                    );
+                    showNotifications(skippedMessages); // Notificações dos capítulos pulados
+                }
             } else {
-                alert(`${translations.error_occurred}: ` + data.message);
+                // alert(`${translations.error_occurred}: ` + data.message);
+                showNotifications([`${translations.error_occurred}: ` + data.message]);
             }
         })
         .catch(error => {
@@ -601,6 +632,75 @@ document.getElementById('upload-btn').addEventListener('click', function () {
         })
         .finally(() => {
             // Oculta o overlay de carregamento após a operação
+            loadingOverlay.style.display = 'none';
+        });
+});
+
+document.getElementById('reload-btn').addEventListener('click', function() {
+    const folderPath = document.getElementById('parent-folder').value.trim();
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const sendButton = document.getElementById('upload-btn'); // Botão Enviar Todos
+    const noItemsMessage = document.getElementById('no-items-message'); // Mensagem vazia
+
+    // Mostra o overlay de carregamento
+    loadingOverlay.style.display = 'flex';
+
+    fetch('/multi-upload-step', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ folder_path: folderPath })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                itemsList.innerHTML = ''; // Limpa a lista
+
+                // Verifica se há itens retornados
+                if (data.items.length === 0) {
+                    // Exibe mensagem de nenhum item encontrado
+                    noItemsMessage.style.display = 'block';
+                    sendButton.disabled = true; // Desativa botão Enviar Todos
+                } else {
+                    // Oculta mensagem e habilita botão
+                    noItemsMessage.style.display = 'none';
+                    sendButton.disabled = false;
+
+                    // Adiciona itens à lista
+                    data.items.forEach((item, index) => {
+                        const listItem = document.createElement('li');
+    
+                        // Adicionar classe base
+                        listItem.classList.add('file-item');
+    
+                        // Ícone e nome do item
+                        const icon = document.createElement('i');
+                        icon.className = item.is_directory ? 'fi fi-rr-folder' : 'fi fi-rr-file';
+    
+                        const itemName = document.createElement('p');
+                        itemName.textContent = item.name;
+    
+                        // Adicionar ícone e nome ao item
+                        listItem.appendChild(icon);
+                        listItem.appendChild(itemName);
+    
+                        // Adicionar evento de clique para seleção
+                        listItem.addEventListener('click', (event) => handleItemClick(event, index));
+    
+                        // Adicionar o item à lista
+                        itemsList.appendChild(listItem);
+                    });
+                }
+            } else {
+                alert(`${translations.error_proccess_path}: ` + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert(translations.error_send_path);
+        })
+        .finally(() => {
             loadingOverlay.style.display = 'none';
         });
 });
