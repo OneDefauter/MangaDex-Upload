@@ -105,9 +105,12 @@ welcome_seen = False
 lang = None
 TRANSLATE = None
 
-android_path = Path(os.path.join(os.getcwd(), 'Download', 'Mangadex Upload (uploads)'))
+android_path = Path('/storage/emulated/0/Download/Mangadex Upload (uploads)')
 temp_folder = tempfile.gettempdir()
 app_folder = check_path()
+
+print('android', android_path, '\n')
+print('temp', temp_folder, '\n\n')
 
 last_folder = None
 last_file = None
