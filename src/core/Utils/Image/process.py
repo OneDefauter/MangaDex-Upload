@@ -6,7 +6,12 @@ from PIL import Image
 from pathlib import Path
 from natsort import natsorted
 from concurrent.futures import ThreadPoolExecutor
-from src.core.Utils.SmartStitch.process import ConsoleStitchProcess
+
+try:
+    import psd_tools
+    from src.core.Utils.SmartStitch.process import ConsoleStitchProcess
+except:
+    ...
 
 class ImagePreprocessor:
     def __init__(self, config, num_parts=5):
@@ -131,6 +136,10 @@ class ImagePreprocessor:
 
         # Abre a imagem para verificar as dimensões
         with Image.open(filepath) as img:
+            # Converte para RGB se necessário e apenas se o output for JPG/JPEG
+            if self.output_file_type in [".jpg", ".jpeg"] and img.mode != "RGB":
+                img = img.convert("RGB")
+
             width, height = img.size
 
             if height > 10000:

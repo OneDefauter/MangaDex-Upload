@@ -74,8 +74,9 @@ class UploadChapters():
     def delete_folder(self):
         shutil.rmtree(self.temp_dir)
 
-        if os.path.exists(self.dir_tmp) and self.ispre:
-            shutil.rmtree(self.dir_tmp)
+        if self.dir_tmp:
+            if os.path.exists(self.dir_tmp) and self.ispre:
+                shutil.rmtree(self.dir_tmp)
 
     def get_upload_session(self):
         r = requests.get(
@@ -307,6 +308,12 @@ class UploadChapters():
                 # Verifica se o tamanho total do capítulo excede 200MB
                 if total_size_mb > 200:
                     print(f"O tamanho total do capítulo excede 200MB. Upload cancelado.")
+                    self.status_cancel()
+                    shutil.rmtree(temp_dir)
+                    return successful, failed
+                
+                if len(os.listdir(temp_dir)) == 0:
+                    print(f"Nenhuma imagem encontrada (problema ao copiar ou converter).")
                     self.status_cancel()
                     shutil.rmtree(temp_dir)
                     return successful, failed

@@ -15,6 +15,11 @@
             <button onclick="showSection('downloads')">{{ translations.get('downloads', 'Downloads') }}</button>
             <button onclick="showSection('uploads')">{{ translations.get('uploads', 'Uploads') }}</button>
         </div>
+        <div class="reverse-toggle">
+            <button id="reverse-btn" class="reverse-off" onclick="toggleReverse()">
+                {{ translations.get('reverse_button', 'Reverso') }}
+            </button>
+        </div>
         <div id="downloads" class="section active scrollable-list">
             <h3>{{ translations.get('download_queue', 'Fila de Downloads') }}</h3>
             <ul id="download-list" class="item-list"></ul>
@@ -28,6 +33,8 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='scripts/queue.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
     <script>
         // Traduções para mensagens vazias
         const emptyDownloadMessage = "{{ translations.get('no_download_items', 'Nenhum item na fila de downloads') }}";

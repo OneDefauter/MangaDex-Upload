@@ -6,6 +6,7 @@
     <title>{{ translations.get('upload_manga', 'Enviar Mangá') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
     <!-- Link para os ícones do Flaticon -->
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 </head>
@@ -86,12 +87,9 @@
         <div class="loading-spinner"></div>
     </div>
 
-    <div id="notifications" class="notifications">
-        <!-- As notificações serão inseridas aqui pelo JavaScript -->
-    </div>
-
     <!-- Translations passed to JavaScript -->
     <script>
+        const isAndroid = {{ session['is_android'] | tojson }}
         const translations = {
             project: "{{ translations.get('tip_project', 'Projeto: Identifique o projeto ao qual este upload pertence.') }}",
             group: "{{ translations.get('tip_group', 'Grupo: Selecione o grupo responsável por este mangá.') }}",
@@ -106,7 +104,8 @@
             finish: "{{ translations.get('finish', 'Finalizar') }}"
         };
     </script>
-
     <script src="{{ url_for('static', filename='scripts/upload.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
 </body>
 </html>

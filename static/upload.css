@@ -243,35 +243,6 @@ button:hover {
     animation: spin 1s linear infinite;
 }
 
-.notification {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 1000;
-    margin-top: 10px; /* Espaçamento entre notificações */
-    position: relative; /* Permite empilhar as notificações */
-}
-
-.notification.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.notifications {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    z-index: 1000;
-}
-
 #folder {
     padding-right: 70px; /* Espaço extra para os ícones */
 }

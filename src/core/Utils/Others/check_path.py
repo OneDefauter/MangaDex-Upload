@@ -1,7 +1,5 @@
 import os
-import sys
 from tempfile import gettempdir
-from time import sleep
 
 def check_path():
     temp_folder = gettempdir()
@@ -19,9 +17,7 @@ def check_path():
         return os_app_folder
     
     else:
-        print("Folder 'MangaDex Upload (APP)' not found.")
-        sleep(3)
-        sys.exit()
+        return app_folder
 
 def lib_path():
     temp_folder = gettempdir()
@@ -39,6 +35,4 @@ def lib_path():
         return 1, os_app_folder
     
     else:
-        print("Folder 'MangaDex Upload (APP)' not found.")
-        sleep(3)
-        sys.exit()
+        return 0, app_folder

@@ -97,35 +97,6 @@ h2 {
     opacity: 1;
 }
 
-.notification {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 1000;
-    margin-top: 10px; /* Espaçamento entre notificações */
-    position: relative; /* Permite empilhar as notificações */
-}
-
-.notification.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.notifications {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    z-index: 1000;
-}
-
 @keyframes gradientBackground {
     0% {
         background-position: 0% 50%;
@@ -135,5 +106,105 @@ h2 {
     }
     100% {
         background-position: 0% 50%;
+    }
+}
+
+/* Estilos para telas menores */
+@media (max-width: 768px) {
+    body {
+        justify-content: flex-start; /* Ajusta o alinhamento */
+        align-items: flex-start;
+        padding: 1rem; /* Adiciona espaçamento interno */
+    }
+
+    .container {
+        width: 100%; /* Usa toda a largura da tela */
+        padding: 1.5rem;
+        border-radius: 10px; /* Reduz o arredondamento */
+    }
+
+    h2 {
+        font-size: 1.5rem; /* Reduz o tamanho do título */
+        margin-bottom: 1rem;
+    }
+
+    .button-container {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Botões menores */
+        gap: 0.5rem; /* Reduz o espaçamento entre botões */
+        margin-top: 1rem;
+    }
+
+    .icon-button {
+        padding: 1rem;
+        font-size: 1.5rem;
+        width: 80px;
+        height: 80px;
+    }
+
+    .icon-button i {
+        font-size: 2rem; /* Reduz o tamanho dos ícones */
+    }
+
+    .tooltiptext {
+        width: 100px; /* Menor largura para tooltips */
+        font-size: 0.8rem; /* Texto menor */
+    }
+}
+
+/* Estilos responsivos para telas menores */
+@media (max-width: 768px) {
+    body {
+        justify-content: flex-start; /* Alinha o conteúdo no topo */
+        align-items: center; /* Centraliza horizontalmente */
+        padding: 1rem; /* Adiciona espaçamento nas laterais */
+    }
+
+    .container {
+        width: 95%; /* Reduz a largura para melhor encaixe */
+        padding: 2rem; /* Ajusta o padding */
+        border-radius: 15px; /* Reduz o arredondamento */
+    }
+
+    h2 {
+        font-size: 1.5rem; /* Reduz o tamanho do título */
+        margin-bottom: 1rem;
+    }
+
+    .button-container {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Adapta o número de botões por linha */
+        gap: 0.8rem; /* Reduz o espaçamento entre botões */
+    }
+
+    .icon-button {
+        width: 70px;
+        height: 70px;
+        padding: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .icon-button i {
+        font-size: 1.8rem;
+    }
+
+    .tooltiptext {
+        font-size: 0.9rem; /* Texto menor para tooltips */
+        max-width: 100px; /* Ajusta largura */
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.2rem; /* Texto menor ainda para telas muito pequenas */
+    }
+
+    .icon-button {
+        width: 60px;
+        height: 60px;
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+
+    .icon-button i {
+        font-size: 1.5rem;
     }
 }

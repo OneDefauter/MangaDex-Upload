@@ -185,3 +185,31 @@ button.btn-login:hover {
         background-position: 0% 50%;
     }
 }
+
+.reverse-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#reverse-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid #e63946;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#reverse-btn.reverse-on {
+    background-color: #e63946;
+    color: white;
+    border: 2px solid transparent;
+}
+
+#reverse-btn.reverse-off {
+    background-color: transparent;
+    color: #e63946;
+    border: 2px solid #e63946;
+}

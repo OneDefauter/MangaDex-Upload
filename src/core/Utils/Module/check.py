@@ -1,4 +1,5 @@
 import os
+import platform
 import subprocess
 import importlib
 from src.core.Utils.Others.check_path import lib_path
@@ -6,12 +7,31 @@ from src.core.Utils.Others.check_path import lib_path
 def install_module(module, path=None):
     """Instala o módulo especificado."""
     try:
-        command = ['pip', 'install', module] if path is None else [f'{path}', 'Python312', 'python.exe', '-m', 'pip', 'install', module]
-        subprocess.run(command, check=True, shell=True)  # shell=True para resolver questões de permissão
+        # Detecta o sistema operacional
+        if platform.system() == "Windows":
+            # Comando para Windows
+            if path is None:
+                command = ['pip', 'install', module]
+            else:
+                command = [os.path.join(path, 'Python312', 'python.exe'), '-m', 'pip', 'install', module]
+        else:
+            # Comando para Linux/Mac (usando pip3 explicitamente)
+            command = ['pip3', 'install', module]
+        
+        # Executa o comando
+        subprocess.run(command, check=True)
+        print(f"Módulo '{module}' instalado com sucesso!")
     except subprocess.CalledProcessError as e:
         print(f"Erro ao instalar {module}: {e}")
     except PermissionError as e:
-        print(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador. Erro: {e}")
+        print(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador/sudo. Erro: {e}")
+
+def check_smartstitch_compatible():
+    try:
+        import psd_tools
+        return True
+    except:
+        return False
 
 # Lista de módulos obrigatórios
 required_modules = [
@@ -24,14 +44,15 @@ required_modules = [
     'markdown',
     'packaging',
     'pycryptodome',
-    'flask-session',
+    'flask_session',
     'psd-tools'
 ]
 
 # Mapeamento de módulos com nomes alternativos para importação
 alternate_imports = {
     'Pillow': 'PIL',
-    'pycryptodome': ['Crypto', 'Cryptodome']
+    'pycryptodome': ['Crypto', 'Cryptodome'],
+    'flask_session': 'flask-session'
 }
 
 lib, path_ = lib_path()
@@ -55,4 +76,4 @@ for module in required_modules:
         install_module(module, None if lib == 0 else path_)
 
 # Limpar a tela
-os.system('cls' if os.name == 'nt' else 'clear')
+os.system('cls' if platform.system() == "Windows" else 'clear')

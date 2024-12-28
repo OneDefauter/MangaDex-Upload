@@ -72,6 +72,15 @@ window.onload = function() {
         showTip(currentTipIndex);
     }
 
+    if (isAndroid) {
+        const folderBtn = document.getElementById('folder-btn');
+        const lb_folder = document.querySelector('label[for="folder"]');
+        lb_folder.textContent = 'Arquivo:'
+        folderBtn.disabled = true;
+        folderBtn.style = 'display: none;'
+        folderBtn.classList.add('disabled'); // Opcional: Adicione uma classe para estilização
+    }
+
     tipNextBtn.addEventListener('click', function() {
         if (currentTipIndex >= 0) {
             const previousField = document.getElementById(tips[currentTipIndex].id);
@@ -110,8 +119,6 @@ window.onload = function() {
     // Inicia com a primeira dica
     currentTipIndex = 0;
     showTip(currentTipIndex);
-
-    const isAndroid = /Android/i.test(navigator.userAgent);
 
     document.getElementById('folder-btn').addEventListener('click', function () {
         if (isAndroid) {
@@ -180,13 +187,43 @@ window.onload = function() {
     function openAndroidFileSelector() {
         const input = document.createElement('input');
         input.type = 'file';
+        input.accept = '.cbz,.zip'; // Restringe aos arquivos CBZ e ZIP
         input.onchange = function (event) {
-            const filePath = event.target.files[0].name;
-            document.getElementById('folder').value = filePath;
-            showNotifications([`Arquivo selecionado`]);
+            if (event.target.files.length > 0) {
+                const file = event.target.files[0];
+                const allowedExtensions = ['.cbz', '.zip'];
+                const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    
+                if (allowedExtensions.includes(fileExtension)) {
+                    // Enviar o nome do arquivo para o backend para verificação
+                    fetch('/verify_file', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ filename: file.name })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            document.getElementById('folder').value = file.name;
+                        } else {
+                            showNotifications(['Arquivo não encontrado na pasta esperada.']);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao verificar o arquivo no backend:', error);
+                        showNotifications(['Erro ao verificar o arquivo. Tente novamente.']);
+                    });
+                } else {
+                    showNotifications([`Formato de arquivo inválido. Apenas arquivos CBZ e ZIP são permitidos.`]);
+                }
+            } else {
+                showNotifications(['Nenhum arquivo foi selecionado']);
+            }
         };
         input.click();
-    }
+    }    
 };
 
 document.getElementById('project').addEventListener('input', function () {
@@ -406,7 +443,7 @@ document.getElementById('submit-btn').addEventListener('click', function () {
             }
 
         } else {
-            showNotifications(['Erro ao enviar dados.']);
+            showNotifications([result.message]);
         }
     })
     .catch(error => {

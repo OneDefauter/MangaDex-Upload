@@ -61,6 +61,8 @@
             background-color: #0056b3;
         }
     </style>
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
     <script>
         function filterWorks() {
             const searchTerm = document.getElementById("search-bar").value.toLowerCase();

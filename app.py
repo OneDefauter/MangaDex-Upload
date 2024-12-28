@@ -1,6 +1,7 @@
-import src.core.Utils.Module.check
+import src.core.Utils.Module.check as ck
 
 import os
+import re
 import json
 import shutil
 import markdown
@@ -76,10 +77,11 @@ from src.core.Utils.Others.check_image import contains_images_in_folder, contain
 from src.core.Utils.Upload.core import UploadChapters
 from src.core.Utils.Upload.upload import UploadQueue
 
+SmartStitch_enable = ck.check_smartstitch_compatible()
 
 
 login_core = LoginAuth()
-config_core = ConfigFile()
+config_core = ConfigFile(SmartStitch_enable)
 
 DW_Q = DownloadQueue()
 UP_Q = UploadQueue()
@@ -103,6 +105,7 @@ welcome_seen = False
 lang = None
 TRANSLATE = None
 
+android_path = Path(os.path.join(os.getcwd(), 'Download', 'Mangadex Upload (uploads)'))
 temp_folder = tempfile.gettempdir()
 app_folder = check_path()
 
@@ -128,33 +131,34 @@ def login_required(f):
     return decorated_function
 
 @app.before_request
-def LanguageUser():
-    user_language = request.headers.get('Accept-Language')
-    primary_language = user_language.split(',')[0].lower()
-
-    if 'lang' not in session or session['lang'] != primary_language:
-        session['lang'] = primary_language
-
-        # Defina o idioma padrão, por exemplo, 'en'
+def preprocess_request():
+    # Verifica o idioma do usuário e carrega traduções
+    user_language = request.headers.get('Accept-Language', 'en').split(',')[0].lower()
+    if 'lang' not in session or session['lang'] != user_language:
+        session['lang'] = user_language
         default_language = 'en'
-        
-        # Tente carregar a tradução correspondente ao idioma detectado
+        language_file = os.path.join(app_folder, 'src', 'locale', f'{user_language}.json')
         try:
-            with open(os.path.join(app_folder, 'src', 'locale', f'{primary_language}.json'), 'r', encoding='utf-8') as file:
+            with open(language_file, 'r', encoding='utf-8') as file:
                 session['TRANSLATE'] = json.load(file)
         except FileNotFoundError:
-            # Se não encontrar, carregar o idioma padrão
-            with open(os.path.join(app_folder, 'src', 'locale', f'{default_language}.json'), 'r', encoding='utf-8') as file:
+            fallback_file = os.path.join(app_folder, 'src', 'locale', f'{default_language}.json')
+            with open(fallback_file, 'r', encoding='utf-8') as file:
                 session['TRANSLATE'] = json.load(file)
             session['lang'] = default_language
 
-@app.before_request
-def require_login():
-    # Lista de rotas públicas que não precisam de login
+    # Verifica se o usuário está logado
     public_routes = ['login', 'static']  # Adicione outras rotas públicas aqui
     if request.endpoint not in public_routes and not session.get('access_token'):
         flash("Você precisa estar logado para acessar esta página.")
         return redirect(url_for('login'))
+
+    # Verifica o agente do usuário
+    user_agent = request.headers.get('User-Agent', '').lower()
+    session['is_android'] = 'android' in user_agent
+    if session['is_android'] and not os.path.exists(android_path):
+        os.makedirs(android_path, exist_ok=True)
+
 
 @app.route('/api/search', methods=['GET'])
 def api_search():
@@ -246,8 +250,8 @@ def get_chapter_details(chapter_id):
 
 @app.route('/config', methods=['GET', 'POST'])
 def config():
-    config_data = config_core.load_config()
-    translate = session.get('TRANSLATE', {})
+    config_data = config_core.load_config()  # Carrega as configurações atuais
+    translate = session.get('TRANSLATE', {})  # Obtém traduções da sessão
 
     if request.method == 'POST':
         # Obtém os valores do formulário
@@ -268,36 +272,16 @@ def config():
         queue_operations = int(request.form.get('queue_operations'))
         image_operations = int(request.form.get('image_operations'))
 
+        if not SmartStitch_enable:
+            cutting_tool = 'Pillow'
+
         # Limites para as configurações numéricas
-        if upload > 10:
-            upload = 10
-        elif upload < 1:
-            upload = 1
-
-        if retry > 3:
-            retry = 3
-        elif retry < 1:
-            retry = 1
-
-        if max_results > 100:
-            max_results = 100
-        elif max_results < 1:
-            max_results = 1
-
-        if queue_operations > 10:
-            queue_operations = 10
-        elif queue_operations < 1:
-            queue_operations = 1
-
-        if image_operations > 10:
-            image_operations = 10
-        elif image_operations < 1:
-            image_operations = 1
-
-        if output_image_quality > 100:
-            output_image_quality = 100
-        elif output_image_quality < 0:
-            output_image_quality = 0
+        upload = min(max(upload, 1), 10)
+        retry = min(max(retry, 1), 3)
+        max_results = min(max(max_results, 1), 100)
+        queue_operations = min(max(queue_operations, 1), 10)
+        image_operations = min(max(image_operations, 1), 10)
+        output_image_quality = min(max(output_image_quality, 0), 100)
 
         # Atualiza os dados de configuração
         config_data.update({
@@ -323,16 +307,19 @@ def config():
         config_core.save_config(config_data)
         flash(translate.get('config_saved', 'Configurações salvas com sucesso!'))
 
+    # Calcula o tamanho das pastas
     folder_size = get_folder_size()
     temp_folders_size = calculate_temp_folders_size()
 
+    # Renderiza o template com as configurações
     return render_template(
-        'config.html', 
-        config=config_data, 
-        default_config=config_core.default_config, 
-        translations=translate, 
-        folder_size=folder_size, 
-        temp_folders_size=temp_folders_size
+        'config.html',
+        config=config_data,
+        default_config=config_core.default_config,
+        translations=translate,
+        folder_size=folder_size,
+        temp_folders_size=temp_folders_size,
+        SmartStitch_enable=SmartStitch_enable
     )
 
 @app.route('/restore_defaults', methods=['POST'])
@@ -614,7 +601,12 @@ def submit():
         
     data = request.get_json()
     
-    path = Path(data['folder'])
+    if session['is_android']:
+        path = Path(os.path.join(android_path, data['folder']))
+        print(path)
+    
+    else:
+        path = Path(data['folder'])
     
     # Verifica se o caminho existe
     if os.path.exists(str(path)):
@@ -703,10 +695,21 @@ def submit():
         chapter = None if data['singleChapter'] else data['chapter']
         volume = None if data['singleChapter'] else data['volume']
 
-        for item in list(UP_Q.get()):
-            if item.manga_id == manga['id'] and item.language == data['language'] and item.groups == groups and item.volume == volume and item.chapter == chapter and item.path == path and item.oneshot == data['singleChapter']:
-                return jsonify(success=False, message=translate.get('duplicate_upload', 'Este upload já está na fila.'))
+        queues_list = UP_Q.queue_upload
 
+        # Itera sobre os uploads na fila
+        for item in queues_list.values():
+            if (
+                item['manga_id'] == manga['id'] and
+                item['language'] == data['language'] and
+                item['groups'] == groups and
+                item['volume'] == volume and
+                item['chapter'] == chapter and
+                item['path'] == path and
+                item['oneshot'] == data['singleChapter']
+            ):
+                return jsonify(success=False, message=translate.get('duplicate_upload', 'Este upload já está na fila.'))
+                
         upload_core = UploadChapters(
             manga_id=manga['id'],
             manga_title=manga['attributes']['title']['en'],
@@ -738,6 +741,7 @@ def submit():
             'datetime': publish_date_str,
             'oneshot': data['singleChapter'],
             'status': translate.get('waiting', 'Aguardando'),
+            'notif': False,
             'error': None
         }
         
@@ -747,6 +751,27 @@ def submit():
     
     else:
         return jsonify(success=False, message=translate.get('project_not_found', 'Projeto não encontrado.'))
+
+@app.route('/verify_file', methods=['POST'])
+def verify_file():
+    data = request.json
+    filename = data.get('filename')
+    app.logger.info(f"Received request to verify file: {filename}")  # Log do arquivo recebido
+
+    if not filename:
+        app.logger.error("No filename provided in the request")
+        return jsonify({'exists': False, 'message': 'Filename not provided'}), 400
+
+    # Verificar se o arquivo existe
+    file_path = android_path / filename
+    app.logger.info(f"Checking file path: {file_path}")  # Log do caminho verificado
+
+    if file_path.exists():
+        app.logger.info("File exists")
+        return jsonify({'exists': True})
+    else:
+        app.logger.warning("File does not exist")
+        return jsonify({'exists': False, 'message': 'File does not exist'})
 
 @app.route('/api/check_tip_seen', methods=['GET'])
 def check_tip_seen():
@@ -823,23 +848,79 @@ def update_route():
 @app.route('/queue')
 def queue():
     translate = session.get('TRANSLATE', {})
-    return render_template('queue.html', translations=translate, queue_download=DW_Q.queue_download, queue_upload=UP_Q.queue_upload)
+
+    def normalize_chapter(chapter):
+        """Normaliza o capítulo para ordenação natural."""
+        import re
+        if not chapter:
+            return float('inf')  # Capítulos ausentes vão para o final
+        return [int(part) if part.isdigit() else part.lower() for part in re.split(r'(\d+)', chapter)]
+
+    # Ordenar a fila de uploads
+    sorted_queue_upload = natsorted(
+        UP_Q.queue_upload.items(),
+        key=lambda item: (
+            item[1].get('manga_title', '').lower(),  # Ordena por título em ordem alfabética
+            normalize_chapter(item[1].get('chapter'))  # Ordena capítulos naturalmente
+        )
+    )
+
+    # Ordenar a fila de downloads (se aplicável)
+    sorted_queue_download = natsorted(
+        DW_Q.queue_download.items(),
+        key=lambda item: (
+            item[1].get('manga_title', '').lower(),  # Ordena por título em ordem alfabética
+            normalize_chapter(item[1].get('chapter'))  # Ordena capítulos naturalmente
+        )
+    )
+
+    return render_template(
+        'queue.html',
+        translations=translate,
+        queue_download=sorted_queue_download,
+        queue_upload=sorted_queue_upload
+    )
 
 @app.route('/get_queue_data', methods=['POST'])
 def get_queue_data():
-    try:
-        # Criar uma cópia dos dados com o path como string
-        queue_upload_with_path_str = {
-            key: {
-                **item,
-                'path': str(item['path']) if isinstance(item['path'], Path) else None
-            } for key, item in UP_Q.queue_upload.items()
-        }
+    def normalize_chapter(chapter):
+        """Normaliza o capítulo para ordenação natural."""
+        if not chapter:
+            return float('inf')  # Capítulos ausentes vão para o final
+        return [int(part) if part.isdigit() else part.lower() for part in re.split(r'(\d+)', chapter)]
 
-        return jsonify(queue_download=DW_Q.queue_download, queue_upload=queue_upload_with_path_str)
-    except Exception as e:
-        print(f"Erro ao processar /get_queue_data: {e}")
-        return jsonify(error=str(e)), 500
+    def serialize_path(data):
+        """Converte todos os objetos WindowsPath para string."""
+        for key, value in data.items():
+            if isinstance(value, dict):
+                data[key] = serialize_path(value)  # Chamado recursivamente para dicionários
+            elif isinstance(value, Path):  # Converte Path para string
+                data[key] = str(value)
+        return data
+
+    # Ordenar a fila de uploads
+    sorted_queue_upload = natsorted(
+        UP_Q.queue_upload.items(),
+        key=lambda item: (
+            item[1].get('manga_title', '').lower(),  # Ordena por título em ordem alfabética
+            normalize_chapter(item[1].get('chapter'))  # Ordena capítulos naturalmente
+        )
+    )
+
+    # Ordenar a fila de downloads (se aplicável)
+    sorted_queue_download = natsorted(
+        DW_Q.queue_download.items(),
+        key=lambda item: (
+            item[1].get('manga_title', '').lower(),  # Ordena por título em ordem alfabética
+            normalize_chapter(item[1].get('chapter'))  # Ordena capítulos naturalmente
+        )
+    )
+
+    # Converte para listas ordenadas com chaves explícitas
+    sorted_queue_upload = [{"key": k, **serialize_path(v)} for k, v in sorted_queue_upload]
+    sorted_queue_download = [{"key": k, **serialize_path(v)} for k, v in sorted_queue_download]
+
+    return jsonify(queue_download=sorted_queue_download, queue_upload=sorted_queue_upload)
 
 @app.route('/delete_item', methods=['POST'])
 def delete_item():
@@ -958,14 +1039,19 @@ def delete_chapter(chapter_id):
 @app.route('/mult_upload')
 def mult_upload():
     translate = session.get('TRANSLATE', {})
-
-    return render_template('mult_upload.html', translations=translate)
+    is_android = session.get('is_android', False)
+    return render_template('mult_upload.html', translations=translate, is_android=is_android)
 
 @app.route('/multi-upload-step', methods=['POST'])
 def multi_upload_step():
     data = request.json
     folder_path = data.get('folder_path')
+    
+    # Substituir o caminho para Android
+    if session.get('is_android', False):  # Verifica explicitamente se a sessão é Android
+        folder_path = android_path
 
+    # Verificar se o caminho é válido
     if not folder_path or not os.path.exists(folder_path):
         return jsonify({'success': False, 'error': 'Pasta inválida ou inexistente.'})
 
@@ -977,19 +1063,29 @@ def multi_upload_step():
     for item in natsorted(os.listdir(folder_path)):
         item_path = os.path.join(folder_path, item)
 
-        # Filtrar apenas pastas ou arquivos compactados que contêm imagens
-        if os.path.isdir(item_path) and contains_images_in_folder(item_path):
-            items.append({
-                'name': item,
-                'path': item_path,
-                'is_directory': True
-            })
-        elif os.path.splitext(item)[1].lower() in allowed_extensions and contains_images_in_zip(item_path):
-            items.append({
-                'name': item,
-                'path': item_path,
-                'is_directory': False
-            })
+        # Lógica para dispositivos Android: somente arquivos compactados
+        if session.get('is_android', False):
+            # Verifica apenas arquivos .zip ou .cbz
+            if os.path.splitext(item)[1].lower() in allowed_extensions and contains_images_in_zip(item_path):
+                items.append({
+                    'name': item,
+                    'path': item_path,
+                    'is_directory': False
+                })
+        else:
+            # Para outras plataformas, permite pastas e arquivos compactados
+            if os.path.isdir(item_path) and contains_images_in_folder(item_path):
+                items.append({
+                    'name': item,
+                    'path': item_path,
+                    'is_directory': True
+                })
+            elif os.path.splitext(item)[1].lower() in allowed_extensions and contains_images_in_zip(item_path):
+                items.append({
+                    'name': item,
+                    'path': item_path,
+                    'is_directory': False
+                })
 
     return jsonify({'success': True, 'items': items})
 
@@ -1099,6 +1195,7 @@ def multi_upload_send():
                 'datetime': None,
                 'oneshot': None,
                 'status': translate.get('waiting', 'Aguardando'),
+                'notif': False,
                 'error': None
             }
 
@@ -1111,6 +1208,26 @@ def multi_upload_send():
         skipped_uploads=skipped_uploads  # Capítulos não enviados
     )
 
+@app.route('/get_notifications', methods=['GET'])
+def get_notifications():
+    # Armazena os capítulos que precisam ser notificados
+    notifications = []
+    
+    # Itera sobre os capítulos no UP_Q.queue_upload
+    for key, value in UP_Q.queue_upload.items():
+        # Verifica se a notificação já foi enviada e se o status é "success" ou "error"
+        if not value['notif'] and value['status'] in ['Concluído', 'Erro']:
+            notifications.append({
+                'key': key,
+                'status': value['status'],
+                'error': value['error'],
+                'manga_title': value['manga_title'],
+                'chapter': value['chapter']
+            })
+            # Marca como notificado
+            value['notif'] = True
+
+    return jsonify({'success': True, 'notifications': notifications})
 
 
 def setup_web():

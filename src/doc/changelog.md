@@ -1,3 +1,9 @@
+### Versão 1.0.8 (25/12/2024)
+
+- Correções
+
+- Adicionado suporte para Android usando [Pydroid3](https://play.google.com/store/apps/details?id=ru.iiec.pydroid3) (limitado a Pillow)
+
 ### Versão 1.0.7 (18/12/2024)
 
 - Correções

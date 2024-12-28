@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 </head>
-<body>
+<body data-smartstitch-enabled="{{ SmartStitch_enable | tojson }}">
     <div class="container">
         <h2>{{ translations.get('config_title', 'Configurações') }}</h2>
         <div class="filter-buttons">
@@ -87,14 +87,21 @@
             </div>
 
             <div class="config-item others">
-                <label for="cutting_tool">{{ translations.get('cutting_tool', 'Ferramenta de corte:') }}</label>
+                <label for="cutting_tool">{{ translations.get('cutting_tool', 'Ferramenta de corte:') }} {{ SmartStitch_enable | tojson }}</label>
                 <div style="display: flex; align-items: center;">
                     <label class="toggle">
-                        <input type="checkbox" id="cutting_tool" name="cutting_tool" value="SmartStitch" {% if config.cutting_tool == 'SmartStitch' %}checked{% endif %}>
+                        <input 
+                            type="checkbox" 
+                            id="cutting_tool" 
+                            name="cutting_tool" 
+                            value="SmartStitch" 
+                            {% if config.cutting_tool == 'SmartStitch' %}checked{% endif %} 
+                            {% if not SmartStitch_enable %}disabled{% endif %}
+                        >
                         <span class="slider round"></span>
                     </label>
                     <span id="cutting_tool_label" class="cutting-tool-label">
-                        {% if config.cutting_tool == 'SmartStitch' %}
+                        {% if SmartStitch_enable and config.cutting_tool == 'SmartStitch' %}
                             <a href="https://github.com/MechTechnology/SmartStitch" target="_blank" class="smartstitch-link">
                                 {{ translations.get('smart_stitch', 'SmartStitch') }}
                             </a>
@@ -103,7 +110,7 @@
                         {% endif %}
                     </span>
                 </div>
-            </div>            
+            </div>
 
             <div class="config-item others">
                 <label for="output_file_type">{{ translations.get('output_file_type', 'Tipo de arquivo de saída:') }}</label>
@@ -163,6 +170,21 @@
                 <input type="text" id="auth_url" name="auth_url" value="{{ config.auth_url }}">
             </div>
 
+            <div class="config-item others">
+                <label for="debug_mode">{{ translations.get('debug_mode', 'Modo de Debug:') }}</label>
+                <input type="checkbox" id="debug_mode" name="debug_mode" {% if debug_mode %}checked{% endif %}>
+            </div>            
+
+            <div class="config-item others">
+                <label for="debug_ui_toggle">{{ translations.get('debug_ui_toggle', 'Mostrar UI de Debug:') }}</label>
+                <input type="checkbox" id="debug_ui_toggle" name="debug_ui_toggle" {% if debug_ui_toggle %}checked{% endif %}>
+            </div>
+
+            <div class="config-item others">
+                <label for="filter-events">Filtros de Eventos:</label>
+                <button type="button" id="filter-events-btn">Configurar Filtros</button>
+            </div>
+
             <button type="button" id="save-btn">{{ translations.get('save_button', 'Salvar') }}</button>
             <button type="button" id="tips-btn">{{ translations.get('tips_button', 'Dicas') }}</button>
         </form>
@@ -200,6 +222,8 @@
     </div>
 
     <script src="{{ url_for('static', filename='scripts/config.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
     <script>
         const noChangesMessage = "{{ translations.get('no_changes_detected', 'Nenhuma alteração detectada.') }}";
         const noRestoreChangesMessage = "{{ translations.get('no_restore_changes', 'Nenhuma alteração a ser restaurada.') }}";
@@ -218,7 +242,7 @@
             confirm_delete_folder: "{{ translations.get('confirm_delete_folder', 'Tem certeza que deseja excluir esta pasta?') }}",
             folder_deleted: "{{ translations.get('folder_deleted', 'Pasta excluída com sucesso!') }}",
             folder_delete_error: "{{ translations.get('folder_delete_error', 'Erro ao excluir a pasta.') }}"
-        };        
+        };
     </script>
     <script>
         const outputImageQualityRange = document.getElementById('output_image_quality');

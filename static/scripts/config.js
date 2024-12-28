@@ -63,6 +63,53 @@ function getFormData() {
     };
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    const cuttingToolInput = document.getElementById('cutting_tool');
+    const cuttingToolContainer = cuttingToolInput.closest('.config-item'); // Contêiner do toggle
+
+    // Obter o valor de SmartStitchEnabled do atributo data-smartstitch-enabled
+    const SmartStitchEnabled = document.body.getAttribute('data-smartstitch-enabled') === 'true';
+
+    if (!SmartStitchEnabled) {
+        // Captura eventos em todo o contêiner do toggle
+        cuttingToolContainer.addEventListener('click', function (event) {
+            // Verificar se o evento ocorreu no toggle ou no span associado
+            if (event.target === cuttingToolInput || cuttingToolContainer.contains(event.target)) {
+                event.preventDefault(); // Impede o comportamento padrão
+                console.log("Evento interceptado no cuttingToolContainer."); // Debug
+                showNotificationAbove(cuttingToolInput, "A ferramenta 'SmartStitch' não está disponível no momento.");
+            }
+        });
+    }
+
+    // Função para exibir notificações acima de um elemento
+    function showNotificationAbove(element, message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = message; 
+    
+        const parent = element.closest('.config-item');
+        parent.style.position = 'relative';
+        parent.appendChild(notification);
+    
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.bottom = `${element.offsetHeight + 10}px`;
+    
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+    
+        setTimeout(() => {
+            notification.classList.remove('show');
+            notification.classList.add('hide');
+            notification.addEventListener('transitionend', () => {
+                notification.remove();
+            });
+        }, 3000);
+    }
+});
+
 function generateChangesMessage(changes) {
     let message = `${translations.changesDetectedMessage}<br>`;
     for (const [key, value] of Object.entries(changes)) {

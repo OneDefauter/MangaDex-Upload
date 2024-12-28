@@ -93,6 +93,26 @@ h2 {
     box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
 }
 
+/* Ajustes para telas menores que 768px (tablets e smartphones) */
+@media (max-width: 768px) {
+    #items-list li {
+        width: 100px;
+        height: 120px;
+        font-size: 12px; /* Texto menor */
+        padding: 15px; /* Menos padding */
+    }
+}
+
+/* Ajustes para telas menores que 480px (smartphones menores) */
+@media (max-width: 480px) {
+    #items-list li {
+        width: 80px;
+        height: 100px;
+        font-size: 10px; /* Texto menor ainda */
+        padding: 10px; /* Padding reduzido */
+    }
+}
+
 /* Para o botão de upload */
 #upload-btn {
     background-color: #007bff;

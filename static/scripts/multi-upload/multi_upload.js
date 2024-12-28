@@ -61,43 +61,53 @@ function createTemporaryButton(itemElement) {
 
 // Modificar função de clique para preservar cores dos grupos existentes
 function handleItemClick(event, index) {
-    console.log('handleItemClick called for item at index:', index); // Log inicial
-
     const item = event.currentTarget;
+    const checkbox = item.querySelector('.item-checkbox');
 
-    // Verificar se a tecla Ctrl ou Shift está pressionada
+    // Verificar se é um clique no checkbox ou no item
+    const isCheckboxClick = event.target.classList.contains('item-checkbox');
+
+    // Para dispositivos móveis (usando checkboxes)
+    if (isCheckboxClick) {
+        if (checkbox.checked) {
+            item.classList.add('selected');
+        } else {
+            item.classList.remove('selected');
+        }
+        return; // Não continuar com a lógica de Ctrl/Shift
+    }
+
+    // Para PC (usando Ctrl ou Shift)
     const isCtrlPressed = event.ctrlKey || event.metaKey;
     const isShiftPressed = event.shiftKey;
 
-    console.log('Ctrl pressed:', isCtrlPressed, 'Shift pressed:', isShiftPressed); // Log para verificar teclas pressionadas
-
     if (isCtrlPressed) {
-        console.log('Toggling selection for item:', item.textContent);
+        // Alternar seleção para o item atual
         item.classList.toggle('selected');
+        checkbox.checked = item.classList.contains('selected');
     } else if (isShiftPressed && lastSelectedIndex !== null) {
-        console.log('Shift range selection from:', lastSelectedIndex, 'to:', index);
+        // Seleção em intervalo
         const start = Math.min(lastSelectedIndex, index);
         const end = Math.max(lastSelectedIndex, index);
         for (let i = start; i <= end; i++) {
-            itemsList.children[i].classList.add('selected');
+            const listItem = itemsList.children[i];
+            listItem.classList.add('selected');
+            listItem.querySelector('.item-checkbox').checked = true;
         }
     } else {
-        console.log('Single selection, clearing others and selecting current');
+        // Seleção única (limpar outras seleções)
         Array.from(itemsList.children).forEach(child => {
-            if (!child.dataset.groupName) {
-                // Apenas limpar a seleção de itens que não estão em um grupo
-                child.classList.remove('selected');
-            }
+            child.classList.remove('selected');
+            child.querySelector('.item-checkbox').checked = false;
         });
         item.classList.add('selected');
+        checkbox.checked = true;
     }
 
     // Atualizar o índice do último selecionado
     lastSelectedIndex = index;
 
-    console.log('Last selected index updated to:', lastSelectedIndex); // Log para verificar o índice do último selecionado
-
-    // Criar o botão temporário "Criar Grupo"
+    // Criar botão temporário "Criar Grupo"
     createTemporaryButton(item);
 }
 
@@ -505,6 +515,18 @@ function generateUniqueColor() {
     return newColor;
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    const parentFolderInput = document.getElementById('parent-folder');
+    const isAndroid = parentFolderInput.getAttribute('data-is-android') === 'true';
+
+    if (isAndroid) {
+        // Preenche o campo com a localização padrão
+        parentFolderInput.value = 'Download/MangaDex Upload (uploads)';
+        // Torna o campo não editável
+        parentFolderInput.readOnly = true;
+    }
+});
+
 // Lógica para enviar o caminho da pasta e carregar os itens
 document.getElementById('continue-btn').addEventListener('click', function () {
     const project = document.getElementById('project-id').value.trim();
@@ -553,28 +575,41 @@ document.getElementById('continue-btn').addEventListener('click', function () {
                     // Adiciona itens à lista
                     data.items.forEach((item, index) => {
                         const listItem = document.createElement('li');
-    
+                    
                         // Adicionar classe base
                         listItem.classList.add('file-item');
-    
+                    
                         // Ícone e nome do item
                         const icon = document.createElement('i');
                         icon.className = item.is_directory ? 'fi fi-rr-folder' : 'fi fi-rr-file';
-    
+                    
                         const itemName = document.createElement('p');
                         itemName.textContent = item.name;
-    
-                        // Adicionar ícone e nome ao item
+                    
+                        // Checkbox para seleção
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.className = 'item-checkbox';
+                        checkbox.addEventListener('change', () => {
+                            if (checkbox.checked) {
+                                listItem.classList.add('selected');
+                            } else {
+                                listItem.classList.remove('selected');
+                            }
+                        });
+                    
+                        // Adicionar ícone, nome e checkbox ao item
+                        listItem.appendChild(checkbox);
                         listItem.appendChild(icon);
                         listItem.appendChild(itemName);
-    
-                        // Adicionar evento de clique para seleção
+                    
+                        // Adicionar evento de clique no item
                         listItem.addEventListener('click', (event) => handleItemClick(event, index));
-    
+                    
                         // Adicionar o item à lista
                         itemsList.appendChild(listItem);
                     });
-                
+
                     // Ocultar o formulário e exibir a lista
                     document.getElementById('folder-input-group').style.display = 'none';
                     document.getElementById('folder-list').style.display = 'block';
@@ -670,27 +705,41 @@ document.getElementById('reload-btn').addEventListener('click', function() {
                     // Adiciona itens à lista
                     data.items.forEach((item, index) => {
                         const listItem = document.createElement('li');
-    
+                    
                         // Adicionar classe base
                         listItem.classList.add('file-item');
-    
+                    
                         // Ícone e nome do item
                         const icon = document.createElement('i');
                         icon.className = item.is_directory ? 'fi fi-rr-folder' : 'fi fi-rr-file';
-    
+                    
                         const itemName = document.createElement('p');
                         itemName.textContent = item.name;
-    
-                        // Adicionar ícone e nome ao item
+                    
+                        // Checkbox para seleção
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.className = 'item-checkbox';
+                        checkbox.addEventListener('change', () => {
+                            if (checkbox.checked) {
+                                listItem.classList.add('selected');
+                            } else {
+                                listItem.classList.remove('selected');
+                            }
+                        });
+                    
+                        // Adicionar ícone, nome e checkbox ao item
+                        listItem.appendChild(checkbox);
                         listItem.appendChild(icon);
                         listItem.appendChild(itemName);
-    
-                        // Adicionar evento de clique para seleção
+                    
+                        // Adicionar evento de clique no item
                         listItem.addEventListener('click', (event) => handleItemClick(event, index));
-    
+                    
                         // Adicionar o item à lista
                         itemsList.appendChild(listItem);
                     });
+
                 }
             } else {
                 alert(`${translations.error_proccess_path}: ` + data.error);

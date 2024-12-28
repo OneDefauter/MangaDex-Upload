@@ -20,6 +20,24 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+let isReversed = false; // Estado inicial do botão "Reverso"
+
+function toggleReverse() {
+    isReversed = !isReversed; // Alterna o estado
+
+    const reverseBtn = document.getElementById('reverse-btn');
+    if (isReversed) {
+        reverseBtn.classList.remove('reverse-off');
+        reverseBtn.classList.add('reverse-on');
+    } else {
+        reverseBtn.classList.remove('reverse-on');
+        reverseBtn.classList.add('reverse-off');
+    }
+
+    // Atualiza as listas na interface
+    updateQueue();
+}
+
 function updateQueue() {
     fetch('/get_queue_data', {
         method: 'POST',
@@ -37,22 +55,22 @@ function updateQueue() {
         downloadList.innerHTML = '';
         uploadList.innerHTML = '';
 
-        // Populando a lista de downloads (em ordem reversa)
-        if (data.queue_download && Object.keys(data.queue_download).length > 0) {
-            const reversedDownloadKeys = Object.keys(data.queue_download).reverse();
-            reversedDownloadKeys.forEach(key => {
-                const listItem = createListItem(key, data.queue_download[key], 'download');
+        // Populando a lista de downloads
+        if (data.queue_download && data.queue_download.length > 0) {
+            let downloadItems = isReversed ? [...data.queue_download].reverse() : data.queue_download;
+            downloadItems.forEach(item => {
+                const listItem = createListItem(item.key, item, 'download');
                 downloadList.appendChild(listItem);
             });
         } else {
             downloadList.innerHTML = `<li class="empty-message">${emptyDownloadMessage}</li>`;
         }
 
-        // Populando a lista de uploads (em ordem reversa)
-        if (data.queue_upload && Object.keys(data.queue_upload).length > 0) {
-            const reversedUploadKeys = Object.keys(data.queue_upload).reverse();
-            reversedUploadKeys.forEach(key => {
-                const listItem = createListItem(key, data.queue_upload[key], 'upload');
+        // Populando a lista de uploads
+        if (data.queue_upload && data.queue_upload.length > 0) {
+            let uploadItems = isReversed ? [...data.queue_upload].reverse() : data.queue_upload;
+            uploadItems.forEach(item => {
+                const listItem = createListItem(item.key, item, 'upload');
                 uploadList.appendChild(listItem);
             });
         } else {

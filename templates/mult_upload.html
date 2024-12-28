@@ -39,7 +39,7 @@
                 </select>
 
                 <label for="parent-folder">{{ translations.get('parent_folder', 'Pasta Pai:') }}</label>
-                <input type="text" id="parent-folder" name="parent-folder" placeholder="{{ translations.get('enter_folder_path', 'Insira o caminho da pasta') }}">
+                <input type="text" id="parent-folder" name="parent-folder" placeholder="{{ translations.get('enter_folder_path', 'Insira o caminho da pasta') }}" data-is-android="{{ 'true' if is_android else 'false' }}">
                 <button type="button" id="continue-btn">{{ translations.get('continue', 'Continuar') }}</button>
             </div>
         </form>
@@ -135,9 +135,6 @@
         <div class="loading-spinner"></div>
     </div>
 
-    <!-- Container de notificações -->
-    <div id="notifications" class="notifications"></div>
-
     <!-- Translations passed to JavaScript -->
     <script>
         const translations = {
@@ -173,5 +170,6 @@
     <script src="{{ url_for('static', filename='scripts/multi-upload/search_groups.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/tips.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
 </body>
 </html>
