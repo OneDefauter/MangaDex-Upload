@@ -1102,6 +1102,9 @@ def multi_upload_send():
     groups = data.get('groups')  # Grupos recebidos no formato de dicionário
     folderpath = Path(data.get('folder_path'))
     language = data.get('language', 'pt-br')
+    
+    if session['is_android']:
+        folderpath = android_path
 
     if not folderpath.exists() or not folderpath.is_dir():
         return jsonify({'error': 'Invalid folder path'}), 400
