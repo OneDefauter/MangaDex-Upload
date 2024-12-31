@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import subprocess
 import importlib
@@ -20,25 +21,37 @@ def install_module(module, path=None):
     try:
         # Detecta o sistema operacional
         if platform.system() == "Windows":
-            # Comando para Windows
             if path is None:
                 command = ['pip', 'install', module]
             else:
                 command = [os.path.join(path, 'Python312', 'python.exe'), '-m', 'pip', 'install', module]
         else:
-            # Comando para Linux/Mac (usando pip3 explicitamente)
             command = ['pip3', 'install', module]
-        
-        # Executa o comando
+
+        # Tenta instalar da internet
         subprocess.run(command, check=True)
         print_colored(f"Módulo '{module}' instalado com sucesso!", 'green')
-    except subprocess.CalledProcessError as e:
-        print_colored(f"Erro ao instalar {module}: {e}", 'red')
+    except subprocess.CalledProcessError:
+        print_colored(f"Erro ao instalar {module} da internet. Tentando instalar pelo arquivo local, se disponível...", 'red')
+
+        # Tenta instalar do arquivo local, se for numpy
         if module == 'numpy':
-            print_colored("\nInstruções para instalar o numpy manualmente no Pydroid3:", 'yellow')
-            print_colored("1. Abra a aba Pip.", 'yellow')
-            print_colored("2. Em 'install', coloque 'numpy'.", 'yellow')
-            print_colored("3. Marque a caixa 'Use prebuilt libraries repository'.", 'yellow')
+            try:
+                module_path = os.path.join("src", "core", "Utils", "Module", "numpy-1.26.0-py3-none-any.whl")
+                if os.path.isfile(module_path):
+                    subprocess.run(['pip', 'install', module_path] if platform.system() == "Windows" else ['pip3', 'install', module_path], check=True)
+                    print_colored(f"Módulo '{module}' instalado com sucesso a partir do arquivo local!", 'green')
+                else:
+                    raise FileNotFoundError(f"Arquivo local '{module_path}' não encontrado.")
+            except (subprocess.CalledProcessError, FileNotFoundError) as e:
+                print_colored(f"Erro ao instalar {module} do arquivo local: {e}", 'red')
+                print_colored("\nInstruções para instalar o numpy manualmente:", 'yellow')
+                print_colored("1. Abra a aba Pip.", 'yellow')
+                print_colored("2. Em 'install', coloque 'numpy'.", 'yellow')
+                print_colored("3. Marque a caixa 'Use prebuilt libraries repository'.", 'yellow')
+                sys.exit()
+
+        print_colored(f"Erro ao instalar {module}: {e}", 'red')
     except PermissionError as e:
         print_colored(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador/sudo. Erro: {e}", 'red')
 
