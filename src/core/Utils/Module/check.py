@@ -37,12 +37,8 @@ def install_module(module, path=None):
         # Tenta instalar do arquivo local, se for numpy
         if module == 'numpy':
             try:
-                module_path = os.path.join(path_, "src", "core", "Utils", "Module", "numpy-1.26.0-py3-none-any.whl")
-                if os.path.isfile(module_path):
-                    subprocess.run(['pip', 'install', module_path] if platform.system() == "Windows" else ['pip3', 'install', module_path], check=True)
-                    print_colored(f"Módulo '{module}' instalado com sucesso a partir do arquivo local!", 'green')
-                else:
-                    raise FileNotFoundError(f"Arquivo local '{module_path}' não encontrado.")
+                subprocess.run(['pip', 'install', 'numpy<1.26'] if platform.system() == "Windows" else ['pip3', 'install', 'numpy<1.26'], check=True)
+                print_colored(f"Módulo '{module}' instalado com sucesso a partir do arquivo local!", 'green')
             except (subprocess.CalledProcessError, FileNotFoundError) as e:
                 print_colored(f"Erro ao instalar {module} do arquivo local: {e}", 'red')
                 print_colored("\nInstruções para instalar o numpy manualmente:", 'yellow')
