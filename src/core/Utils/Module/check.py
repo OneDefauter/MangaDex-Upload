@@ -4,8 +4,8 @@ import subprocess
 import importlib
 from src.core.Utils.Others.check_path import lib_path
 
-def install_module(module, path=None):
-    """Instala o módulo especificado."""
+def install_module(module, path=None, repo_url=None):
+    """Instala o módulo especificado a partir de um repositório opcional."""
     try:
         # Detecta o sistema operacional
         if platform.system() == "Windows":
@@ -18,6 +18,10 @@ def install_module(module, path=None):
             # Comando para Linux/Mac (usando pip3 explicitamente)
             command = ['pip3', 'install', module]
         
+        # Adiciona o repositório customizado, se fornecido
+        if repo_url:
+            command.extend(['--index-url', repo_url])
+
         # Executa o comando
         subprocess.run(command, check=True)
         print(f"Módulo '{module}' instalado com sucesso!")
@@ -38,7 +42,8 @@ required_modules = [
     'markdown',
     'packaging',
     'pycryptodome',
-    'flask-session'
+    'flask-session',
+    'numpy'
 ]
 
 # Mapeamento de módulos com nomes alternativos para importação
@@ -66,7 +71,9 @@ for module in required_modules:
             pass  # Tente o próximo nome alternativo
     
     if not installed:
-        install_module(module, None if lib == 0 else path_)
+        # Use o repositório customizado apenas para numpy
+        repo_url = 'http://repo.local' if module == 'numpy' else None
+        install_module(module, None if lib == 0 else path_, repo_url)
 
 # Limpar a tela
 os.system('cls' if platform.system() == "Windows" else 'clear')
