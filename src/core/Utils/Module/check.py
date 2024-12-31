@@ -4,8 +4,19 @@ import subprocess
 import importlib
 from src.core.Utils.Others.check_path import lib_path
 
-def install_module(module, path=None, repo_url=None):
-    """Instala o módulo especificado a partir de um repositório opcional."""
+def print_colored(message, color):
+    """Exibe uma mensagem colorida no terminal."""
+    colors = {
+        'red': '\033[91m',
+        'green': '\033[92m',
+        'yellow': '\033[93m',
+        'blue': '\033[94m',
+        'reset': '\033[0m'
+    }
+    print(f"{colors.get(color, colors['reset'])}{message}{colors['reset']}")
+
+def install_module(module, path=None):
+    """Instala o módulo especificado."""
     try:
         # Detecta o sistema operacional
         if platform.system() == "Windows":
@@ -18,18 +29,18 @@ def install_module(module, path=None, repo_url=None):
             # Comando para Linux/Mac (usando pip3 explicitamente)
             command = ['pip3', 'install', module]
         
-        # Adiciona o repositório customizado, se fornecido
-        if repo_url:
-            command.extend(['--index-url', repo_url])
-
         # Executa o comando
         subprocess.run(command, check=True)
-        print(f"Módulo '{module}' instalado com sucesso!")
+        print_colored(f"Módulo '{module}' instalado com sucesso!", 'green')
     except subprocess.CalledProcessError as e:
-        print(f"Erro ao instalar {module}: {e}")
+        print_colored(f"Erro ao instalar {module}: {e}", 'red')
+        if module == 'numpy':
+            print_colored("\nInstruções para instalar o numpy manualmente no Pydroid3:", 'yellow')
+            print_colored("1. Abra a aba Pip.", 'yellow')
+            print_colored("2. Em 'install', coloque 'numpy'.", 'yellow')
+            print_colored("3. Marque a caixa 'Use prebuilt libraries repository'.", 'yellow')
     except PermissionError as e:
-        print(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador/sudo. Erro: {e}")
-
+        print_colored(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador/sudo. Erro: {e}", 'red')
 
 # Lista de módulos obrigatórios
 required_modules = [
@@ -71,9 +82,7 @@ for module in required_modules:
             pass  # Tente o próximo nome alternativo
     
     if not installed:
-        # Use o repositório customizado apenas para numpy
-        repo_url = 'http://repo.local' if module == 'numpy' else None
-        install_module(module, None if lib == 0 else path_, repo_url)
+        install_module(module, None if lib == 0 else path_)
 
 # Limpar a tela
 os.system('cls' if platform.system() == "Windows" else 'clear')
