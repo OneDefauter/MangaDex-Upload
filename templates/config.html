@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 </head>
-<body data-smartstitch-enabled="{{ SmartStitch_enable | tojson }}">
+<body>
     <div class="container">
         <h2>{{ translations.get('config_title', 'Configurações') }}</h2>
         <div class="filter-buttons">
@@ -88,21 +88,14 @@
             </div>
 
             <div class="config-item others">
-                <label for="cutting_tool">{{ translations.get('cutting_tool', 'Ferramenta de corte:') }} {{ SmartStitch_enable | tojson }}</label>
+                <label for="cutting_tool">{{ translations.get('cutting_tool', 'Ferramenta de corte:') }}</label>
                 <div style="display: flex; align-items: center;">
                     <label class="toggle">
-                        <input 
-                            type="checkbox" 
-                            id="cutting_tool" 
-                            name="cutting_tool" 
-                            value="SmartStitch" 
-                            {% if config.cutting_tool == 'SmartStitch' %}checked{% endif %} 
-                            {% if not SmartStitch_enable %}disabled{% endif %}
-                        >
+                        <input type="checkbox" id="cutting_tool" name="cutting_tool" value="SmartStitch" {% if config.cutting_tool == 'SmartStitch' %}checked{% endif %}>
                         <span class="slider round"></span>
                     </label>
                     <span id="cutting_tool_label" class="cutting-tool-label">
-                        {% if SmartStitch_enable and config.cutting_tool == 'SmartStitch' %}
+                        {% if config.cutting_tool == 'SmartStitch' %}
                             <a href="https://github.com/MechTechnology/SmartStitch" target="_blank" class="smartstitch-link">
                                 {{ translations.get('smart_stitch', 'SmartStitch') }}
                             </a>
@@ -229,7 +222,7 @@
         const noChangesMessage = "{{ translations.get('no_changes_detected', 'Nenhuma alteração detectada.') }}";
         const noRestoreChangesMessage = "{{ translations.get('no_restore_changes', 'Nenhuma alteração a ser restaurada.') }}";
     </script>
-    <script type="text/javascript">
+    <script>
         const translations = {
             tip: "{{ translations.get('tip', 'Dicas do') }}",
             seen: "{{ translations.get('seen', 'Visto') }}",
@@ -242,9 +235,27 @@
             restoreDefaultsMessage: "{{ translations.get('restore_defaults_message', 'Você está prestes a restaurar os seguintes valores para o padrão:') }}",
             confirm_delete_folder: "{{ translations.get('confirm_delete_folder', 'Tem certeza que deseja excluir esta pasta?') }}",
             folder_deleted: "{{ translations.get('folder_deleted', 'Pasta excluída com sucesso!') }}",
-            folder_delete_error: "{{ translations.get('folder_delete_error', 'Erro ao excluir a pasta.') }}"
+            folder_delete_error: "{{ translations.get('folder_delete_error', 'Erro ao excluir a pasta.') }}",
+            friendlyNames: {
+                upload: "{{ translations.get('upload', 'Upload Simultâneo') }}",
+                retry: "{{ translations.get('retry', 'Máximo de Tentativas') }}",
+                log: "{{ translations.get('log', 'Log de Eventos') }}",
+                api_url: "{{ translations.get('api_url', 'URL da API') }}",
+                auth_url: "{{ translations.get('auth_url', 'URL de Autenticação') }}",
+                max_results: "{{ translations.get('max_results', 'Máximo de Resultados') }}",
+                download_folder: "{{ translations.get('download_folder', 'Pasta de Downloads') }}",
+                download_folder_scheme: "{{ translations.get('download_folder_scheme', 'Esquema da Pasta de Downloads') }}",
+                cover_image_quality: "{{ translations.get('cover_image_quality', 'Qualidade das Imagens de Capa') }}",
+                upload_on_error: "{{ translations.get('upload_on_error', 'Upload de Imagens com Erro') }}",
+                preprocess_images: "{{ translations.get('preprocess_images', 'Pré-processar Imagens') }}",
+                cutting_tool: "{{ translations.get('cutting_tool', 'Ferramenta de Corte') }}",
+                output_file_type: "{{ translations.get('output_file_type', 'Tipo de Arquivo de Saída') }}",
+                output_image_quality: "{{ translations.get('output_image_quality', 'Qualidade da Imagem de Saída') }}",
+                queue_operations: "{{ translations.get('queue_operations', 'Operações Simultâneas na Fila') }}",
+                image_operations: "{{ translations.get('image_operations', 'Operações Simultâneas nas Imagens') }}"
+            }
         };
-    </script>
+    </script>    
     <script>
         const outputImageQualityRange = document.getElementById('output_image_quality');
         const outputImageQualityValue = document.getElementById('output_image_quality_field');

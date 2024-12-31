@@ -1,8 +1,18 @@
-### Versão 1.0.8 (25/12/2024)
+### Versão 1.0.9 (31/12/2024)
+
+- Removido suporte a PSD no [SmartStitch](https://github.com/MechTechnology/SmartStitch)
 
 - Correções
 
-- Adicionado suporte para Android usando [Pydroid3](https://play.google.com/store/apps/details?id=ru.iiec.pydroid3) (limitado a Pillow)
+- Corrigindo o envio de capítulos '0'
+
+- Adicionado estração de título dentro de parênteses '()'
+
+### Versão 1.0.8 (28/12/2024)
+
+- Correções
+
+- Adicionado suporte para Android usando [Pydroid3](https://play.google.com/store/apps/details?id=ru.iiec.pydroid3) (~~limitado a Pillow~~)
 
 ### Versão 1.0.7 (18/12/2024)
 

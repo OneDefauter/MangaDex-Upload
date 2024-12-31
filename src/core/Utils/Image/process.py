@@ -6,12 +6,8 @@ from PIL import Image
 from pathlib import Path
 from natsort import natsorted
 from concurrent.futures import ThreadPoolExecutor
+from src.core.Utils.SmartStitch.process import ConsoleStitchProcess
 
-try:
-    import psd_tools
-    from src.core.Utils.SmartStitch.process import ConsoleStitchProcess
-except:
-    ...
 
 class ImagePreprocessor:
     def __init__(self, config, num_parts=5):

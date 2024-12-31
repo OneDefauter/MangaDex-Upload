@@ -119,7 +119,7 @@
     "upload_manga": "Enviar Mangá",
     "project": "Projeto:",
     "group": "Grupo:",
-    "language": "Linguagem:",
+    "language": "Idioma:",
     "portuguese_brazil": "Português (Brasil)",
     "english": "Inglês",
     "title": "Título:",
@@ -150,9 +150,7 @@
     "tip_edit_group": "Edite grupos selecionando um capítulo com grupo ou clique com o botão direito do mouse em um capítulo com grupo.",
 
     "multi_upload": "Upload Multi",
-    "project": "Projeto",
     "enter_project_name": "Digite o nome do projeto",
-    "language": "Linguagem",
     "parent_folder": "Pasta Pai",
     "enter_folder_path": "Insira o caminho da pasta",
     "continue": "Continuar",
@@ -185,6 +183,9 @@
     "error_occurred": "Ocorreu um erro",
     "error_send": "Erro ao enviar os dados",
     "error_occurred_upload": "Ocorreu um erro durante o upload.",
+    "chapter_skiped": "Capítulo pulado",
+    "recommended_tool": "Recomendado o uso da ferramenta SmartStitch.",
+    "long_strip_tag": "Projeto com a Tag Long Strip.",
 
     "directory_does_not_exist": "O diretório informado não existe.",
     "directory_is_empty": "O diretório está vazio.",

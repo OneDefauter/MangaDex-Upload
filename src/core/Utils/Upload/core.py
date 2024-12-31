@@ -341,7 +341,7 @@ class UploadChapters():
         # Dados do rascunho do capítulo
         chapter_draft = {
             "volume": self.volume.lstrip("0") if self.volume else None,
-            "chapter": self.chapter.lstrip("0") if self.chapter else None,
+            "chapter": str(int(self.chapter)) if self.chapter and self.chapter.isdigit() else self.chapter,
             "translatedLanguage": self.language,
             "title": self.title
         }

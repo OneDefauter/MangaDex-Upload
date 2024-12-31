@@ -128,12 +128,21 @@ class GetManga():
         if response.ok:
             data = response.json()
             for manga in data['data']:
-                title = manga['attributes']['title'].get('en')  # Verifica a existência do título em inglês
-                if not title:
-                    # Usa o primeiro título alternativo disponível ou define como 'Título desconhecido'
-                    title = next(iter(manga['attributes']['title'].values()), 'Título desconhecido')
+                # Verificar se há título em inglês, senão pegar o primeiro alternativo disponível
+                title = manga['attributes']['title'].get('en', next(iter(manga['attributes']['title'].values()), 'Título desconhecido'))
                 
-                results.append({'id': manga['id'], 'title': title})
+                # Verificar se a tag "Long Strip" está presente
+                has_long_strip = any(
+                    tag['attributes']['name']['en'] == 'Long Strip'
+                    for tag in manga['attributes']['tags']
+                )
+                
+                # Adicionar o ID, título e o status "Long Strip" aos resultados
+                results.append({
+                    'id': manga['id'],
+                    'title': title,
+                    'long_strip': has_long_strip  # Incluir a informação no resultado
+                })
 
         return results
 

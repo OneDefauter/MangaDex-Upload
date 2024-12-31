@@ -4,8 +4,7 @@ import json
 from src.core.Utils.Others.folders import settings_dir, config_file
 
 class ConfigFile():
-    def __init__(self, SmartStitch_enable) -> None:
-        self.SmartStitch_enable = SmartStitch_enable
+    def __init__(self) -> None:
         # Valores padrão para a configuração
         self.default_config = {
             "upload": 10,
@@ -41,9 +40,6 @@ class ConfigFile():
         with open(config_file, 'r') as f:
             config = json.load(f)
 
-        # Valida a configuração da ferramenta de corte
-        self.validate_cutting_tool(config)
-
         return config
 
     # Função para salvar a configuração
@@ -69,10 +65,3 @@ class ConfigFile():
             config["tips_seen"] = {}
         config["tips_seen"][tip_name] = seen
         self.save_config(config)
-        
-    def validate_cutting_tool(self, config):
-        """Valida a configuração da ferramenta de corte."""
-        if not self.SmartStitch_enable:
-            if config.get('cutting_tool') != 'Pillow':
-                config['cutting_tool'] = 'Pillow'
-                self.save_config(config)

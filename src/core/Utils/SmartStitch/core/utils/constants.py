@@ -14,13 +14,6 @@ SUPPORTED_IMG_TYPES = (
     '.bmp',
     '.tiff',
     '.tga',
-    '.psd',
-    '.psb',
-)
-
-PHOTOSHOP_FILE_TYPES = (
-    ".psd",
-    ".psb"
 )
 
 # Static Enums

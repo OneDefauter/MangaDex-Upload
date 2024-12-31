@@ -9,3 +9,12 @@ Baixe o arquivo [**start.py**](https://github.com/OneDefauter/MangaDex-Upload/re
 ## Portatíl
 ### Windows
 Baixe o arquivo [**MangaDex Upload.zip**](https://github.com/OneDefauter/MangaDex-Upload/releases/download/Main/MangaDex.Upload.zip), extraia e inicie o arquivo **run.bat**
+
+# MangaDex Upload (Android)
+## Requisito
+ - [Pydroid3](https://play.google.com/store/apps/details?id=ru.iiec.pydroid3&hl=pt_BR)
+
+## Instalação
+Baixe o arquivo [**start.py**](https://github.com/OneDefauter/MangaDex-Upload/releases/download/Main/start.py), inicie e pronto...
+
+Um vídeo usando [**aqui.**](https://drive.google.com/file/d/1eX4gfM84D4YtwZG_t7rn4OVgtentLPDh/view?usp=sharing)

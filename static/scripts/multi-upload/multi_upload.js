@@ -63,18 +63,18 @@ function createTemporaryButton(itemElement) {
 function handleItemClick(event, index) {
     const item = event.currentTarget;
     const checkbox = item.querySelector('.item-checkbox');
+    const isAndroid = document.getElementById('parent-folder').getAttribute('data-is-android') === 'true';
 
     // Verificar se é um clique no checkbox ou no item
     const isCheckboxClick = event.target.classList.contains('item-checkbox');
 
     // Para dispositivos móveis (usando checkboxes)
-    if (isCheckboxClick) {
+    if (isAndroid && isCheckboxClick) {
         if (checkbox.checked) {
             item.classList.add('selected');
         } else {
             item.classList.remove('selected');
         }
-        return; // Não continuar com a lógica de Ctrl/Shift
     }
 
     // Para PC (usando Ctrl ou Shift)
@@ -92,16 +92,16 @@ function handleItemClick(event, index) {
         for (let i = start; i <= end; i++) {
             const listItem = itemsList.children[i];
             listItem.classList.add('selected');
-            listItem.querySelector('.item-checkbox').checked = true;
+            if (isAndroid) { listItem.querySelector('.item-checkbox').checked = true; }
         }
     } else {
         // Seleção única (limpar outras seleções)
         Array.from(itemsList.children).forEach(child => {
             child.classList.remove('selected');
-            child.querySelector('.item-checkbox').checked = false;
+            if (isAndroid) { child.querySelector('.item-checkbox').checked = false; }
         });
         item.classList.add('selected');
-        checkbox.checked = true;
+        if (isAndroid) { checkbox.checked = true; }
     }
 
     // Atualizar o índice do último selecionado
@@ -134,9 +134,10 @@ function openGroupModal(groupName) {
 
             // Verificar se o item já está na lista temporária
             if (!temporaryGroupData.items.some(i => i.filename === filename)) {
+                const { chapter, title } = extractChapterAndTitle(filename);
                 temporaryGroupData.items.push({
-                    chapter: extractChapterNumber(filename),
-                    title: '',
+                    chapter: chapter,
+                    title: title,
                     filename,
                     isNew: true // Indicar que o item foi adicionado recentemente
                 });
@@ -373,12 +374,15 @@ function showGroupModal() {
         const chapterInput = document.createElement('input');
         const titleInput = document.createElement('input');
 
+        // Extrair capítulo e título do nome do item
+        const { chapter, title } = extractChapterAndTitle(item.textContent);
+
         chapterInput.type = 'text';
-        chapterInput.value = extractChapterNumber(item.textContent); // Extração do capítulo
+        chapterInput.value = chapter; // Preencher com o capítulo extraído
         chapterInput.placeholder = 'Capítulo';
 
         titleInput.type = 'text';
-        titleInput.value = ''; // Campo título deve começar em branco
+        titleInput.value = title; // Preencher com o título extraído
         titleInput.placeholder = 'Título';
 
         // Adiciona um dataset ao elemento de lista para guardar o nome do arquivo original
@@ -494,10 +498,15 @@ function closeModal() {
     console.log(translations.modal_closed);
 }
 
-// Função para extrair o número do capítulo do nome do item
-function extractChapterNumber(name) {
-    const match = name.match(/\d+(\.\d+)?/);
-    return match ? match[0] : '';
+// Função para extrair o número do capítulo e o título do nome do item
+function extractChapterAndTitle(name) {
+    const chapterMatch = name.match(/\d+(\.\d+)?/); // Extrair o número do capítulo
+    const titleMatch = name.match(/\((.*?)\)/); // Extrair título dentro de parênteses
+
+    return {
+        chapter: chapterMatch ? chapterMatch[0] : '', // Retornar capítulo, ou vazio se não encontrado
+        title: titleMatch ? titleMatch[1].trim() : '' // Retornar título, ou vazio se não encontrado
+    };
 }
 
 // Função para gerar uma cor hexadecimal aleatória
@@ -533,6 +542,7 @@ document.getElementById('continue-btn').addEventListener('click', function () {
     const folderPath = document.getElementById('parent-folder').value.trim();
     const sendButton = document.getElementById('upload-btn'); // Botão Enviar Todos
     const noItemsMessage = document.getElementById('no-items-message'); // Mensagem vazia
+    const isAndroid = document.getElementById('parent-folder').getAttribute('data-is-android') === 'true';
 
     if (!project) {
         alert(translations.need_project);
@@ -586,20 +596,23 @@ document.getElementById('continue-btn').addEventListener('click', function () {
                         const itemName = document.createElement('p');
                         itemName.textContent = item.name;
                     
-                        // Checkbox para seleção
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.className = 'item-checkbox';
-                        checkbox.addEventListener('change', () => {
-                            if (checkbox.checked) {
-                                listItem.classList.add('selected');
-                            } else {
-                                listItem.classList.remove('selected');
-                            }
-                        });
+                        if (isAndroid) {
+                            // Checkbox para seleção
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.className = 'item-checkbox';
+                            checkbox.addEventListener('change', () => {
+                                if (checkbox.checked) {
+                                    listItem.classList.add('selected');
+                                } else {
+                                    listItem.classList.remove('selected');
+                                }
+                            });
                     
-                        // Adicionar ícone, nome e checkbox ao item
-                        listItem.appendChild(checkbox);
+                            listItem.appendChild(checkbox);
+                        }
+                    
+                        // Adicionar ícone e nome ao item
                         listItem.appendChild(icon);
                         listItem.appendChild(itemName);
                     
@@ -648,12 +661,12 @@ document.getElementById('upload-btn').addEventListener('click', function () {
                 showNotifications([translations.upload_success]); // Exibe mensagem de sucesso
                 // Verifica se há capítulos pulados
                 if (data.skipped_uploads && data.skipped_uploads.length > 0) {
-                    const skippedMessages = data.skipped_uploads.map(chapter => 
-                        `Capítulo pulado<br>` +
-                        `Projeto: ${chapter.title}<br>` +
-                        `Capítulo: ${chapter.chapter}<br>` +
-                        `Linguagem: ${chapter.language}`
-                    );
+                    const skippedMessages = data.skipped_uploads.map(chapter => `
+                        ${translations.chapter_skiped}<br>
+                        ${translations.project_} ${chapter.title}<br>
+                        ${translations.chapter} ${chapter.chapter}<br>
+                        ${translations.language_} ${chapter.language}
+                    `);
                     showNotifications(skippedMessages); // Notificações dos capítulos pulados
                 }
             } else {
@@ -676,6 +689,7 @@ document.getElementById('reload-btn').addEventListener('click', function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     const sendButton = document.getElementById('upload-btn'); // Botão Enviar Todos
     const noItemsMessage = document.getElementById('no-items-message'); // Mensagem vazia
+    const isAndroid = document.getElementById('parent-folder').getAttribute('data-is-android') === 'true';
 
     // Mostra o overlay de carregamento
     loadingOverlay.style.display = 'flex';
@@ -716,20 +730,23 @@ document.getElementById('reload-btn').addEventListener('click', function() {
                         const itemName = document.createElement('p');
                         itemName.textContent = item.name;
                     
-                        // Checkbox para seleção
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.className = 'item-checkbox';
-                        checkbox.addEventListener('change', () => {
-                            if (checkbox.checked) {
-                                listItem.classList.add('selected');
-                            } else {
-                                listItem.classList.remove('selected');
-                            }
-                        });
+                        if (isAndroid) {
+                            // Checkbox para seleção
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.className = 'item-checkbox';
+                            checkbox.addEventListener('change', () => {
+                                if (checkbox.checked) {
+                                    listItem.classList.add('selected');
+                                } else {
+                                    listItem.classList.remove('selected');
+                                }
+                            });
+                        
+                            listItem.appendChild(checkbox);
+                        }
                     
-                        // Adicionar ícone, nome e checkbox ao item
-                        listItem.appendChild(checkbox);
+                        // Adicionar ícone e nome ao item
                         listItem.appendChild(icon);
                         listItem.appendChild(itemName);
                     

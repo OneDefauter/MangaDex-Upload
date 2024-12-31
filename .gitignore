@@ -1,6 +1,7 @@
 static/covers/*
-temp/*
-__logs__/*
-flask_session/*
-.vscode/*
-__pycache__/*
+temp/
+__logs__/
+flask_session/
+.vscode/
+__pycache__/
+Download/

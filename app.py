@@ -77,11 +77,10 @@ from src.core.Utils.Others.check_image import contains_images_in_folder, contain
 from src.core.Utils.Upload.core import UploadChapters
 from src.core.Utils.Upload.upload import UploadQueue
 
-SmartStitch_enable = ck.check_smartstitch_compatible()
 
 
 login_core = LoginAuth()
-config_core = ConfigFile(SmartStitch_enable)
+config_core = ConfigFile()
 
 DW_Q = DownloadQueue()
 UP_Q = UploadQueue()
@@ -108,6 +107,8 @@ TRANSLATE = None
 android_path = Path('/storage/emulated/0/Download/Mangadex Upload (uploads)')
 temp_folder = tempfile.gettempdir()
 app_folder = check_path()
+
+new_update, version = update.check_update()
 
 print('android', android_path, '\n')
 print('temp', temp_folder, '\n\n')
@@ -275,9 +276,6 @@ def config():
         queue_operations = int(request.form.get('queue_operations'))
         image_operations = int(request.form.get('image_operations'))
 
-        if not SmartStitch_enable:
-            cutting_tool = 'Pillow'
-
         # Limites para as configurações numéricas
         upload = min(max(upload, 1), 10)
         retry = min(max(retry, 1), 3)
@@ -321,8 +319,7 @@ def config():
         default_config=config_core.default_config,
         translations=translate,
         folder_size=folder_size,
-        temp_folders_size=temp_folders_size,
-        SmartStitch_enable=SmartStitch_enable
+        temp_folders_size=temp_folders_size
     )
 
 @app.route('/restore_defaults', methods=['POST'])
@@ -426,9 +423,9 @@ def home():
     translate = session.get('TRANSLATE', {})
     
     notifications = []
-    if update.new_update:
+    if new_update:
         # Substitui o placeholder {version} com o valor real de rmver_
-        notifications.append(translate.get('new_update', 'Nova atualização disponível! v{version}').format(version=update.rmver_))
+        notifications.append(translate.get('new_update', 'Nova atualização disponível! v{version}').format(version=version))
     
     if not welcome_seen:
         user = USER_ME.get_user_me()
@@ -439,9 +436,9 @@ def home():
         # Substitui o placeholder {username} com o nome real do usuário
         notifications.append(translate.get('welcome_message', "Bem-vindo ao MangaDex Uploader, {username}!").format(username=user['attributes']['username']))
         
-        if not update.new_update:
+        if not new_update:
             # Substitui o placeholder {version} com o valor real de lcver_
-            notifications.append(translate.get('up_to_date', 'Você está na versão mais recente! v{version}').format(version=update.lcver_))
+            notifications.append(translate.get('up_to_date', 'Você está na versão mais recente! v{version}').format(version=version))
         
         welcome_seen = True
     
@@ -811,6 +808,11 @@ def update_tip_status():
 
 @app.route('/updates')
 def updates():
+    global new_update
+    global version
+    if not new_update:
+        new_update, version = update.check_update()
+    
     translate = session.get('TRANSLATE', {})
 
     # URL do arquivo Markdown raw no GitHub
@@ -830,7 +832,7 @@ def updates():
     return render_template(
         'updates.html',
         content=Markup(html_content),
-        new_update=update.new_update,
+        new_update=new_update,
         translations=translate
     )
 
@@ -1096,13 +1098,13 @@ def multi_upload_step():
 def multi_upload_send():
     config = config_core.load_config()
     translate = session.get('TRANSLATE', {})
-    
+
     # Receber os dados da requisição
     data = request.json
     groups = data.get('groups')  # Grupos recebidos no formato de dicionário
     folderpath = Path(data.get('folder_path'))
     language = data.get('language', 'pt-br')
-    
+
     if session['is_android']:
         folderpath = android_path
 
@@ -1110,7 +1112,7 @@ def multi_upload_send():
         return jsonify({'error': 'Invalid folder path'}), 400
 
     manga = MANGA.get_manga_id(data['project'])
-    
+
     if not manga:
         return jsonify(success=False, message=translate['manga_not_found']), 404
 
@@ -1187,7 +1189,7 @@ def multi_upload_send():
                 preprocessor=preprocessor,
                 ispre=chapter.get('ispre', False)
             )
-            
+
             # Adiciona à fila e atualiza o dicionário de status
             UP_Q.queue_upload[f"{manga['attributes']['title']['en']} - {data['language']} - {chapter['chapter']}"] = {
                 'manga_id': manga['id'],

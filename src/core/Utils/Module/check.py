@@ -26,12 +26,6 @@ def install_module(module, path=None):
     except PermissionError as e:
         print(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador/sudo. Erro: {e}")
 
-def check_smartstitch_compatible():
-    try:
-        import psd_tools
-        return True
-    except:
-        return False
 
 # Lista de módulos obrigatórios
 required_modules = [
@@ -44,15 +38,14 @@ required_modules = [
     'markdown',
     'packaging',
     'pycryptodome',
-    'flask_session',
-    'psd-tools'
+    'flask-session'
 ]
 
 # Mapeamento de módulos com nomes alternativos para importação
 alternate_imports = {
     'Pillow': 'PIL',
     'pycryptodome': ['Crypto', 'Cryptodome'],
-    'flask_session': 'flask-session'
+    'flask-session': 'flask_session'
 }
 
 lib, path_ = lib_path()

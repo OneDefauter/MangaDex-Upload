@@ -150,9 +150,7 @@
     "tip_edit_group": "Edit groups by selecting a chapter with a group or right-clicking on a chapter with a group.",
 
     "multi_upload": "Multi Upload",
-    "project": "Project",
     "enter_project_name": "Enter project name",
-    "language": "Language",
     "parent_folder": "Parent Folder",
     "enter_folder_path": "Enter folder path",
     "continue": "Continue",
@@ -185,6 +183,9 @@
     "error_occurred": "An error occurred",
     "error_send": "Error sending data",
     "error_occurred_upload": "An error occurred during upload.",
+    "chapter_skiped": "Chapter skipped",
+    "recommended_tool": "SmartStitch tool recommended.",
+    "long_strip_tag": "Project with the Long Strip Tag.",
 
     "directory_does_not_exist": "The specified directory does not exist.",
     "directory_is_empty": "The directory is empty.",
