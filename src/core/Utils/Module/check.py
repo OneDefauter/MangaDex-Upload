@@ -37,7 +37,7 @@ def install_module(module, path=None):
         # Tenta instalar do arquivo local, se for numpy
         if module == 'numpy':
             try:
-                module_path = os.path.join(lib, "src", "core", "Utils", "Module", "numpy-1.26.0-py3-none-any.whl")
+                module_path = os.path.join(path_, "src", "core", "Utils", "Module", "numpy-1.26.0-py3-none-any.whl")
                 if os.path.isfile(module_path):
                     subprocess.run(['pip', 'install', module_path] if platform.system() == "Windows" else ['pip3', 'install', module_path], check=True)
                     print_colored(f"Módulo '{module}' instalado com sucesso a partir do arquivo local!", 'green')
