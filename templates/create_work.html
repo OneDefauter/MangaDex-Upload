@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ translations['create_work']['title'] }}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Link para o CSS estilizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/create_work/styles.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/loading-overlay.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal_tip.css') }}">
+
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/modal_tip.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/create_work/create_work.js') }}"></script>
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script> const t = translations.create_work; </script>
+    <script> let tipName = 'create_work_page'; </script>
+  </head>
+  <body>
+    <div class="black-screen" id="black-screen"></div>
+
+    <!-- Modal Tip Universal -->
+    <div id="tipModal" class="tip-modal">
+      <div class="tip-modal-content">
+        <span class="tip-close">&times;</span>
+        
+        <!-- Página 1: Introdução -->
+        <div class="tip-page" id="tipPage1">
+          <h2>{{ translations['create_work']['introduction_title'] }}</h2>
+          <p>{{ translations['create_work']['introduction_text'] }}</p>
+          <p><strong>{{ translations['create_work']['shortcuts'] }}</strong></p>
+          <ul>
+            <li><strong>Alt + P</strong> {{ translations['create_work']['shortcut_mangaupdates'] }}</li>
+            <li><strong>{{ translations['create_work']['shortcut_swipe'] }}</strong> {{ translations['create_work']['shortcut_mangaupdates'] }}</li>
+          </ul>
+          <div class="tip-navigation">
+            <div class="tip-steps">
+              <span class="dot" data-step="0"></span>
+              <span class="dot" data-step="1"></span>
+              <span class="dot" data-step="2"></span>
+            </div>
+            <button class="tip-next">{{ translations['create_work']['continue'] }}</button>
+          </div>
+        </div>
+
+        <!-- Página 2: Demonstração do input -->
+        <div class="tip-page" id="tipPage2" style="display: none;">
+          <img src="{{ url_for('static', filename='/tips/create_work/tip_gif_input.gif') }}" alt="{{ translations['create_work']['input_demo'] }}" />
+          <p>{{ translations['create_work']['input_description'] }}</p>
+          <p><strong>{{ translations['create_work']['example_url'] }}</strong> https://www.mangaupdates.com/series/6z1uqw7/solo-leveling</p>
+          <p><strong>{{ translations['create_work']['example_id'] }}</strong> 6z1uqw7</p>
+          <div class="tip-navigation">
+            <button class="tip-prev">{{ translations['create_work']['back'] }}</button>
+            <div class="tip-steps">
+              <span class="dot" data-step="0"></span>
+              <span class="dot" data-step="1"></span>
+              <span class="dot" data-step="2"></span>
+            </div>
+            <button class="tip-next">{{ translations['create_work']['continue'] }}</button>
+          </div>
+        </div>
+
+        <!-- Página 3: Demonstração dos resultados -->
+        <div class="tip-page" id="tipPage3" style="display: none;">
+          <img src="{{ url_for('static', filename='/tips/create_work/tip_gif_result.gif') }}" alt="{{ translations['create_work']['result_demo'] }}" />
+          <p>{{ translations['create_work']['result_description'] | safe}}</p>
+          <p>{{ translations['create_work']['result_found'] }}</p>
+          <div class="tip-navigation">
+            <button class="tip-prev">{{ translations['create_work']['back'] }}</button>
+            <div class="tip-steps">
+              <span class="dot" data-step="0"></span>
+              <span class="dot" data-step="1"></span>
+              <span class="dot" data-step="2"></span>
+            </div>
+            <button class="tip-finish">{{ translations['create_work']['finish'] }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <input type="text" id="workInput" placeholder="Digite a URL ou ID" />
+    </div>
+
+    <!-- Modal para exibir os resultados -->
+    <div id="resultModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="mainResult" class="result-main"></div>
+        <div id="otherResults" class="result-others"></div>
+        <!-- Botão para criar a obra -->
+        <div class="modal-actions">
+          <button id="createWorkBtn" class="primary-btn">Criar Obra</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tela de carregamento -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="loading-spinner"></div>
+
+      <!-- Barra de Progresso -->
+      <div class="progress" style="width: 90%; position: absolute; bottom: 10px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="progressBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -217,3 +217,17 @@
         opacity: 1;
     }
 }
+
+@media (max-width: 480px) {
+    /* Ajuste a largura dos inputs */
+    #selected-items-list input {
+        width: 70%; /* ou qualquer valor desejado */
+        font-size: 12px; /* diminuir a fonte, se quiser */
+    }
+
+    /* Se quiser ajustar todo o li, pode fazer assim: */
+    #selected-items-list li {
+        flex-direction: column; /* quebrar para linha de baixo se precisar */
+        align-items: stretch;   /* garante que o input ocupe toda a largura */
+    }
+}

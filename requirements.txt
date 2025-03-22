@@ -7,4 +7,7 @@ markupsafe
 markdown
 packaging
 pycryptodome
-flask-session
+flask-session2
+flask-socketio
+bs4
+opencv-python

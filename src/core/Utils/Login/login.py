@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 try:
     from Crypto.Cipher import AES
@@ -11,6 +12,7 @@ except ImportError:
     from Cryptodome.Protocol.KDF import PBKDF2
     from Cryptodome.Util.Padding import pad, unpad
 import base64
+from time import sleep
 
 from src.core.Utils.Others.folders import settings_dir, token_file, key_file
 
@@ -69,12 +71,19 @@ class LoginAuth():
             "client_id": client_id,
             "client_secret": client_secret
         }
-        r = requests.post(
-            "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token",
-            data=creds
-        )
-        if r.status_code == 200:
-            return r.json().get("access_token")
-        else:
-            os.remove(token_file)
-            return r.status_code
+        try:
+            r = requests.post(
+                "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token",
+                data=creds
+            )
+            if r.status_code == 200:
+                return r.json().get("access_token")
+            else:
+                os.remove(token_file)
+                return r.status_code
+        except Exception as e:
+            if "Remote end closed connection" in str(e):
+                print("\033[91mErro: Parece que o IP foi temporariamente banido por fazer muitos requests.\033[0m")
+                print("\033[91mAguarde 1 hora e tente novamente.\033[0m")
+                sleep(5)
+                os._exit(1)

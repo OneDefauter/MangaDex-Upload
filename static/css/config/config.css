@@ -1,0 +1,538 @@
+@import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+/* Desativa a seleção de texto em toda a página */
+body, .container {
+    user-select: none; /* Bloqueia a seleção de texto */
+}
+
+/* Permite seleção apenas em campos de entrada */
+input, textarea {
+    user-select: text; /* Permite selecionar texto apenas nesses elementos */
+}
+
+body {
+    font-family: 'Exo', sans-serif;
+    margin: 20px;
+    min-height: 100vh; /* Mudei de height para min-height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: 300% 300%;
+    overflow-y: auto; /* Adicionado para permitir rolagem vertical se necessário */
+    background: linear-gradient(45deg, #4e54c8, #8f94fb, #141E30, #243B55);
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    font-family: 'Comic Sans MS', sans-serif;
+    color: #333;
+    font-size: 2.5rem;
+}
+
+form div {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+input[type="number"],
+input[type="text"] {
+    width: calc(100% - 2rem); /* Ajuste para acomodar o botão */
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-right: 1rem;
+}
+
+input[type="checkbox"] {
+    margin-left: 0.5rem;
+    transform: scale(1.2);
+}
+
+button {
+    margin-top: 1rem;
+    padding: 11.2px 24px; /* Mantendo o mesmo padding */
+    background-color: #4e54c8; /* Cor de fundo padrão */
+    color: #ffffff; /* Cor do texto */
+    border: 2px solid transparent; /* Borda inicial transparente */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold; /* Negrito */
+    box-sizing: border-box; /* Inclui padding e borda nas dimensões totais */
+    transition: background-color 0.3s, color 0.3s, border 0.3s; /* Transições suaves */
+    box-shadow: 0px 10px 40px -12px #e6394699; /* Sombra */
+}
+
+button:hover {
+    background-color: #ffffff; /* Fundo branco no hover */
+    color: #4e54c8; /* Cor do texto no hover */
+    border: 2px solid #4e54c8; /* Mantém a borda para evitar o aumento do tamanho */
+}
+
+#exit-label {
+    display: block;
+    margin-top: 1rem;
+    color: #333;
+    font-size: 1rem;
+    transition: color 0.3s;
+    cursor: pointer;
+}
+
+#exit-label:hover {
+    color: #243B55;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos adicionais para o modal de dicas */
+.modal-content h3 {
+    margin-bottom: 1rem;
+}
+
+/* Botões de status: "Visto"/"Não Visto" */
+.tip-button {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Botão de status "Não Visto" */
+.tip-not-seen {
+    background-color: #4e54c8; /* Vermelho */
+    color: white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tip-not-seen:hover {
+    background-color: #243B55;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Botão de status "Visto" */
+.tip-seen {
+    background-color: #8f94fb; /* Verde */
+    color: white;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tip-seen:hover {
+    background-color: #141E30;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Ajuste de alinhamento para a lista de dicas */
+#tips-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#tips-list button {
+    margin-left: 10px; /* Espaço entre o texto da dica e o botão */
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    width: 100%; /* Ajusta para ocupar 100% da largura do container */
+    padding: 0.5rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white; /* Cor de fundo branco */
+    margin-right: 0; /* Remove a margem adicional */
+    box-sizing: border-box; /* Inclui o padding e a borda na largura total */
+    transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+    appearance: none; /* Remove o estilo padrão do select */
+    -webkit-appearance: none; /* Remove o estilo padrão no Webkit (Chrome, Safari) */
+    -moz-appearance: none; /* Remove o estilo padrão no Firefox */
+}
+
+select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4' viewBox='0 0 292.4 292.4'%3E%3Cpath fill='%23aaa' d='M287 69.2c-3.6-3.6-7.9-5.4-12.9-5.4H18.3c-5 0-9.3 1.8-12.9 5.4S0 77 0 82s1.8 9.3 5.4 12.9l119.5 119.5c3.6 3.6 7.9 5.4 12.9 5.4s9.3-1.8 12.9-5.4l119.5-119.5c3.6-3.6 5.4-7.9 5.4-12.9s-1.8-9.3-5.5-12.8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem top 50%;
+    background-size: 1rem auto;
+}
+
+select:focus,
+input[type="number"]:focus,
+input[type="text"]:focus {
+    border-color: #4e54c8; /* Cor da borda ao focar */
+    outline: none; /* Remove a linha de foco padrão */
+}
+
+#download_folder {
+    padding-right: 35px; /* Ajusta o padding para acomodar o ícone */
+    height: 100%; /* Garante que o campo de texto tenha altura completa */
+    box-sizing: border-box; /* Inclui padding e borda na largura e altura do elemento */
+}
+
+#folder-btn-config {
+    position: absolute;
+    right: 10px;
+    top: 0; /* Alinha o botão com a parte superior do campo */
+    bottom: 0; /* Faz o botão ocupar a altura completa do campo */
+    margin: auto; /* Centraliza verticalmente */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex; /* Para centralizar o ícone dentro do botão */
+    align-items: center; /* Centraliza verticalmente o ícone dentro do botão */
+    justify-content: center; /* Centraliza horizontalmente o ícone dentro do botão */
+}
+
+#folder-btn-config i {
+    font-size: 18px;
+    color: #666;
+}
+
+#folder-btn-config:hover i {
+    color: #333;
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Certifique-se de que esteja acima de outros elementos */
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+input[type="checkbox"] {
+    margin-left: 0.5rem;
+    transform: scale(1.2); /* Ajuste o tamanho da checkbox */
+}
+
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4e54c8;
+}
+
+input:checked + .slider::before {
+    transform: translateX(26px);
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os botões se ajustem em várias linhas se necessário */
+    justify-content: center; /* Centraliza os botões no container */
+    gap: 15px; /* Espaçamento entre os botões */
+    margin-bottom: 5px;
+    padding: 10px 0;
+}
+
+/* Animação para os botões de filtro */
+.filter-btn {
+    color: #555;
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: #4e54c8;
+    color: white;
+    border-color: #4e54c8;
+}
+
+.filter-btn.active {
+    background-color: #007BFF;
+    color: white;
+    border-color: #0056b3;
+    transform: scale(1.05); /* Leve aumento ao clicar */
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+/* Configuração inicial dos itens (escondidos) */
+.config-item {
+    display: none; /* Inicialmente escondido */
+    opacity: 0;
+    transform: translateY(-20px); /* Move para cima inicialmente */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Configuração dos itens quando ativos (visíveis) */
+.config-item.active {
+    display: block; /* Garante que o item fique visível */
+    opacity: 1;
+    transform: translateY(0); /* Retorna à posição original */
+}
+
+/* Botão de salvar e restaurar com animação */
+button:active {
+    transform: scale(0.95); /* Reduz levemente ao clicar */
+    transition: transform 0.1s ease;
+}
+
+/* Animação ao focar nos inputs */
+input:focus,
+select:focus {
+    border-color: #007BFF;
+    background-color: #f0f8ff; /* Leve destaque */
+    transform: scale(1.02); /* Leve crescimento ao focar */
+}
+
+/* Especificidade para links dentro de cutting-tool-label */
+.cutting-tool-label a {
+    display: inline; /* Garante alinhamento correto */
+    color: inherit; /* Usa a cor herdada do texto pai */
+    text-decoration: none; /* Remove sublinhado por padrão */
+    font-weight: bold; /* Destaca o link */
+    transition: color 0.3s ease; /* Transição suave */
+}
+
+/* Hover para links em cutting-tool-label */
+.cutting-tool-label a:hover {
+    color: #4e54c8; /* Destaque no hover */
+    text-decoration: underline; /* Sublinhado ao passar o mouse */
+}
+
+/* Estilo geral do container do label da ferramenta de corte */
+.cutting-tool-label {
+    margin-left: 10px;
+    display: inline-block;
+    font-size: 1rem; /* Consistência com o texto */
+    line-height: 1.5; /* Alinhamento vertical */
+}
+
+/* Especificidade para o link de SmartStitch */
+.cutting-tool-label a {
+    text-decoration: none; /* Remove sublinhado padrão */
+    color: #333; /* Cor padrão do texto */
+    font-weight: bold; /* Destaque para o link */
+    transition: color 0.3s ease; /* Transição suave na mudança de cor */
+}
+
+/* Hover específico para o link de SmartStitch */
+.cutting-tool-label a:hover {
+    color: #8f94fb; /* Cor de destaque no hover */
+    text-decoration: underline; /* Adiciona sublinhado no hover */
+}
+
+/* Evita conflitos com outros links */
+.cutting-tool-label a,
+.cutting-tool-label span {
+    vertical-align: middle; /* Garante alinhamento vertical consistente */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Botão "Upload Avançado" */
+.advanced-upload-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.advanced-upload-btn {
+    background-color: #4e54c8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.advanced-upload-btn:hover {
+    background-color: #8f94fb;
+}
+
+/* Estilos para o modal */
+.modal-content {
+    text-align: center;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-content input[type="file"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.modal-content select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Ajustes para dispositivos menores */
+@media (max-width: 768px) {
+    h2 {
+        font-size: 1.8rem; /* Reduz o tamanho da fonte */
+        margin-bottom: 1rem; /* Reduz o espaço inferior */
+        text-align: center; /* Centraliza o texto para telas menores */
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.5rem; /* Reduz ainda mais para telas muito pequenas */
+        margin-bottom: 0.8rem; /* Ajusta o espaçamento */
+    }
+}
+
+/* Animação de Fade In e Fade Out para o conteúdo do modal */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.9); }
+}
+
+/* Ocultar o modal inicialmente */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Mantém o fundo sem animação */
+}
+
+/* Animação aplicada ao conteúdo do modal */
+.modal-content.show {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-content.hide {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+.container {
+    transition: height 0.4s ease; /* Animação suave da altura */
+    overflow: hidden; /* Garante que o conteúdo extra fique oculto durante a transição */
+}

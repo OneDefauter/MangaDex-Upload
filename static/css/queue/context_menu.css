@@ -1,0 +1,33 @@
+/* Estiliza o menu de contexto */
+#custom-context-menu {
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 5px 0;
+    display: none;
+    min-width: 150px;
+    z-index: 1000;
+}
+
+/* Estiliza os itens do menu */
+.context-menu-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    transition: background 0.2s ease;
+}
+
+/* Hover nos itens do menu */
+.context-menu-item:hover {
+    background: #f0f0f0;
+}
+
+/* Impede o menu de contexto de sair da tela */
+#custom-context-menu {
+    max-width: 200px;
+    word-wrap: break-word;
+}

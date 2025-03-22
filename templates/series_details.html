@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes da Série</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Detalhes da Série</h1>
+        <p><strong>Title:</strong> {{ details.title }}</p>
+        <p><strong>URL:</strong> <a href="{{ details.url }}" target="_blank">{{ details.url }}</a></p>
+        <p><strong>Tipo:</strong> {{ details.type }}</p>
+        <p><strong>Ano:</strong> {{ details.year }}</p>
+        <p><strong>Último Capítulo:</strong> {{ details.latest_chapter }}</p>
+        <p><strong>Completado:</strong> {{ details.completed }}</p>
+        <p><strong>Gêneros:</strong> {{ details.genres | join(", ") }}</p>
+        
+        <h2>Associated</h2>
+        <pre>{{ associated_str }}</pre>
+        
+        {% if obra_existe %}
+            <p style="color: red;"><strong>Essa obra já existe no MangaDex!</strong></p>
+        {% else %}
+            <p style="color: green;"><strong>Obra não encontrada no MangaDex.</strong></p>
+        {% endif %}
+        
+        <a href="{{ url_for('create_work') }}">Voltar</a>
+    </div>
+</body>
+</html>

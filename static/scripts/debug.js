@@ -267,29 +267,33 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function logEvent(event) {
+        const t = translations.script.debug;  // Atalho para simplificar o acesso
+    
         const logEntry = document.createElement('div');
         logEntry.style.marginBottom = '5px';
         logEntry.style.borderBottom = '1px solid rgba(255, 255, 255, 0.2)';
         logEntry.style.paddingBottom = '5px';
+    
         logEntry.innerHTML = `
-            <div><strong>Evento:</strong> ${event.type}</div>
-            <div><strong>Elemento:</strong> ${event.target.tagName}</div>
-            <div><strong>ID:</strong> ${event.target.id || 'Sem ID'}</div>
-            <div><strong>Classe:</strong> ${event.target.className || 'Sem classe'}</div>
-            <div><strong>Coordenadas:</strong> (${event.clientX}, ${event.clientY})</div>
+            <div><strong>${t.event}:</strong> ${event.type}</div>
+            <div><strong>${t.element}:</strong> ${event.target.tagName}</div>
+            <div><strong>${t.id}:</strong> ${event.target.id || t.no_id}</div>
+            <div><strong>${t.class}:</strong> ${event.target.className || t.no_class}</div>
+            <div><strong>${t.coordinates}:</strong> (${event.clientX}, ${event.clientY})</div>
         `;
+    
         debugContent.appendChild(logEntry);
         debugContent.scrollTop = debugContent.scrollHeight;
-
+    
         // Logs no console
-        console.groupCollapsed(`Evento: ${event.type}`);
-        console.log(`Elemento alvo:`, event.target);
-        console.log(`ID do elemento: ${event.target.id || 'Sem ID'}`);
-        console.log(`Classe(s) do elemento: ${event.target.className || 'Sem classe'}`);
-        console.log(`Tipo do elemento: ${event.target.tagName}`);
-        console.log(`Coordenadas do clique: (${event.clientX}, ${event.clientY})`);
+        console.groupCollapsed(`${t.event}: ${event.type}`);
+        console.log(`${t.target_element}:`, event.target);
+        console.log(`${t.element_id}: ${event.target.id || t.no_id}`);
+        console.log(`${t.element_class}: ${event.target.className || t.no_class}`);
+        console.log(`${t.element_type}: ${event.target.tagName}`);
+        console.log(`${t.click_coordinates}: (${event.clientX}, ${event.clientY})`);
         console.groupEnd();
-    }
+    }    
 
     // Inicializa os eventos ativos
     updateEventListeners(activeEvents);

@@ -5,51 +5,24 @@ import subprocess
 import importlib
 from src.core.Utils.Others.check_path import lib_path
 
-def print_colored(message, color):
-    """Exibe uma mensagem colorida no terminal."""
-    colors = {
-        'red': '\033[91m',
-        'green': '\033[92m',
-        'yellow': '\033[93m',
-        'blue': '\033[94m',
-        'reset': '\033[0m'
-    }
-    print(f"{colors.get(color, colors['reset'])}{message}{colors['reset']}")
-
 def install_module(module, path=None):
     """Instala o módulo especificado."""
     try:
+        print(f"⏳ Instalando '{module}'...")
         # Detecta o sistema operacional
         if platform.system() == "Windows":
             if path is None:
-                command = ['pip', 'install', module]
+                command = ['pip', 'install', module, '--disable-pip-version-check', '--quiet']
             else:
-                command = [os.path.join(path, 'Python312', 'python.exe'), '-m', 'pip', 'install', module]
+                command = [os.path.join(path, 'Python312', 'python.exe'), '-m', 'pip', 'install', module, '--disable-pip-version-check', '--quiet']
         else:
-            command = ['pip3', 'install', module]
+            command = ['pip3', 'install', module, '--disable-pip-version-check', '--quiet']
 
         # Tenta instalar da internet
         subprocess.run(command, check=True)
-        print_colored(f"Módulo '{module}' instalado com sucesso!", 'green')
+        print(f"✔ '{module}' instalado com sucesso!")
     except subprocess.CalledProcessError:
-        print_colored(f"Erro ao instalar {module} da internet. Tentando instalar pelo arquivo local, se disponível...", 'red')
-
-        # Tenta instalar do arquivo local, se for numpy
-        if module == 'numpy':
-            try:
-                subprocess.run(['pip', 'install', 'numpy<1.26'] if platform.system() == "Windows" else ['pip3', 'install', 'numpy<1.26'], check=True)
-                print_colored(f"Módulo '{module}' instalado com sucesso a partir do arquivo local!", 'green')
-            except (subprocess.CalledProcessError, FileNotFoundError) as e:
-                print_colored(f"Erro ao instalar {module} do arquivo local: {e}", 'red')
-                print_colored("\nInstruções para instalar o numpy manualmente:", 'yellow')
-                print_colored("1. Abra a aba Pip.", 'yellow')
-                print_colored("2. Em 'install', coloque 'numpy'.", 'yellow')
-                print_colored("3. Marque a caixa 'Use prebuilt libraries repository'.", 'yellow')
-                sys.exit()
-
-        print_colored(f"Erro ao instalar {module}: {e}", 'red')
-    except PermissionError as e:
-        print_colored(f"Permissão negada ao tentar instalar {module}. Certifique-se de executar como administrador/sudo. Erro: {e}", 'red')
+        print(f"⚠ Erro ao instalar '{module}'.")
 
 # Lista de módulos obrigatórios
 required_modules = [
@@ -62,21 +35,28 @@ required_modules = [
     'markdown',
     'packaging',
     'pycryptodome',
-    'flask-session',
-    'numpy'
+    'flask-session2',
+    'flask-socketio',
+    'bs4',
+    'opencv-python'
 ]
 
 # Mapeamento de módulos com nomes alternativos para importação
 alternate_imports = {
-    'Pillow': 'PIL',
+    'Pillow': ['PIL'],
     'pycryptodome': ['Crypto', 'Cryptodome'],
-    'flask-session': 'flask_session'
+    'flask-session2': ['flask_session'],
+    'flask-socketio': ['flask_socketio'],
+    'opencv-python': ['cv2']
 }
 
 lib, path_ = lib_path()
 
+# Dicionário para armazenar o status da instalação
+installed_status = {}
+
 for module in required_modules:
-    # Verificar nomes alternativos
+    # Verifica nomes alternativos
     alternatives = alternate_imports.get(module, module)
     if not isinstance(alternatives, list):
         alternatives = [alternatives]
@@ -91,7 +71,31 @@ for module in required_modules:
             pass  # Tente o próximo nome alternativo
     
     if not installed:
+        # Tenta instalar se não estiver instalado
         install_module(module, None if lib == 0 else path_)
+        # Após instalação, tenta importar novamente
+        for alt in alternatives:
+            try:
+                importlib.import_module(alt)
+                installed = True
+                break
+            except ImportError:
+                pass
+    installed_status[module] = installed
+    if installed:
+        print(f"✔ Dependência '{module}' verificada.")
+    else:
+        print(f"✖ Dependência '{module}' NÃO foi instalada.")
 
-# Limpar a tela
-os.system('cls' if platform.system() == "Windows" else 'clear')
+# Verifica se todas as dependências foram instaladas
+if all(installed_status.values()):
+    # Se tudo ok, limpa a tela e procede para a verificação da lista de chaves
+    os.system('cls' if platform.system() == "Windows" else 'clear')
+else:
+    # Lista os módulos que falharam na instalação
+    failed = [module for module, status in installed_status.items() if not status]
+    print("Algumas dependências não foram instaladas corretamente:")
+    for module in failed:
+        print(f" - {module}")
+    print("Por favor, verifique os erros acima.")
+    sys.exit(1)

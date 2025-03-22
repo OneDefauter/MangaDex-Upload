@@ -12,5 +12,8 @@ def calculate_temp_folders_size():
                 for root, dirs, files in os.walk(folder_path):
                     for file in files:
                         file_path = os.path.join(root, file)
-                        total_size += os.path.getsize(file_path)
+                        try:
+                            total_size += os.path.getsize(file_path)
+                        except:
+                            pass
     return total_size

@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
+* {
+    font-family: 'Signika Negative', sans-serif;
+}
+
 /* Fundo com gradiente animado */
 body {
     margin: 0;
@@ -6,11 +12,9 @@ body {
     justify-content: center;
     align-items: flex-start; /* Permitir rolagem */
     min-height: 100vh; /* Ajustar altura mínima */
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d, #88d8b0);
     background-size: 300% 300%;
-    animation: gradientBackground 60s ease infinite;
     overflow-y: auto; /* Ativar rolagem global */
+    background: linear-gradient(45deg, #4e54c8, #8f94fb, #141E30, #243B55);
 }
 
 /* Quadro centralizado com blur e transparência */
@@ -28,6 +32,10 @@ body {
     margin-top: 10%;
     margin-bottom: 10%;
     /* Remover altura fixa */
+    -webkit-user-select: none; /* Chrome, Safari */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* Internet Explorer/Edge */
+    user-select: none;         /* Padrão */
 }
 
 /* Estilo para o título */
@@ -40,7 +48,7 @@ h2 {
 
 #continue-btn {
     margin-top: 10px;
-    background-color: #28a745;
+    background-color: #4e54c8;
     color: white;
     border: none;
     border-radius: 4px;
@@ -52,7 +60,11 @@ h2 {
 }
 
 #continue-btn:hover {
-    background-color: #238a3f;
+    background-color: #243B55;
+}
+
+#folder-list h3 {
+    color: #fff;
 }
 
 /* Lista de itens com estilo de quadrados */
@@ -115,7 +127,7 @@ h2 {
 
 /* Para o botão de upload */
 #upload-btn {
-    background-color: #007bff;
+    background-color: #4e54c8;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -128,11 +140,37 @@ h2 {
 }
 
 #upload-btn:hover {
-    background-color: #0056b3;
+    background-color: #243B55;
 }
 
 #upload-btn:disabled {
     background-color: #1a2a6c;
+    cursor: not-allowed;
+}
+
+#group-btn {
+    background-color: rgb(61 65 74);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-right: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#group-btn:disabled:hover {
+    background-color: rgb(61 65 74); /* Mesmo background do botão normal */
+}
+
+#group-btn:hover {
+    background-color: #243B55;
+}
+
+#group-btn:disabled {
+    opacity: .2;
     cursor: not-allowed;
 }
 
@@ -194,15 +232,7 @@ h2 {
     user-select: none; /* Previne a seleção de texto */
 }
 
-/* Animação de fundo */
-@keyframes gradientBackground {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+#group-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

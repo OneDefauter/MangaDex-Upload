@@ -15,7 +15,7 @@ document.body.appendChild(contextMenu);
 
 // Adicionar opções ao menu de contexto
 const createGroupOption = document.createElement('div');
-createGroupOption.textContent = `${translations.create_group}`;
+createGroupOption.textContent = `${t.script.context_menu.create_group}`;
 createGroupOption.style.cursor = 'pointer';
 createGroupOption.style.padding = '8px';
 createGroupOption.style.borderRadius = '4px';
@@ -33,7 +33,7 @@ createGroupOption.addEventListener('mouseleave', () => {
 contextMenu.appendChild(createGroupOption);
 
 const editGroupOption = document.createElement('div');
-editGroupOption.textContent = `${translations.edit_group}`;
+editGroupOption.textContent = `${t.script.context_menu.edit_group}`;
 editGroupOption.style.cursor = 'pointer';
 editGroupOption.style.padding = '8px';
 editGroupOption.style.borderRadius = '4px';

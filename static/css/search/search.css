@@ -1,0 +1,272 @@
+/* Importa fonte personalizada */
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
+/* Estilo global */
+body {
+    font-family: 'Signika Negative', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;overflow-x: hidden;
+    box-sizing: border-box;
+    background: linear-gradient(45deg, #4e54c8, #8f94fb, #141E30, #243B55);
+}
+
+/* Definição da animação */
+@keyframes gradientBackground {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Estilo do container principal */
+.container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90vw;
+    max-width: 1100px;
+    text-align: center;
+    box-sizing: border-box;
+    margin-top: 30px; /* Espaço superior */
+    margin-bottom: 30px; /* Espaço inferior */
+}
+
+/* Estilo do título */
+h2 {
+    margin-bottom: 1rem;
+    font-family: 'Comic Sans MS', sans-serif;
+    color: #2B2E4A;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo do campo de entrada */
+#search-input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #2B2E4A;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    background-color: #F0F0F0;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Transição suave para foco */
+}
+
+#search-input:focus {
+    border-color: #88d8b0;
+    box-shadow: 0 0 10px #88d8b0;
+    background-color: #fff;
+}
+
+/* Estilo para o contêiner de resultados */
+#results-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem; /* Espaçamento entre os itens */
+}
+
+/* Estilo para cada resultado de mangá */
+.manga-result {
+    flex: 1 1 calc(25% - 1rem); /* Responsivo: 4 itens por linha */
+    max-width: calc(25% - 1rem);
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow-x: hidden;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.manga-result:hover {
+    transform: scale(1.05); /* Zoom ao passar o mouse */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para as imagens de capa */
+.cover-image {
+    width: 100%;
+    height: auto;
+    border-bottom: 2px solid #ddd;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Título de cada mangá */
+.manga-result h3 {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+/* Paginação */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 1rem;
+    display: none; /* Ocultado inicialmente */
+}
+
+.pagination button {
+    background-color: #88d8b0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #2B2E4A;
+}
+
+.page-numbers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-numbers span {
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-numbers span:hover {
+    background-color: #88d8b0;
+    color: white;
+}
+
+.current-page {
+    font-weight: bold;
+    background-color: #88d8b0;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Tela de carregamento */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none; /* Oculto inicialmente */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Sobrepõe outros elementos */
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Botão desativado (opcional para paginação) */
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .manga-result {
+        flex: 1 1 calc(50% - 1rem); /* 2 itens por linha */
+        max-width: calc(50% - 1rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .manga-result {
+        flex: 1 1 calc(100% - 1rem); /* 1 item por linha */
+        max-width: calc(100% - 1rem);
+    }
+}
+
+.dots {
+    cursor: pointer;
+    padding: 5px 10px;
+    font-weight: bold;
+    color: #888;
+    transition: color 0.3s;
+}
+
+.dots:hover {
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    /* Estilos para dispositivos menores */
+    .pagination {
+        flex-direction: column; /* Alinha os elementos verticalmente */
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* Espaçamento entre os elementos */
+        margin-top: 1rem;
+    }
+
+    .pagination button {
+        width: 100%; /* Botões ocupam toda a largura */
+        max-width: 200px; /* Tamanho máximo para evitar botões muito grandes */
+        text-align: center;
+    }
+
+    .page-numbers {
+        display: flex;
+        justify-content: center;
+        gap: 5px; /* Espaçamento entre os números */
+        margin: 5px 0; /* Espaçamento acima e abaixo */
+    }
+
+    .page-numbers span {
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #333;
+        font-size: 0.9rem;
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -ms-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+}
+
+    .page-numbers span:hover {
+        background-color: #88d8b0;
+        color: white;
+    }
+
+    .current-page {
+        font-weight: bold;
+        background-color: #88d8b0;
+        color: white;
+        border: none;
+    }
+}

@@ -2,9 +2,10 @@
 <html lang="{{ session['lang'] }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations.get('multi_upload', 'Upload Multi') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>{{ translations['upload_mult']['multi_upload'] }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/page.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/modal.css') }}">
@@ -12,47 +13,168 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/group-button.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/groups.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/loading-overlay.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/tips.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/progress_bar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal_tip.css') }}">
 
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script> const t = translations.upload_mult; </script>
+    <script> const t_tip_pc = translations.upload_mult.modal.tip_pc; </script>
+    <script> const t_tip_android = translations.upload_mult.modal.tip_android; </script>
+    <script src="{{ url_for('static', filename='scripts/modal_tip.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/hexagon.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/home/socket.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/socket-init.js') }}"></script>
+    <script> let tipName = 'multi_upload_page_1'; </script>
 </head>
 <body>
+    <div class="black-screen" id="black-screen"></div>
+
+    <!-- Modal Tip Universal -->
+    <div id="tipModal" class="tip-modal">
+        <div class="tip-modal-content">
+            <!-- Botão "X" para fechar -->
+            <span class="tip-close">&times;</span>
+            
+            <!-- Página 1: Introdução -->
+            <div class="tip-page" id="tipPage1">
+                <h2>{{ translations['upload_mult']['modal']['tip']['title'] }}</h2>
+                <p>
+                    {{ translations['upload_mult']['modal']['tip']['description'] }}
+                </p>
+        
+                <div class="tip-navigation">
+                    <!-- Indicadores de página -->
+                    <div class="tip-steps">
+                        <span class="dot" data-step="0"></span>
+                        <span class="dot" data-step="1"></span>
+                        <span class="dot" data-step="2"></span>
+                        <span class="dot" data-step="3"></span>
+                    </div>
+
+                    <!-- Botão "Continuar" para ir à página 2 -->
+                    <button class="tip-next">{{ translations['upload_mult']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+        
+            <!-- Página 2: Selecionar a projeto -->
+            <div class="tip-page" id="tipPage2" style="display: none;">
+                <h2>{{ translations['upload_mult']['modal']['tip']['select_project_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/multi_upload/project.gif') }}" alt="{{ translations['upload_mult']['modal']['tip']['select_project_img_alt'] }}" />
+                <p>
+                    {{ translations['upload_mult']['modal']['tip']['select_project_description'] | safe}}
+                </p>
+                <p>
+                    {{ translations['upload_mult']['modal']['tip']['select_project_error'] }}
+                </p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload_mult']['modal']['tip']['prev'] }}</button>
+            
+                    <!-- Indicadores de página -->
+                    <div class="tip-steps">
+                        <span class="dot" data-step="0"></span>
+                        <span class="dot" data-step="1"></span>
+                        <span class="dot" data-step="2"></span>
+                        <span class="dot" data-step="3"></span>
+                    </div>
+
+                    <button class="tip-next">{{ translations['upload_mult']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+        
+            <!-- Página 3: Selecionar o idioma -->
+            <div class="tip-page" id="tipPage3" style="display: none;">
+                <h2>{{ translations['upload_mult']['modal']['tip']['select_language_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/multi_upload/language.gif') }}" alt="{{ translations['upload_mult']['modal']['tip']['select_language_img_alt'] }}" />
+                <p>
+                    {{ translations['upload_mult']['modal']['tip']['select_language_description'] }}
+                </p>
+        
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload_mult']['modal']['tip']['prev'] }}</button>
+            
+                    <!-- Indicadores de página -->
+                    <div class="tip-steps">
+                        <span class="dot" data-step="0"></span>
+                        <span class="dot" data-step="1"></span>
+                        <span class="dot" data-step="2"></span>
+                        <span class="dot" data-step="3"></span>
+                    </div>
+
+                    <button class="tip-next">{{ translations['upload_mult']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+        
+            <!-- Página 4: Selecionar a pasta -->
+            <div class="tip-page" id="tipPage4" style="display: none;">
+                <h2>{{ translations['upload_mult']['modal']['tip']['select_folder_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/multi_upload/folder.gif') }}" alt="{{ translations['upload_mult']['modal']['tip']['select_folder_img_alt'] }}" />
+                <p>
+                    {{ translations['upload_mult']['modal']['tip']['select_folder_description'] }}
+                </p>
+        
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload_mult']['modal']['tip']['prev'] }}</button>
+            
+                    <!-- Indicadores de página -->
+                    <div class="tip-steps">
+                        <span class="dot" data-step="0"></span>
+                        <span class="dot" data-step="1"></span>
+                        <span class="dot" data-step="2"></span>
+                        <span class="dot" data-step="3"></span>
+                    </div>
+
+                    <button class="tip-finish">{{ translations['upload_mult']['modal']['tip']['finish'] }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  
     <div class="container">
-        <h2>{{ translations.get('multi_upload', 'Upload Multi') }}</h2>
+        <h2>{{ translations['upload_mult']['multi_upload'] }}</h2>
 
         <!-- Formulário inicial -->
         <form id="multi-upload-form">
             <div class="form-group" id="folder-input-group">
                 <!-- Campo Projeto -->
-                <label for="project">{{ translations.get('project', 'Projeto:') }}</label>
-                <input type="text" id="project" name="project" placeholder="{{ translations.get('enter_project_name', 'Digite o nome do projeto') }}" autocomplete="off">
-                <ul id="project-suggestions" class="suggestions"></ul>
+                <label for="project">{{ translations['upload_mult']['project'] }}</label>
+                <input type="text" id="project" name="project" placeholder="{{ translations['upload_mult']['enter_project_name'] }}" autocomplete="off">
+                <ul id="project-suggestions" class="suggestions" style="display: none;"></ul>
 
                 <!-- Campo oculto para armazenar o ID do projeto -->
                 <input type="hidden" id="project-id" name="project-id">
 
-                <label for="language">{{ translations.get('language', 'Linguagem:') }}</label>
+                <label for="language">{{ translations['upload_mult']['language'] }}</label>
                 <select id="language" name="language">
-                    <option value="pt-br">{{ translations.get('portuguese_brazil', 'Português (Brasil)') }}</option>
-                    <option value="en">{{ translations.get('english', 'Inglês') }}</option>
+                    <option value="pt-br">{{ translations['upload_mult']['portuguese_brazil'] }}</option>
+                    <option value="en">{{ translations['upload_mult']['english'] }}</option>
                 </select>
 
-                <label for="parent-folder">{{ translations.get('parent_folder', 'Pasta Pai:') }}</label>
-                <input type="text" id="parent-folder" name="parent-folder" placeholder="{{ translations.get('enter_folder_path', 'Insira o caminho da pasta') }}" data-is-android="{{ 'true' if is_android else 'false' }}">
-                <button type="button" id="continue-btn">{{ translations.get('continue', 'Continuar') }}</button>
+                <label for="parent-folder">{{ translations['upload_mult']['parent_folder'] }}</label>
+                <input type="text" id="parent-folder" name="parent-folder" placeholder="{{ translations['upload_mult']['enter_folder_path'] }}" data-is-android="{{ 'true' if is_android else 'false' }}">
+                <button type="button" id="continue-btn">{{ translations['upload_mult']['continue'] }}</button>
             </div>
         </form>
 
         <!-- Lista dinâmica de pastas/arquivos -->
         <div id="folder-list" style="display: none;">
-            <h3>{{ translations.get('files_and_folders', 'Arquivos e Pastas Encontrados:') }}</h3>
+            <p id="project-title" style="font-weight: bold; margin-bottom: 10px; font-size: 24px; color: #fff;"></p> <!-- Título do projeto -->
+            <h3>{{ translations['upload_mult']['files_and_folders'] }}</h3>
             <ul id="items-list"></ul>
             <p id="no-items-message" style="display: none; color: red; text-align: center;">
-                Nenhum item com imagens foi encontrado.
+                {{ translations['upload_mult']['no_items'] }}
             </p>
-            <button type="button" id="upload-btn">{{ translations.get('upload', 'Enviar') }}</button>
-            <button type="button" id="reload-btn">{{ translations.get('reload_folder', 'Recarregar pasta') }}</button>
+            <button type="button" id="group-btn" class="disabled">{{ translations['upload_mult']['modal']['group']['create_group'] }}</button>
+            <button type="button" id="upload-btn">{{ translations['upload_mult']['upload'] }}</button>
+            <button type="button" id="reload-btn">{{ translations['upload_mult']['reload_folder'] }}</button>
         </div>
     </div>
 
@@ -63,20 +185,20 @@
     <!-- Modal para criação/seleção de grupo -->
     <div id="group-modal" class="group-modal">
         <div class="group-modal-content">
-            <h3>{{ translations.get('create_or_select_group', 'Criar ou Selecionar Grupo') }}</h3>
+            <h3>{{ translations['upload_mult']['modal']['group']['create_or_select_group'] }}</h3>
     
             <div class="form-group-row">
                 <!-- Campo Nome do Grupo -->
                 <div class="form-group">
-                    <label for="group-name">{{ translations.get('group_name', 'Nome do Grupo:') }}</label>
-                    <input type="text" id="group-name" placeholder="{{ translations.get('enter_group_name', 'Digite o nome do grupo') }}" readonly>
+                    <label for="group-name">{{ translations['upload_mult']['modal']['group']['group_name'] }}</label>
+                    <input type="text" id="group-name" placeholder="{{ translations['upload_mult']['modal']['group']['enter_group_name'] }}" readonly>
                 </div>
     
                 <!-- Campo Seleção de Grupo -->
                 <div class="form-group">
-                    <label for="group-select">{{ translations.get('group', 'Grupo:') }}</label>
+                    <label for="group-select">{{ translations['upload_mult']['modal']['group']['group'] }}</label>
                     <select id="group-select">
-                        <option value="novo">{{ translations.get('create_new_group', 'Criar Novo Grupo') }}</option>
+                        <option value="novo">{{ translations['upload_mult']['modal']['group']['create_new_group'] }}</option>
                         <!-- Aqui serão adicionados grupos existentes dinamicamente -->
                     </select>
                 </div>
@@ -85,97 +207,82 @@
             <div class="form-group-row">
                 <!-- Campo Seleção de Grupo (Scan/Equipe) -->
                 <div class="form-group">
-                    <label for="scan-group">{{ translations.get('scan_group', 'Grupo (Scan/Equipe):') }}</label>
-                    <input type="text" id="scan-group" placeholder="{{ translations.get('enter_scan_group', 'Digite o nome da Scan/Grupo') }}">
+                    <label for="scan-group">{{ translations['upload_mult']['modal']['group']['scan_group'] }}</label>
+                    <input type="text" id="scan-group" placeholder="{{ translations['upload_mult']['modal']['group']['enter_scan_group'] }}">
                     <ul id="scan-suggestions" class="suggestions-list"></ul>
                     <div id="selected-groups" class="tags-container"></div>
                 </div>
     
                 <!-- Campo Seleção de Volume -->
                 <div class="form-group">
-                    <label for="volume">{{ translations.get('volume', 'Volume:') }}</label>
-                    <input type="text" id="volume" placeholder="{{ translations.get('enter_volume', 'Digite o volume') }}">
+                    <label for="volume">{{ translations['upload_mult']['modal']['group']['volume'] }}</label>
+                    <input type="text" id="volume" placeholder="{{ translations['upload_mult']['modal']['group']['enter_volume'] }}">
                 </div>
             </div>
     
             <!-- Lista de Itens Selecionados -->
             <div id="selected-items">
-                <h4>{{ translations.get('selected_items', 'Itens Selecionados:') }}</h4>
+                <h4>{{ translations['upload_mult']['modal']['group']['selected_items'] }}</h4>
                 <ul id="selected-items-list"></ul>
             </div>
     
             <!-- Botão para criar grupo -->
-            <button id="create-group-btn" class="btn-primary">{{ translations.get('create_group', 'Criar Grupo') }}</button>
+            <button id="create-group-btn" class="btn-primary">{{ translations['upload_mult']['modal']['group']['create_group'] }}</button>
     
             <!-- Botão para fechar o modal -->
-            <button id="close-modal-btn" class="btn-secondary">{{ translations.get('close', 'Fechar') }}</button>
+            <button id="close-modal-btn" class="btn-secondary">{{ translations['upload_mult']['modal']['group']['close'] }}</button>
 
             <!-- Botão para excluir grupo -->
-            <button id="delete-group-btn" class="btn-danger" style="display: none;">{{ translations.get('delete_group', 'Excluir Grupo') }}</button>
+            <button id="delete-group-btn" class="btn-danger" style="display: none;">{{ translations['upload_mult']['modal']['group']['delete_group'] }}</button>
 
-        </div>
-    </div>
-
-    <!-- Overlay de Dicas -->
-    <div id="tip-overlay" class="tip-overlay">
-        <div class="tip-content">
-            <h3>{{ translations.get('tip', 'Dica') }}</h3>
-            <img id="tip-gif" src="" alt="{{ translations.get('tip_gif_alt', 'GIF da dica') }}" class="tip-gif">
-            <p id="tip-text">{{ translations.get('tip_default_text', 'Use este formulário para carregar arquivos e gerenciar grupos.') }}</p>
-            <div class="tip-navigation">
-                <button id="tip-prev-btn">{{ translations.get('previous', 'Voltar') }}</button>
-                <button id="tip-next-btn">{{ translations.get('next', 'Continuar') }}</button>
-            </div>
-            <div id="tip-indicators" class="tip-indicators"></div>
         </div>
     </div>
 
     <!-- Tela de carregamento -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner" style="display: none;"></div>
+        <canvas id="canvas-loading" style="display: none;"></canvas>
+
+        <!-- Barra de Progresso -->
+        <div class="progress" style="width: 90%; position: absolute; bottom: 10px;">
+            <div 
+                class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                id="progressBar" 
+                role="progressbar" 
+                style="width: 0%;" 
+                aria-valuenow="0" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
+            </div>
+        </div>
     </div>
 
-    <!-- Translations passed to JavaScript -->
-    <script>
-        const translations = {
-            project: "{{ translations.get('tip_project', 'Projeto: Identifique o projeto ao qual este upload pertence.') }}",
-            language: "{{ translations.get('tip_language', 'Linguagem: Escolha o idioma do mangá.') }}",
-            parent_folder: "{{ translations.get('tip_folder_2', 'Pasta: Indique a pasta onde os capítulos estão armazenados.') }}",
-            create_group: "{{ translations.get('tip_create_group', 'Crie grupos para enviar capítulos.<br>Selecione capítulos com o botão esquerdo do mouse e use CTRL ou SHIFT para selecionar mais de um.') }}",
-            edit_group: "{{ translations.get('tip_edit_group', 'Edite grupos selecionando um capítulo com grupo ou clique com o botão direito do mouse em um capítulo com grupo.') }}",
-            next: "{{ translations.get('next', 'Continuar') }}",
-            finish: "{{ translations.get('finish', 'Finalizar') }}",
-            group_search_error: "{{ translations.get('group_search_error', 'Erro ao buscar grupos') }}",
-            group_already_added: "{{ translations.get('group_already_added', 'Grupo já adicionado!') }}",
-            project_search_error: "{{ translations.get('project_search_error', 'Erro ao buscar projetos') }}",
-            create_group: "{{ translations.get('create_group', 'Criar Grupo') }}",
-            edit_group: "{{ translations.get('edit_group', 'Criar Grupo') }}",
-            create_new_group: "{{ translations.get('create_new_group', 'Criar Novo Grupo') }}",
-            created_group: "{{ translations.get('created_group', 'Grupo criado') }}",
-            modal_closed: "{{ translations.get('modal_closed', 'Modal fechado e seleção limpa.') }}",
-            need_project: "{{ translations.get('need_project', 'Por favor, adicione um projeto.') }}",
-            need_valid_path: "{{ translations.get('need_valid_path', 'Por favor, insira um caminho válido para a pasta.') }}",
-            error_proccess_path: "{{ translations.get('error_proccess_path', 'Erro ao processar o caminho da pasta') }}",
-            error_send_path: "{{ translations.get('error_send_path', 'Erro ao enviar o caminho da pasta.') }}",
-            upload_success: "{{ translations.get('upload_success', 'Upload concluído com sucesso!') }}",
-            error_occurred: "{{ translations.get('error_occurred', 'Ocorreu um erro') }}",
-            error_send: "{{ translations.get('error_send', 'Erro ao enviar os dados') }}",
-            error_occurred_upload: "{{ translations.get('error_occurred_upload', 'Ocorreu um erro durante o upload.') }}",
-            chapter: "{{ translations.get('chapter', 'Capítulo') }}",
-            project_: "{{ translations.get('project', 'Projeto') }}",
-            language_: "{{ translations.get('language', 'Idioma') }}",
-            chapter_skiped: "{{ translations.get('chapter_skiped', 'Capítulo pulado') }}",
-            long_strip_tag: "{{ translations.get('long_strip_tag', 'Projeto com a Tag Long Strip.') }}",
-            recommended_tool: "{{ translations.get('recommended_tool', 'Recomendado o uso da ferramenta SmartStitch.') }}",
-        };
-    </script>
+    <!-- Modal -->
+    <div id="confirmation-modal" class="custom-modal">
+        <h5 class="modal-title">{{ translations['modal']['queue']['confirmation_title'] }}</h5>
+        <p>{{ translations['modal']['queue']['message_1'] }}</p>
+        <p>{{ translations['modal']['queue']['message_2'] }}</p>
+        <div class="modal-footer">
+            <button id="delete-all" class="btn btn-danger">{{ translations['modal']['queue']['delete_all'] }}</button>
+            <button id="send-again" class="btn btn-success">{{ translations['modal']['queue']['send_again'] }}</button>
+        </div>
+    </div>
 
+    <!-- Fundo escurecido -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+
+    <script src="{{ url_for('static', filename='scripts/multi-upload/modal_tip_update.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/multi_upload.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/context_menu.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/search_project.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/multi-upload/search_groups.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/multi-upload/tips.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/multi-upload/shortcut_android.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
+
+    <script>
+        // Suponha que a variável animation_option seja passada para o template
+        var animationOption = "{{ animation_option }}"; // 'spinner' ou 'bola'
+    </script>      
 </body>
 </html>

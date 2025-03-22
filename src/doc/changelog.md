@@ -1,3 +1,37 @@
+### Versão 1.1.0 (22/03/2025)
+
+#### Mudanças
+
+- Foi alterado o plano de fundo
+
+- Agora a pasta de downloads é definida automaticamente
+
+- Mudança em como é lidado com a fila
+
+- Mudança nas notificações
+
+- Pequenas mudanças na página de baixar e editar projetos
+
+####  Adicionados
+
+- Foi adicionado filtro de pesquisa personalizado (encontra-se na página de configurações) (afeta apenas a página de busca)
+
+- Foi adicionado campo para colocar chave da API do "Detect Language" (usado na criação de obras)
+
+- Foi adicionado opção para alterar carregamento simples ou complexo (afeta apenas na página de multi upload)
+
+- Foi adicionado rolagem automática na página de fila
+
+- Foi adicionado filtro na página de fila
+
+- Foi adicionado contexto de menu na página de fila com as opções: Cancelar, Priorizar, Reenviar e Excluir
+
+- Foi adicionado página para criar obra
+
+- Na página de editar projeto, foi adicionado filtro e botão de remover todos os capítulos filtrados
+
+- Foi adicionado tempo de espera para procurar obras e grupos (evitar várias chamadas)
+
 ### Versão 1.0.9 (31/12/2024)
 
 - Removido suporte a PSD no [SmartStitch](https://github.com/MechTechnology/SmartStitch)
@@ -6,7 +40,7 @@
 
 - Corrigindo o envio de capítulos '0'
 
-- Adicionado estração de título dentro de parênteses '()'
+- Adicionado extração de título dentro de parênteses '()'
 
 ### Versão 1.0.8 (28/12/2024)
 

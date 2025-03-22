@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations.get('manga_details_edit', 'Editar Detalhes do Mangá') }}</title>
+    <title>{{ translations['edits']['manga_details_edit'] }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='edit_details.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
-    <!-- Link para os ícones do Flaticon -->
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_details/edit_details.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/modal.css') }}">
+
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/home/socket.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
+
     <script>
         const mangaId = "{{ manga_id }}"; // Passa o manga_id do Flask para o JavaScript
     </script>
@@ -17,25 +24,28 @@
     <div class="content-container">
         <div class="container">
             <div class="sidebar">
-                <img id="cover-image" src="" alt="{{ translations.get('manga_cover_alt', 'Capa do Mangá') }}" class="cover-image"/>
+                <img id="cover-image" src="" alt="{{ translations['edits']['manga_cover_alt'] }}" class="cover-image"/>
                 <div class="manga-info">
                     <h1 id="manga-title"></h1>
                     <p id="manga-author"></p>
                     <p id="manga-artist"></p>
                     <p id="manga-status"></p>
-                    <a id="manga-link" href="" target="_blank" class="view-link">{{ translations.get('view_on_mangadex', 'Ver no MangaDex') }}</a>
+                    <a id="manga-link" href="" target="_blank" class="view-link">{{ translations['edits']['view_on_mangadex'] }}</a>
                     <div id="manga-tags" class="tags-container"></div>
                 </div>
             </div>
         
             <div class="content">
                 <div class="description">
-                    <h2>{{ translations.get('about', 'Sobre') }}</h2>
+                    <h2>{{ translations['edits']['about'] }}</h2>
                     <p id="manga-description"></p>
                 </div>
+
                 <div class="buttons-container">
+                    <button id="open-filter-modal" class="filter-btn">Filtro</button>
                     <div class="language-buttons" id="language-buttons"></div>
                 </div>
+
                 <div class="chapter-container">
                     <div class="chapter-grid" id="chapter-list"></div>
                 </div>
@@ -43,67 +53,92 @@
         </div>
     </div>
 
+    <!-- Modal de Filtro (inicialmente escondido) -->
+    <div id="filter-modal" class="filter-modal" style="display: none;">
+        <div class="filter-modal-content">
+        <span id="filter-close-btn" class="filter-close-btn">&times;</span>
+        <h3>Filtrar Capítulos</h3>
+
+        <div class="filter-group">
+            <label for="filter-chapter">Capítulo (ou intervalo, ex: 5-10):</label>
+            <input id="filter-chapter" type="text" placeholder="Número ou intervalo">
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-date-start">Data inicial:</label>
+            <input id="filter-date-start" type="date">
+        </div>
+
+        <div class="filter-group">
+            <label for="filter-date-end">Data final:</label>
+            <input id="filter-date-end" type="date">
+        </div>
+
+        <!-- Novo filtro por grupos usando checkboxes -->
+        <div class="filter-group">
+            <label>Grupos:</label>
+            <div id="group-checkboxes"><!-- Checkboxes gerados via JS --></div>
+        </div>
+
+        <div class="filter-buttons">
+            <button id="clear-filters" class="clear-filter-btn">Limpar</button>
+            <button id="apply-filters" class="apply-filter-btn">Aplicar Filtros</button>
+            <button id="delete-all-filtered" class="delete-filtered-btn">Deletar Todos Filtrados</button>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Overlay do modal de filtro -->
+    <div id="filter-overlay" class="filter-overlay" style="display: none;"></div>
+  
     <div id="overlay" class="overlay" style="display: none;"></div>
 
     <!-- Pop-up para editar detalhes do capítulo -->
     <div id="chapter-popup" class="chapter-popup" style="display: none;">
         <div class="popup-content">
-            <span id="popup-close-btn">&times;</span>
-            <h3>{{ translations.get('chapter_details', 'Detalhes do Capítulo') }}</h3>
-            <p><strong>{{ translations.get('title', 'Título') }}:</strong></p>
-            <p><input id="popup-title-input" type="text" placeholder="Título"></p>
-            <p><strong>{{ translations.get('volume', 'Volume') }}:</strong></p>
-            <p><input id="popup-volume-input" type="text" placeholder="Volume"></p>
-            <p><strong>{{ translations.get('chapter', 'Capítulo') }}:</strong></p>
-            <p><input id="popup-chapter-input" type="text" placeholder="Capítulo"></p>
-            <p><strong>{{ translations.get('group', 'Grupo') }}:</strong></p>
-            <p class="cp-it">
-                <input id="popup-group-input" class="cp-it" type="text" placeholder="Grupo" autocomplete="off">
+            <span id="popup-close-btn" class="popup-close-btn">&times;</span>
+            <h3>{{ translations['edits']['modal']['chapter']['chapter_details'] }}</h3>
+            <p><strong>{{ translations['edits']['modal']['chapter']['title'] }}:</strong></p>
+            <p><input id="popup-title-input" type="text" placeholder="{{ translations['edits']['modal']['chapter']['title'] }}"></p>
+            <p><strong>{{ translations['edits']['modal']['chapter']['volume'] }}:</strong></p>
+            <p><input id="popup-volume-input" type="text" placeholder="{{ translations['edits']['modal']['chapter']['volume'] }}"></p>
+            <p><strong>{{ translations['edits']['modal']['chapter']['chapter'] }}:</strong></p>
+            <p><input id="popup-chapter-input" type="text" placeholder="{{ translations['edits']['modal']['chapter']['chapter'] }}"></p>
+            <p><strong>{{ translations['edits']['modal']['chapter']['group'] }}:</strong></p>
+            <div class="cp-it">
+                <input id="popup-group-input" class="cp-it" type="text" placeholder="{{ translations['edits']['modal']['chapter']['group'] }}" autocomplete="off">
                 <ul id="popup-group-suggestions" class="suggestions-list"></ul>
                 <div id="popup-selected-groups" class="tags-container-group"></div>
-            </p>
+            </div>
             <!-- Adicionando os botões -->
             <div class="popup-buttons">
-                <button id="delete-btn" class="delete-btn">Excluir</button>
-                <button id="cancel-btn" class="cancel-btn">Cancelar</button>
-                <button id="edit-btn" class="edit-btn">Editar</button>
+                <button id="delete-btn" class="delete-btn">{{ translations['edits']['modal']['chapter']['exclude'] }}</button>
+                <button id="cancel-btn" class="cancel-btn">{{ translations['edits']['modal']['chapter']['cancel'] }}</button>
+                <button id="edit-btn" class="edit-btn">{{ translations['edits']['modal']['chapter']['edit'] }}</button>
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div id="confirmation-modal" class="custom-modal">
+        <h5 class="modal-title">{{ translations['modal']['queue']['confirmation_title'] }}</h5>
+        <p>{{ translations['modal']['queue']['message_1'] }}</p>
+        <p>{{ translations['modal']['queue']['message_2'] }}</p>
+        <div class="modal-footer">
+            <button id="delete-all" class="btn btn-danger">{{ translations['modal']['queue']['delete_all'] }}</button>
+            <button id="send-again" class="btn btn-success">{{ translations['modal']['queue']['send_again'] }}</button>
+        </div>
+    </div>
+
+    <!-- Fundo escurecido -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
 
     <!-- Tela de carregamento -->
     <div id="loading-screen" class="loading-screen" style="display: none;">
         <div class="loading-spinner"></div>
     </div>
-    <script src="{{ url_for('static', filename='scripts/edit_details.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/edit_details/edit_details.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
-    <script>
-        const translations = {
-            author: "{{ translations.get('author', 'Autor') }}",
-            artist: "{{ translations.get('artist', 'Artista') }}",
-            status: "{{ translations.get('status', 'Status') }}",
-            title: "{{ translations.get('placeholder_title', 'Título') }}",
-            volume: "{{ translations.get('placeholder_volume', 'Volume') }}",
-            chapter: "{{ translations.get('placeholder_chapter', 'Capítulo') }}",
-            group:  "{{ translations.get('placeholder_group', 'Grupo') }}",
-            exclude: "{{ translations.get('exclude', 'Excluir') }}",
-            cancel: "{{ translations.get('cancel', 'Cancelar') }}",
-            edit: "{{ translations.get('edit', 'Editar') }}",
-            errorFetchingDetails: "{{ translations.get('error_fetching_details', 'Erro ao buscar detalhes do mangá.') }}",
-            errorFetchingChapters: "{{ translations.get('error_fetching_chapters', 'Erro ao buscar capítulos.') }}",
-            chapter_edited_success: "{{ translations.get('chapter_edited_success', 'Capítulo editado com sucesso!') }}",
-            chapter_excluded_success: "{{ translations.get('chapter_excluded_success', 'Capítulo excluído com sucesso!') }}",
-            chapter_excluded_error: "{{ translations.get('chapter_excluded_error', 'Erro ao excluir capítulo.') }}",
-            chapter_excluded_error_detail: "{{ translations.get('chapter_excluded_error_detail', 'Erro ao excluir capítulo:') }}",
-            chapter_edited_error: "{{ translations.get('chapter_edited_error', 'Erro ao editar capítulo.') }}",
-            chapter_edited_error_detail: "{{ translations.get('chapter_edited_error_detail', 'Erro ao editar capítulo:') }}",
-            confirm_delete: "{{ translations.get('confirm_delete', 'Tem certeza que deseja excluir este capítulo?') }}",
-            group_already_added: "{{ translations.get('group_already_added', 'Este grupo já foi adicionado.') }}",
-            error_get_details_chapters: "{{ translations.get('error_get_details_chapters', 'Erro ao buscar detalhes do capítulo:') }}",
-            not_number: "{{ translations.get('not_number', 'Sem Número') }}",
-            need_required_fields: "{{ translations.get('need_required_fields', 'Por favor, preencha todos os campos obrigatórios.') }}"
-        };
-    </script>
 </body>
 </html>

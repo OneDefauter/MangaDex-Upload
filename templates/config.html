@@ -3,45 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations.get('config_title', 'Configurações') }}</title>
+    <title>{{ translations['config']['config_title'] }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='config.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/config/config.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/home/socket.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
 </head>
 <body>
+    <div class="black-screen" id="black-screen"></div>
+
     <div class="container">
-        <h2>{{ translations.get('config_title', 'Configurações') }}</h2>
+        <h2>{{ translations['config']['config_title'] }}</h2>
         <div class="filter-buttons">
-            <button class="filter-btn active" data-filter="all">Todos</button>
-            <button class="filter-btn" data-filter="download">Download</button>
-            <button class="filter-btn" data-filter="upload">Upload</button>
-            <button class="filter-btn" data-filter="covers">Covers</button>
-            <button class="filter-btn" data-filter="search">Pesquisa</button>
-            <button class="filter-btn" data-filter="storage">Armazenamento</button>
-            <button class="filter-btn" data-filter="api">API</button>
-            <button class="filter-btn" data-filter="others">Outros</button>
+            <button class="filter-btn active" data-filter="all">{{ translations['config']['filter']['all'] }}</button>
+            <button class="filter-btn" data-filter="download">{{ translations['config']['filter']['downloads'] }}</button>
+            <button class="filter-btn" data-filter="upload">{{ translations['config']['filter']['uploads'] }}</button>
+            <button class="filter-btn" data-filter="covers">{{ translations['config']['filter']['covers'] }}</button>
+            <button class="filter-btn" data-filter="search">{{ translations['config']['filter']['search'] }}</button>
+            <button class="filter-btn" data-filter="storage">{{ translations['config']['filter']['storage'] }}</button>
+            <button class="filter-btn" data-filter="api">{{ translations['config']['filter']['api'] }}</button>
+            <button class="filter-btn" data-filter="others">{{ translations['config']['filter']['others'] }}</button>
         </div>
+
+        <input type="hidden" id="search-filter-input" name="search_filter" value='{{ config.search_filter | tojson }}'>
+
+        <!-- Modal para o filtro de pesquisa -->
+        <div id="search-filter-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h3>{{ translations['config']['filter_modal']['search_filter'] }}</h3>
+
+                <form id="search-filter-form">
+                    <div class="filter-group">
+                        <h4>{{ translations['config']['filter_modal']['status']['status'] }}</h4>
+                        <label><input type="checkbox" name="status" value="ongoing"> {{ translations['config']['filter_modal']['status']['ongoing'] }}</label>
+                        <label><input type="checkbox" name="status" value="completed"> {{ translations['config']['filter_modal']['status']['completed'] }}</label>
+                        <label><input type="checkbox" name="status" value="hiatus"> {{ translations['config']['filter_modal']['status']['hiatus'] }}</label>
+                        <label><input type="checkbox" name="status" value="cancelled"> {{ translations['config']['filter_modal']['status']['cancelled'] }}</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>{{ translations['config']['filter_modal']['language']['available_translated_language'] }}</h4>
+                        <label><input type="checkbox" name="availableTranslatedLanguage" value="en"> {{ translations['config']['filter_modal']['language']['en'] }}</label>
+                        <label><input type="checkbox" name="availableTranslatedLanguage" value="pt-br"> {{ translations['config']['filter_modal']['language']['pt-br'] }}</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>{{ translations['config']['filter_modal']['demographic']['demographic'] }}</h4>
+                        <label><input type="checkbox" name="publicationDemographic" value="shounen"> {{ translations['config']['filter_modal']['demographic']['shounen'] }}</label>
+                        <label><input type="checkbox" name="publicationDemographic" value="shoujo"> {{ translations['config']['filter_modal']['demographic']['shoujo'] }}</label>
+                        <label><input type="checkbox" name="publicationDemographic" value="josei"> {{ translations['config']['filter_modal']['demographic']['josei'] }}</label>
+                        <label><input type="checkbox" name="publicationDemographic" value="seinen"> {{ translations['config']['filter_modal']['demographic']['seinen'] }}</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>{{ translations['config']['filter_modal']['content_rating']['content_rating'] }}</h4>
+                        <label><input type="checkbox" name="contentRating" value="safe"> {{ translations['config']['filter_modal']['content_rating']['safe'] }}</label>
+                        <label><input type="checkbox" name="contentRating" value="suggestive"> {{ translations['config']['filter_modal']['content_rating']['suggestive'] }}</label>
+                        <label><input type="checkbox" name="contentRating" value="erotica"> {{ translations['config']['filter_modal']['content_rating']['erotica'] }}</label>
+                        <label><input type="checkbox" name="contentRating" value="pornographic"> {{ translations['config']['filter_modal']['content_rating']['pornographic'] }}</label>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>{{ translations['config']['filter_modal']['order_by']['order'] }}</h4>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_title" value="title"> {{ translations['config']['filter_modal']['order_by']['title'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_title" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_year" value="year"> {{ translations['config']['filter_modal']['order_by']['year'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_year" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_createdAt" value="createdAt"> {{ translations['config']['filter_modal']['order_by']['created_at'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_createdAt" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_updatedAt" value="updatedAt"> {{ translations['config']['filter_modal']['order_by']['updated_at'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_updatedAt" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_latestUploadedChapter" value="latestUploadedChapter"> {{ translations['config']['filter_modal']['order_by']['latest_uploaded_chapter'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_latestUploadedChapter" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_followedCount" value="followedCount"> {{ translations['config']['filter_modal']['order_by']['followed_count'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_followedCount" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                        <div class="order-group">
+                            <label><input type="checkbox" name="order_relevance" value="relevance"> {{ translations['config']['filter_modal']['order_by']['relevance'] }}</label>
+                            <div style="display: flex; align-items: center;">
+                                <label class="toggle">
+                                    <input type="checkbox" name="order_direction_relevance" value="asc">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="order-direction-label">{{ translations['config']['filter_modal']['order']['asc'] }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" id="apply-filter-btn">{{ translations['config']['filter_modal']['apply'] }}</button>
+                </form>
+            </div>
+        </div>
+
         <form id="config-form" action="{{ url_for('config') }}" method="POST">
 
             <div class="config-item upload download">
-                <label for="upload">{{ translations.get('simultaneous_upload', 'Download/Upload Simultâneo:') }}</label>
+                <label for="upload">{{ translations['config']['simultaneous_upload'] }}</label>
                 <input type="number" id="upload" name="upload" min="1" max="10" value="{{ config.upload }}">
             </div>
 
             <div class="config-item search">
-                <label for="max_results">{{ translations.get('max_results', 'Quantidade Máxima de Resultados:') }}</label>
+                <label for="max_results">{{ translations['config']['max_results'] }}</label>
                 <input type="number" id="max_results" name="max_results" min="1" max="100" value="{{ config.max_results }}" required>
             </div>
 
-            <div class="config-item upload">
-                <label for="retry">{{ translations.get('max_retries', 'Máximo de Tentativas:') }}</label>
-                <input type="number" id="retry" name="retry" min="1" max="3" value="{{ config.retry }}">
+            <div class="config-item search">
+                <label for="max_results_page">{{ translations['config']['max_results_page'] }}</label>
+                <input type="number" id="max_results_page" name="max_results_page" min="8" max="20" value="{{ config.max_results_page }}" required>
             </div>
 
-            <div class="config-item download">
-                <label for="download_folder">{{ translations.get('download_folder', 'Pasta de Downloads:') }}</label>
+            <!-- Botão para abrir o modal do filtro de pesquisa -->
+            <div class="config-item search">
+                <label>{{ translations['config']['search_filter'] }}</label>
+                <button type="button" id="search-filter-btn">{{ translations['config']['edit_search_filter'] }}</button>
+            </div>
+
+            <div class="config-item upload">
+                <label for="retry">{{ translations['config']['max_retries'] }}</label>
+                <input type="number" id="retry" name="retry" min="1" max="5" value="{{ config.retry }}">
+            </div>
+
+            <div class="config-item download storage">
+                <label for="download_folder">{{ translations['config']['download_folder'] }}</label>
                 <div style="position: relative; display: flex; align-items: center;">
                     <input type="text" id="download_folder" name="download_folder" value="{{ config.download_folder }}">
                     <button type="button" id="folder-btn-config">
@@ -51,44 +194,42 @@
             </div>
 
             <div class="config-item download storage">
-                <label for="download_folder_scheme">{{ translations.get('download_folder_scheme', 'Esquema da Pasta de Downloads:') }}</label>
+                <label for="download_folder_scheme">{{ translations['config']['scheme']['download_folder_scheme'] }}</label>
                 <select id="download_folder_scheme" name="download_folder_scheme">
-                    <option value="scheme1" {% if config.download_folder_scheme == 'scheme1' %}selected{% endif %}>{{ translations.get('scheme1', 'Idioma / Título da obra / Capítulo') }}</option>
-                    <option value="scheme2" {% if config.download_folder_scheme == 'scheme2' %}selected{% endif %}>{{ translations.get('scheme2', 'Idioma / Título da obra / Volume / Capítulo') }}</option>
-                    <option value="scheme3" {% if config.download_folder_scheme == 'scheme3' %}selected{% endif %}>{{ translations.get('scheme3', 'Título da obra / Idioma / Volume / Capítulo') }}</option>
-                    <option value="scheme4" {% if config.download_folder_scheme == 'scheme4' %}selected{% endif %}>{{ translations.get('scheme4', 'Título da obra / Idioma / Capítulo') }}</option>
-                    <option value="scheme5" {% if config.download_folder_scheme == 'scheme5' %}selected{% endif %}>{{ translations.get('scheme5', 'Título da obra / Volume / Capítulo') }}</option>
-                    <option value="scheme6" {% if config.download_folder_scheme == 'scheme6' %}selected{% endif %}>{{ translations.get('scheme6', 'Título da obra / Capítulo') }}</option>
-                    <option value="scheme7" {% if config.download_folder_scheme == 'scheme7' %}selected{% endif %}>{{ translations.get('scheme7', 'Grupo / Título da obra / Capítulo') }}</option>
-                    <option value="scheme8" {% if config.download_folder_scheme == 'scheme8' %}selected{% endif %}>{{ translations.get('scheme8', 'Grupo / Título da obra / Volume / Capítulo') }}</option>
-                    <option value="scheme9" {% if config.download_folder_scheme == 'scheme9' %}selected{% endif %}>{{ translations.get('scheme9', 'Idioma / Grupo / Título da obra / Capítulo') }}</option>
-                    <option value="scheme10" {% if config.download_folder_scheme == 'scheme10' %}selected{% endif %}>{{ translations.get('scheme10', 'Idioma / Grupo / Título da obra / Volume / Capítulo') }}</option>
-                    <option value="scheme11" {% if config.download_folder_scheme == 'scheme11' %}selected{% endif %}>{{ translations.get('scheme11', 'Grupo / Idioma / Título da obra / Capítulo') }}</option>
-                    <option value="scheme12" {% if config.download_folder_scheme == 'scheme12' %}selected{% endif %}>{{ translations.get('scheme12', 'Grupo / Idioma / Título da obra / Volume / Capítulo') }}</option>
+                    {% for i in range(1, 13) %}
+                        <option value="scheme{{ i }}" {% if config.download_folder_scheme == 'scheme' ~ i %}selected{% endif %}>
+                            {{ translations['config']['scheme'].get('scheme' ~ i, 'Scheme ' ~ i) }}
+                        </option>
+                    {% endfor %}
                 </select>
-            </div>
+            </div>            
 
             <div class="config-item covers">
-                <label for="cover_image_quality">{{ translations.get('cover_image_quality', 'Imagens das covers:') }}</label>
+                <label for="cover_image_quality">{{ translations['config']['cover_image']['cover_image_quality'] }}</label>
                 <select id="cover_image_quality" name="cover_image_quality">
-                    <option value="original" {% if config.cover_image_quality == 'original' %}selected{% endif %}>{{ translations.get('original', 'Original') }}</option>
-                    <option value="reduced" {% if config.cover_image_quality == 'reduced' %}selected{% endif %}>{{ translations.get('reduced', 'Reduzida') }}</option>
-                    <option value="highly_reduced" {% if config.cover_image_quality == 'highly_reduced' %}selected{% endif %}>{{ translations.get('highly_reduced', 'Muito reduzida') }}</option>
+                    <option value="original" {% if config.cover_image_quality == 'original' %}selected{% endif %}>{{ translations['config']['cover_image']['original'] }}</option>
+                    <option value="reduced" {% if config.cover_image_quality == 'reduced' %}selected{% endif %}>{{ translations['config']['cover_image']['reduced'] }}</option>
+                    <option value="highly_reduced" {% if config.cover_image_quality == 'highly_reduced' %}selected{% endif %}>{{ translations['config']['cover_image']['highly_reduced'] }}</option>
                 </select>
             </div>
 
             <div  class="config-item upload">
-                <label for="upload_on_error">{{ translations.get('upload_on_error', 'Fazer upload de capítulos com erros nas imagens:') }}</label>
+                <label for="upload_on_error">{{ translations['config']['upload_on_error'] }}</label>
                 <input type="checkbox" id="upload_on_error" name="upload_on_error" value="true" {% if config.upload_on_error %}checked{% endif %}>
             </div>
 
             <div class="config-item upload">
-                <label for="preprocess_images">{{ translations.get('preprocess_images', 'Pré-processar imagens antes de colocar na fila:') }}</label>
+                <label for="preprocess_images">{{ translations['config']['preprocess_images'] }}</label>
                 <input type="checkbox" id="preprocess_images" name="preprocess_images" value="true" {% if config.preprocess_images %}checked{% endif %}>
             </div>
 
+            <div class="config-item upload" style="display: none;">
+                <label for="auto_adapt_cutting_tool" style="display: none;">{{ translations['config']['auto_adapt_cutting_tool'] }}</label>
+                <input type="checkbox" id="auto_adapt_cutting_tool" name="auto_adapt_cutting_tool" value="true" {% if config.auto_adapt_cutting_tool %}checked{% endif %} style="display: none;">
+            </div>
+
             <div class="config-item others">
-                <label for="cutting_tool">{{ translations.get('cutting_tool', 'Ferramenta de corte:') }}</label>
+                <label for="cutting_tool">{{ translations['config']['cutting_tool']['cutting_tool'] }}</label>
                 <div style="display: flex; align-items: center;">
                     <label class="toggle">
                         <input type="checkbox" id="cutting_tool" name="cutting_tool" value="SmartStitch" {% if config.cutting_tool == 'SmartStitch' %}checked{% endif %}>
@@ -97,17 +238,17 @@
                     <span id="cutting_tool_label" class="cutting-tool-label">
                         {% if config.cutting_tool == 'SmartStitch' %}
                             <a href="https://github.com/MechTechnology/SmartStitch" target="_blank" class="smartstitch-link">
-                                {{ translations.get('smart_stitch', 'SmartStitch') }}
+                                {{ translations['config']['cutting_tool']['smart_stitch'] }}
                             </a>
                         {% else %}
-                            {{ translations.get('pillow', 'Pillow') }}
+                            {{ translations['config']['cutting_tool']['pillow'] }}
                         {% endif %}
                     </span>
                 </div>
             </div>
 
             <div class="config-item others">
-                <label for="output_file_type">{{ translations.get('output_file_type', 'Tipo de arquivo de saída:') }}</label>
+                <label for="output_file_type">{{ translations['config']['output_file_type'] }}</label>
                 <select id="output_file_type" name="output_file_type">
                     <option value="JPG" {% if config.output_file_type == 'JPG' %}selected{% endif %}>JPG</option>
                     <option value="PNG" {% if config.output_file_type == 'PNG' %}selected{% endif %}>PNG</option>
@@ -115,19 +256,19 @@
             </div>
 
             <div class="config-item others">
-                <label for="output_image_quality">{{ translations.get('output_image_quality', 'Qualidade da imagem de saída:') }}</label>
+                <label for="output_image_quality">{{ translations['config']['output_image_quality'] }}</label>
                 <input type="range" id="output_image_quality" name="output_image_quality" min="0" max="100" value="{{ config.output_image_quality }}" oninput="outputImageQualityValue.value = this.value">
                 <input type="number" id="output_image_quality_field" name="output_image_quality_field" min="0" max="100" value="{{ config.output_image_quality }}" oninput="outputImageQualityRange.value = this.value">
             </div>
 
             <div class="config-item others">
-                <label for="queue_operations">{{ translations.get('queue_operations', 'Número de operações simultâneas para fila:') }}</label>
+                <label for="queue_operations">{{ translations['config']['queue_operations'] }}</label>
                 <input type="range" id="queue_operations" name="queue_operations" min="1" max="10" value="{{ config.queue_operations }}" oninput="queueOperationsValue.value = this.value">
                 <input type="number" id="queue_operations_field" name="queue_operations_field" min="1" max="10" value="{{ config.queue_operations }}" oninput="queueOperationsRange.value = this.value">
             </div>
 
             <div class="config-item others">
-                <label for="image_operations">{{ translations.get('image_operations', 'Número de operações simultâneas para imagens:') }}</label>
+                <label for="image_operations">{{ translations['config']['image_operations'] }}</label>
                 <input type="range" id="image_operations" name="image_operations" min="1" max="10" value="{{ config.image_operations }}" oninput="imageOperationsValue.value = this.value">
                 <input type="number" id="image_operations_field" name="image_operations_field" min="1" max="10" value="{{ config.image_operations }}" oninput="imageOperationsRange.value = this.value">
             </div>     
@@ -139,19 +280,24 @@
             </div>
 
             <div class="config-item storage" style="display: flex; align-items: center;">
-                <label>{{ translations.get('download_folder_size', 'Tamanho ocupado pela pasta de covers:') }}</label>
+                <label>{{ translations['config']['download_folder_size'] }}</label>
                 <p style="margin: 0 10px;">{{ "%.2f" | format(folder_size / (1024 * 1024)) }} MB</p>
-                <button type="button" id="delete-folder-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #e63946; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    {{ translations.get('delete_folder_button', 'Excluir Pasta') }}
+                <button type="button" id="delete-folder-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #4e54c8; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    {{ translations['config']['delete_folder_button'] }}
                 </button>
             </div>
 
             <div class="config-item storage" style="display: flex; align-items: center; margin-top: 1rem;">
-                <label>{{ translations.get('temp_folders_size', 'Tamanho ocupado por pastas temporárias:') }}</label>
+                <label>{{ translations['config']['temp_folders_size'] }}</label>
                 <p style="margin: 0 10px;">{{ "%.2f" | format(temp_folders_size / (1024 * 1024)) }} MB</p>
-                <button type="button" id="delete-temp-folders-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #e63946; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    {{ translations.get('delete_temp_folders_button', 'Excluir Pastas Temporárias') }}
+                <button type="button" id="delete-temp-folders-btn" style="padding: 5px 10px; font-size: 0.9rem; background-color: #4e54c8; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    {{ translations['config']['delete_temp_folders_button'] }}
                 </button>
+            </div>
+
+            <div class="config-item api">
+                <label for="api_key">{{ translations['config']['api_key'] }}</label>
+                <input type="text" id="api_key" name="api_key" value="{{ config.API_KEY_DETECTLANGUAGE }}">
             </div>
 
             <div class="config-item api">
@@ -165,27 +311,52 @@
             </div>
 
             <div class="config-item others">
-                <label for="debug_mode">{{ translations.get('debug_mode', 'Modo de Debug:') }}</label>
+                <label for="debug_mode">{{ translations['config']['debug']['debug_mode'] }}</label>
                 <input type="checkbox" id="debug_mode" name="debug_mode" {% if debug_mode %}checked{% endif %}>
             </div>            
 
             <div class="config-item others">
-                <label for="debug_ui_toggle">{{ translations.get('debug_ui_toggle', 'Mostrar UI de Debug:') }}</label>
+                <label for="debug_ui_toggle">{{ translations['config']['debug']['debug_ui_toggle'] }}</label>
                 <input type="checkbox" id="debug_ui_toggle" name="debug_ui_toggle" {% if debug_ui_toggle %}checked{% endif %}>
             </div>
 
             <div class="config-item others">
-                <label for="filter-events">Filtros de Eventos:</label>
-                <button type="button" id="filter-events-btn">Configurar Filtros</button>
+                <label for="filter-events">{{ translations['config']['debug']['filter_events'] }}</label>
+                <button type="button" id="filter-events-btn">{{ translations['config']['debug']['filter_events_button'] }}</button>
             </div>
 
-            <button type="button" id="save-btn">{{ translations.get('save_button', 'Salvar') }}</button>
-            <button type="button" id="tips-btn">{{ translations.get('tips_button', 'Dicas') }}</button>
+            <div class="config-item others">
+                <label for="loading_animation">Loading Animation</label>
+                <div style="display: flex; align-items: center;">
+                    <!-- Toggle -->
+                    <label class="toggle">
+                        <!-- 
+                            Se no seu config atual a opção for 'ball', deixa o checkbox marcado. 
+                            Caso contrário, deixa desmarcado, significando 'spinner'. 
+                        -->
+                        <input type="checkbox" id="loading_animation" name="loading_animation" value="ball" 
+                            {% if config.loading_animation == 'ball' %}checked{% endif %}>
+                        <span class="slider round"></span>
+                    </label>
+            
+                    <!-- Texto ao lado do toggle, que será atualizado dinamicamente via JS -->
+                    <span id="loading_animation_label" style="margin-left: 10px;">
+                        {% if config.loading_animation == 'ball' %}
+                            Ball
+                        {% else %}
+                            Spinner
+                        {% endif %}
+                    </span>
+                </div>
+            </div>            
+
+            <button type="button" id="save-btn">{{ translations['config']['save_button'] }}</button>
+            <button type="button" id="tips-btn">{{ translations['config']['tips_button'] }}</button>
         </form>
         <form action="{{ url_for('restore_defaults') }}" method="POST">
-            <button type="button" id="restore-defaults-btn">{{ translations.get('restore_defaults_button', 'Restaurar Padrões') }}</button>
+            <button type="button" id="restore-defaults-btn">{{ translations['config']['restore_defaults_button'] }}</button>
         </form>
-        <a href="{{ url_for('home') }}">{{ translations.get('back_home_link', 'Voltar para a Home') }}</a>
+        <label id="exit-label">{{ translations['config']['back_home_link'] }}</label>
     </div>
 
     <!-- Tela de carregamento -->
@@ -197,7 +368,7 @@
     <div id="tips-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>{{ translations.get('tips_title', 'Dicas') }}</h3>
+            <h3>{{ translations['config']['modal']['tips']['title'] }}</h3>
             <ul id="tips-list">
                 <!-- As dicas serão inseridas aqui dinamicamente -->
             </ul>
@@ -208,54 +379,31 @@
     <div id="confirmation-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3>{{ translations.get('confirmation_title', 'Confirmação') }}</h3>
+            <h3>{{ translations['config']['modal']['confirmation']['title'] }}</h3>
             <p id="confirmation-message"></p>
-            <button id="confirm-btn">{{ translations.get('confirm_button', 'Continuar') }}</button>
-            <button id="cancel-btn">{{ translations.get('cancel_button', 'Cancelar') }}</button>
+            <button id="confirm-btn">{{ translations['config']['modal']['confirmation']['confirm_button'] }}</button>
+            <button id="cancel-btn">{{ translations['config']['modal']['confirmation']['cancel_button'] }}</button>
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='scripts/config.js') }}"></script>
+    <!-- Modal -->
+    <div id="confirmation-modal" class="custom-modal">
+        <h5 class="modal-title">{{ translations['modal']['queue']['confirmation_title'] }}</h5>
+        <p>{{ translations['modal']['queue']['message_1'] }}</p>
+        <p>{{ translations['modal']['queue']['message_2'] }}</p>
+        <div class="modal-footer">
+            <button id="delete-all" class="btn btn-danger">{{ translations['modal']['queue']['delete_all'] }}</button>
+            <button id="send-again" class="btn btn-success">{{ translations['modal']['queue']['send_again'] }}</button>
+        </div>
+    </div>
+
+    <!-- Fundo escurecido -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+
+    <script> const savedFilter = {{ config.search_filter|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/config/config.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
-    <script>
-        const noChangesMessage = "{{ translations.get('no_changes_detected', 'Nenhuma alteração detectada.') }}";
-        const noRestoreChangesMessage = "{{ translations.get('no_restore_changes', 'Nenhuma alteração a ser restaurada.') }}";
-    </script>
-    <script>
-        const translations = {
-            tip: "{{ translations.get('tip', 'Dicas do') }}",
-            seen: "{{ translations.get('seen', 'Visto') }}",
-            not_seen: "{{ translations.get('not_seen', 'Não Visto') }}",
-            noChangesMessage: "{{ translations.get('no_changes_detected', 'Nenhuma alteração detectada.') }}",
-            noRestoreChangesMessage: "{{ translations.get('no_restore_changes', 'Nenhuma alteração a ser restaurada.') }}",
-            enabled: "{{ translations.get('enabled', 'Ativado') }}",
-            disabled: "{{ translations.get('disabled', 'Desativado') }}",
-            changesDetectedMessage: "{{ translations.get('changes_detected_message', 'Alterações detectadas:') }}",
-            restoreDefaultsMessage: "{{ translations.get('restore_defaults_message', 'Você está prestes a restaurar os seguintes valores para o padrão:') }}",
-            confirm_delete_folder: "{{ translations.get('confirm_delete_folder', 'Tem certeza que deseja excluir esta pasta?') }}",
-            folder_deleted: "{{ translations.get('folder_deleted', 'Pasta excluída com sucesso!') }}",
-            folder_delete_error: "{{ translations.get('folder_delete_error', 'Erro ao excluir a pasta.') }}",
-            friendlyNames: {
-                upload: "{{ translations.get('upload', 'Upload Simultâneo') }}",
-                retry: "{{ translations.get('retry', 'Máximo de Tentativas') }}",
-                log: "{{ translations.get('log', 'Log de Eventos') }}",
-                api_url: "{{ translations.get('api_url', 'URL da API') }}",
-                auth_url: "{{ translations.get('auth_url', 'URL de Autenticação') }}",
-                max_results: "{{ translations.get('max_results', 'Máximo de Resultados') }}",
-                download_folder: "{{ translations.get('download_folder', 'Pasta de Downloads') }}",
-                download_folder_scheme: "{{ translations.get('download_folder_scheme', 'Esquema da Pasta de Downloads') }}",
-                cover_image_quality: "{{ translations.get('cover_image_quality', 'Qualidade das Imagens de Capa') }}",
-                upload_on_error: "{{ translations.get('upload_on_error', 'Upload de Imagens com Erro') }}",
-                preprocess_images: "{{ translations.get('preprocess_images', 'Pré-processar Imagens') }}",
-                cutting_tool: "{{ translations.get('cutting_tool', 'Ferramenta de Corte') }}",
-                output_file_type: "{{ translations.get('output_file_type', 'Tipo de Arquivo de Saída') }}",
-                output_image_quality: "{{ translations.get('output_image_quality', 'Qualidade da Imagem de Saída') }}",
-                queue_operations: "{{ translations.get('queue_operations', 'Operações Simultâneas na Fila') }}",
-                image_operations: "{{ translations.get('image_operations', 'Operações Simultâneas nas Imagens') }}"
-            }
-        };
-    </script>    
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>  
     <script>
         const outputImageQualityRange = document.getElementById('output_image_quality');
         const outputImageQualityValue = document.getElementById('output_image_quality_field');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Logs</title>
     <style>
@@ -62,6 +62,11 @@
             background-color: #0056b3;
         }
     </style>
+
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
+    
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
     <script>
@@ -105,21 +110,22 @@
                 <h3>{{ work['name'] }}</h3>
             </div>
             <div class="chapter-list" id="chapters-{{ work_id }}">
-                {% for chapter in work['chapters']|reverse %}
-                    <div class="chapter-item {% if chapter['failed_pages'] > 0 %}failed{% endif %}">
-                        <p><strong>Chapter:</strong> {{ chapter['number'] }}</p>
-                        <p><strong>Volume:</strong> {{ chapter['volume'] }}</p>
-                        <p><strong>Title:</strong> {{ chapter['title'] }}</p>
-                        <p><strong>ID:</strong> <a href="https://mangadex.org/chapter/{{ chapter['id'] }}" target="_blank">{{ chapter['id'] }}</a></p>
-                        <p><strong>Total Pages:</strong> {{ chapter['total_pages'] }}</p>
-                        <p><strong>Pages Uploaded Successfully:</strong> {{ chapter['successful_pages'] }}</p>
-                        <p><strong>Pages Failed:</strong> {{ chapter['failed_pages'] }}</p>
+                {% for chapter in work['chapters'] %}
+                    <div class="chapter-item {% if chapter['chapter']['failed_pages'] > 0 %}failed{% endif %}">
+                        <p><strong>Chapter:</strong> {{ chapter['chapter']['number'] }}</p>
+                        <p><strong>Volume:</strong> {{ chapter['chapter']['volume'] }}</p>
+                        <p><strong>Title:</strong> {{ chapter['chapter']['title'] }}</p>
+                        <p><strong>ID:</strong> <a href="https://mangadex.org/chapter/{{ chapter['chapter']['id'] }}" target="_blank">{{ chapter['chapter']['id'] }}</a></p>
+                        <p><strong>Total Pages:</strong> {{ chapter['chapter']['total_pages'] }}</p>
+                        <p><strong>Pages Uploaded Successfully:</strong> {{ chapter['chapter']['successful_pages'] }}</p>
+                        <p><strong>Pages Failed:</strong> {{ chapter['chapter']['failed_pages'] }}</p>
+                        <p><strong>Upload Time:</strong> {{ chapter['timestamp'] }}</p>
                     </div>
                 {% endfor %}
             </div>
         {% endfor %}
     </div>
-
+    
     <!-- Botão flutuante para recolher todas as obras expandidas -->
     <button class="float-button" onclick="collapseAll()">-</button>
 </body>

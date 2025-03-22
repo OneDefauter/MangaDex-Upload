@@ -3,39 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations.get('search_manga', 'Buscar Mangá') }}</title>
+    <title>{{ translations['search']['search_manga'] }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
-    <script src="{{ url_for('static', filename='scripts/search.js') }}" defer></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search/search.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi-upload/progress_bar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/home/socket.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/search/search.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
 </head>
 <body>
+    <div class="black-screen" id="black-screen"></div>
+
     <script>
         const mode = '{{ mode }}';
+        const max_results_page = '{{ max_results_page }}';
     </script>
+
     <div class="container">
-        <h2>{{ translations.get('search_manga', 'Buscar Mangá') if mode == 'download' else translations.get('edit_manga', 'Editar Mangá') }}</h2>
-        <input type="text" id="search-input" placeholder="{{ translations.get('enter_manga_name', 'Digite o nome do mangá...') if mode == 'download' else translations.get('enter_manga_name_edit', 'Digite o nome do mangá para editar...') }}" autofocus>
-        <div id="results-container"></div>
+        <h2>{{ translations['search']['search_manga'] if mode == 'download' else translations['search']['edit_manga'] }}</h2>
+        <input type="text" id="search-input" placeholder="{{ translations['search']['enter_manga_name'] }}" autofocus>
+        <div id="results-container">
+            <p id="no-results" style="display: none;">{{ translations['search']['no_results'] }}</p>
+        </div>
         <div class="pagination">
-            <button id="prev-btn">{{ translations.get('previous', 'Anterior') }}</button>
+            <button id="prev-btn">{{ translations['search']['previous'] }}</button>
             <div class="page-numbers"></div>
-            <button id="next-btn">{{ translations.get('next', 'Próximo') }}</button>
+            <button id="next-btn">{{ translations['search']['next'] }}</button>
         </div>
     </div>
+
     <!-- Tela de carregamento -->
-    <div id="loading-screen" class="loading-screen" style="display: none;">
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
         <div class="loading-spinner"></div>
+
+        <!-- Barra de Progresso -->
+        <div class="progress" style="width: 90%; position: absolute; bottom: 10px;">
+            <div 
+                class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                id="progressBar" 
+                role="progressbar" 
+                style="width: 0%;" 
+                aria-valuenow="0" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
+            </div>
+        </div>
     </div>
+
+    <!-- Modal -->
+    <div id="confirmation-modal" class="custom-modal">
+        <h5 class="modal-title">{{ translations['modal']['queue']['confirmation_title'] }}</h5>
+        <p>{{ translations['modal']['queue']['message_1'] }}</p>
+        <p>{{ translations['modal']['queue']['message_2'] }}</p>
+        <div class="modal-footer">
+            <button id="delete-all" class="btn btn-danger">{{ translations['modal']['queue']['delete_all'] }}</button>
+            <button id="send-again" class="btn btn-success">{{ translations['modal']['queue']['send_again'] }}</button>
+        </div>
+    </div>
+
+    <!-- Fundo escurecido -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
 
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
-    <script type="text/javascript">
-        const translations = {
-            noResults: "{{ translations.get('no_results', 'Nenhum resultado encontrado.') }}",
-            searchError: "{{ translations.get('search_error', 'Erro ao buscar dados. Tente novamente mais tarde.') }}"
-        };
-    </script>
 </body>
 </html>

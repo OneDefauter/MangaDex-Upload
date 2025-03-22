@@ -1,0 +1,63 @@
+/* Fundo escurecido */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    display: none; /* Inicialmente escondido */
+}
+
+/* Modal */
+.custom-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    display: none; /* Inicialmente escondido */
+    font-size: 24px;
+}
+
+/* Botões no rodapé */
+.modal-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-footer button {
+    width: 45%;
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-footer .btn-danger {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+.modal-footer .btn-danger:hover {
+    background-color: #c9302c;
+}
+
+.modal-footer .btn-success {
+    background-color: #5cb85c;
+    color: #fff;
+}
+
+.modal-footer .btn-success:hover {
+    background-color: #4cae4c;
+}

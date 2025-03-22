@@ -1,0 +1,380 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
+body {
+    font-family: 'Signika Negative', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: 300% 300%;
+    overflow: hidden;
+    background: linear-gradient(45deg, #4e54c8, #8f94fb, #141E30, #243B55);
+    user-select: none; /* Bloqueia a seleção de texto */
+}
+
+.container {
+    background-color: #ffffff; /* Mudei para branco */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+h1, h3 {
+    margin-bottom: 20px;
+    color: #000000;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.menu button,
+button.btn-login {
+    width: auto;
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #0056b3; /* Cor de fundo */
+    color: #ffffff; /* Texto em branco */
+    border: 2px solid transparent; /* Borda inicial transparente */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border 0.3s; /* Transições suaves */
+    font-weight: bold;
+    box-sizing: border-box; /* Inclui padding e borda nas dimensões totais */
+    box-shadow: 0px 10px 40px -12px #0056b3a3; /* Sombra com a nova cor */
+}
+
+.menu button:hover,
+button.btn-login:hover {
+    background-color: #ffffff; /* Fundo branco ao passar o mouse */
+    color: #0056b3; /* Texto na cor original do botão */
+    border: 2px solid #0056b3; /* Mantém a borda para evitar o aumento do tamanho */
+}
+
+.scrollable-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+/* Custom Scrollbar */
+.scrollable-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.scrollable-list::-webkit-scrollbar-track {
+    background: #3c344f; /* Cor do fundo da barra de rolagem */
+    border-radius: 10px;
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+    background: #60577a; /* Cor da barra de rolagem */
+    border-radius: 10px;
+    border: 3px solid #3c344f; /* Espaço ao redor da barra de rolagem */
+}
+
+.scrollable-list::-webkit-scrollbar-thumb:hover {
+    background: #776e94; /* Cor da barra de rolagem ao passar o mouse */
+}
+
+.item-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.item-list li {
+    display: block;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #f0ffffde;
+    transition: background-color 0.3s;
+}
+
+.item-list ul {
+    display: block !important; /* Garante que a lista interna seja exibida */
+    padding-inline-start: 0;
+}
+
+.item-list ul li {
+    display: block !important; /* Garante que a lista interna seja exibida */
+    padding: 0;
+    margin: 0;
+}
+
+.item-list li.Aguardando {
+    background-color: #9e9e9e; /* Cinza */
+}
+
+.item-list li.Processando {
+    background: linear-gradient(270deg, #ffa500, #ff4500); /* Amarelo alaranjado */
+    background-size: 400% 400%;
+    animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.item-list li.Aguardando:hover,
+.item-list li.Concluído:hover {
+    background-color: #ff4f4f; /* Vermelho ao passar o mouse */
+    cursor: pointer;
+}
+
+.item-list li.Concluído {
+    background-color: #4caf50; /* Verde */
+}
+
+.item-list li.Erro,
+.item-list li.Cancelado {
+    background-color: #ff4f4f; /* Vermelho */
+}
+
+.item-list li:hover {
+    cursor: pointer;
+}
+
+.item-list .album-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.item-list .folder-path, .item-list .status, .item-list .error {
+    font-size: 12px; /* Reduzido */
+    color: #d3d3d3;
+    margin-top: 2px; /* Menor espaçamento */
+}
+
+.item-list .empty-message {
+    color: #f0ffffde;
+    font-style: italic;
+    padding: 20px;
+    background-color: #635d87;
+    border-radius: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.reverse-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#reverse-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid #0056b3;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+#reverse-btn.reverse-on {
+    background-color: #0056b3;
+    color: white;
+    border: 2px solid transparent;
+}
+
+#reverse-btn.reverse-off {
+    background-color: transparent;
+    color: #0056b3;
+    border: 2px solid #0056b3;
+}
+
+#auto-scroll-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid #0056b3;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+#auto-scroll-btn.auto-scroll-on {
+    background-color: #0056b3;
+    color: white;
+    border: 2px solid transparent;
+}
+
+#auto-scroll-btn.auto-scroll-off {
+    background-color: transparent;
+    color: #0056b3;
+    border: 2px solid #0056b3;
+}
+
+/* Container da barra de progresso */
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Barra de progresso */
+.progress-bar {
+    height: 100%;
+    background-color: #4caf50; /* Verde */
+    width: 0%; /* Inicia vazia */
+    transition: width 0.3s ease;
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+#filter-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px solid #0056b3;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+    background-color: transparent;
+    color: #0056b3;
+}
+
+#filter-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Impede que o modal fique fora da tela */
+    padding-top: 10vh; /* Adiciona um espaço no topo */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 10px 40px -12px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh; /* Limita a altura para evitar ultrapassar a tela */
+    overflow-y: auto; /* Adiciona rolagem interna caso o conteúdo seja maior que a altura */
+    position: relative;
+    transform: scale(0.8);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.filter-group {
+    background: #f7f7f7;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.filter-checkboxes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-left: 10px;
+}
+
+.apply-filter-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #0056b3;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.apply-filter-btn:hover {
+    background: #003f7f;
+}
+
+@media screen and (max-width: 600px) {
+    .reverse-toggle {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .reverse-toggle button {
+        width: 45%; /* Reduzindo para que caibam dois por linha */
+        max-width: 200px; /* Para evitar que fiquem muito largos */
+        font-size: 0.7rem;
+        padding: 10px;
+    }
+}

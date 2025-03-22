@@ -38,6 +38,11 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+ul {
+    padding-inline-start: 0;
+    list-style-type: none;
+}
+
 .suggestions-list li {
     padding: 10px;
     font-size: 14px;

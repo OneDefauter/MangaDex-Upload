@@ -3,44 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ translations['queue']['queue_title'] }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='queue.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
-    <title>{{ translations.get('queue_title', 'Fila de Processos') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/queue/queue.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/queue/context_menu.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/home/socket.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
 </head>
 <body>
+    <div class="black-screen" id="black-screen"></div>
+
     <div class="container">
-        <h1>{{ translations.get('queue_title', 'Fila de Processos') }}</h1>
+        <h1>{{ translations['queue']['queue_title'] }}</h1>
         <div class="menu">
-            <button onclick="showSection('downloads')">{{ translations.get('downloads', 'Downloads') }}</button>
-            <button onclick="showSection('uploads')">{{ translations.get('uploads', 'Uploads') }}</button>
+            <button onclick="showSection('downloads')">{{ translations['queue']['downloads'] }}</button>
+            <button onclick="showSection('uploads')">{{ translations['queue']['uploads'] }}</button>
         </div>
         <div class="reverse-toggle">
             <button id="reverse-btn" class="reverse-off" onclick="toggleReverse()">
-                {{ translations.get('reverse_button', 'Reverso') }}
+                {{ translations['queue']['reverse_button'] }}
             </button>
+            <button id="auto-scroll-btn" class="auto-scroll-on" onclick="toggleAutoScroll()">
+                {{ translations['queue']['auto_scroll_button'] }}
+            </button>
+            <button id="filter-btn" onclick="openFilterModal()">{{ translations['queue']['filter'] }}</button>
         </div>
         <div id="downloads" class="section active scrollable-list">
-            <h3>{{ translations.get('download_queue', 'Fila de Downloads') }}</h3>
+            <h3>{{ translations['queue']['download_queue'] }}</h3>
             <ul id="download-list" class="item-list"></ul>
         </div>
         <div id="uploads" class="section scrollable-list">
-            <h3>{{ translations.get('upload_queue', 'Fila de Uploads') }}</h3>
+            <h3>{{ translations['queue']['upload_queue'] }}</h3>
             <ul id="upload-list" class="item-list"></ul>
         </div>
         <div class="button-container">
-            <button onclick="window.location.href='{{ url_for('home') }}'" class="btn-login">{{ translations.get('back_button', 'Voltar') }}</button>
+            <button onclick="window.location.href='{{ url_for('home') }}'" class="btn-login">{{ translations['queue']['back_button'] }}</button>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='scripts/queue.js') }}"></script>
+
+    <!-- Modal para filtro -->
+    <div id="filter-modal" class="modal" onclick="clickOutsideToClose(event)" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeFilterModal()">&times;</span>
+            <h3>{{ translations['queue']['modal']['filter']['filter_title'] }}</h3>
+            <div class="filter-container">
+                <div class="filter-group">
+                    <h4>{{ translations['queue']['modal']['filter']['projects'] }}</h4>
+                    <div class="filter-checkboxes" id="filter-names">
+                        <!-- Nomes das obras serão inseridos dinamicamente -->
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <h4>{{ translations['queue']['modal']['filter']['filter_title'] }}</h4>
+                    <div class="filter-checkboxes">
+                        <label><input type="checkbox" class="filter-status" value="Aguardando"> {{ translations['queue']['modal']['filter']['status']['waiting'] }}</label>
+                        <label><input type="checkbox" class="filter-status" value="Processando"> {{ translations['queue']['modal']['filter']['status']['processing'] }}</label>
+                        <label><input type="checkbox" class="filter-status" value="Concluído"> {{ translations['queue']['modal']['filter']['status']['completed'] }}</label>
+                        <label><input type="checkbox" class="filter-status" value="Cancelado"> {{ translations['queue']['modal']['filter']['status']['canceled'] }}</label>
+                        <label><input type="checkbox" class="filter-status" value="Erro"> {{ translations['queue']['modal']['filter']['status']['error'] }}</label>
+                    </div>
+                </div>
+            </div>
+            <button class="apply-filter-btn" onclick="applyFilter()">{{ translations['queue']['modal']['filter']['apply'] }}</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="confirmation-modal" class="custom-modal">
+        <h5 class="modal-title">{{ translations['modal']['queue']['confirmation_title'] }}</h5>
+        <p>{{ translations['modal']['queue']['message_1'] }}</p>
+        <p>{{ translations['modal']['queue']['message_2'] }}</p>
+        <div class="modal-footer">
+            <button id="delete-all" class="btn btn-danger">{{ translations['modal']['queue']['delete_all'] }}</button>
+            <button id="send-again" class="btn btn-success">{{ translations['modal']['queue']['send_again'] }}</button>
+        </div>
+    </div>
+
+    <!-- Fundo escurecido -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+
+    <script src="{{ url_for('static', filename='scripts/queue/queue.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/queue/context_menu.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
-    <script>
-        // Traduções para mensagens vazias
-        const emptyDownloadMessage = "{{ translations.get('no_download_items', 'Nenhum item na fila de downloads') }}";
-        const emptyUploadMessage = "{{ translations.get('no_upload_items', 'Nenhum item na fila de uploads') }}";
-        const errorDeleteMessage = "{{ translations.get('error_delete_item', 'Erro ao excluir o item.') }}";
-    </script>
 </body>
 </html>

@@ -3,149 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ translations.get('home_title', 'Home') }}</title>
+    <title>{{ translations['home']['home_title'] }}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='notification.css') }}">
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+
+    <script> const translations = {{ translations|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/home/socket.js') }}"></script>
 </head>
 <body>
+    <div class="black-screen" id="black-screen"></div>
+
     <div class="container">
-        <h2>{{ translations.get('welcome_title', 'Bem-vindo ao MangaDex Uploader') }}</h2>
+        <h2>{{ translations['home']['welcome_title'] }}, {{ name_user }}!</h2>
         <div class="button-container">
             <div class="tooltip">
                 <button class="icon-button" id="settings-btn">
                     <i class="fi fi-rr-settings-sliders"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('settings', 'Configurações') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['settings'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="queue-btn">
                     <i class="fi fi-rr-gallery"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('queue', 'Fila') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['queue'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="upload-btn">
                     <i class="fi fi-rr-upload"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('upload', 'Enviar') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['upload'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="upload-mult-btn">
                     <i class="fi fi-rr-cloud-upload"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('upload_mult', 'Enviar - Multi') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['upload_mult'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="download-btn">
                     <i class="fi fi-rr-download"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('download', 'Baixar') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['download'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="edit-btn">
                     <i class="fi fi-rr-pencil"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('edit', 'Editar') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['edit'] }}</span>
+            </div>
+            <div class="tooltip">
+                <button class="icon-button" id="create-btn">
+                    <i class="fi fi-rr-ballot"></i>
+                </button>
+                <span class="tooltiptext">{{ translations['home']['options']['create'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="updates-btn">
                     <i class="fi fi-rr-info"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('updates', 'Atualizações') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['updates'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="logs-btn">
                     <i class="fi fi-rr-search-alt"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('logs', 'Logs de Upload') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['logs'] }}</span>
             </div>
             <div class="tooltip">
                 <button class="icon-button" id="logout-btn">
                     <i class="fi fi-rr-lock"></i>
                 </button>
-                <span class="tooltiptext">{{ translations.get('logout', 'Sair') }}</span>
+                <span class="tooltiptext">{{ translations['home']['options']['logout'] }}</span>
             </div>
         </div>
     </div>
     <div id="notifications" class="notifications">
         <!-- As notificações serão inseridas aqui pelo JavaScript -->
     </div>
-    <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
-    <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>
+
+    <!-- Modal -->
+    <div id="confirmation-modal" class="custom-modal">
+        <h5 class="modal-title">{{ translations['modal']['queue']['confirmation_title'] }}</h5>
+        <p>{{ translations['modal']['queue']['message_1'] }}</p>
+        <p>{{ translations['modal']['queue']['message_2'] }}</p>
+        <div class="modal-footer">
+            <button id="delete-all" class="btn btn-danger">{{ translations['modal']['queue']['delete_all'] }}</button>
+            <button id="send-again" class="btn btn-success">{{ translations['modal']['queue']['send_again'] }}</button>
+        </div>
+    </div>
+
+    <!-- Fundo escurecido -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+
     <script>
-        // Script para manipular cliques nos botões
-        document.getElementById('settings-btn').onclick = function() {
-            // Redireciona para a rota de configurações
-            window.location.href = "{{ url_for('config') }}";
-        };
-
-        document.getElementById('updates-btn').onclick = function() {
-            // Redireciona para a rota de configurações
-            window.location.href = "{{ url_for('updates') }}";
-        };
-
-        document.getElementById('queue-btn').onclick = function() {
-            // Redireciona para a rota de fila
-            window.location.href = "{{ url_for('queue') }}";
-        };
-
-        document.getElementById('logout-btn').onclick = function() {
-            // Redireciona para a rota de logout
-            window.location.href = "{{ url_for('logout') }}";
-        };
-
-        document.getElementById('download-btn').onclick = function() {
-            // Redireciona para a rota de download
-            window.location.href = "{{ url_for('download') }}";
-        };
-
-        document.getElementById('upload-btn').onclick = function() {
-            // Redireciona para a página de upload
-            window.location.href = "{{ url_for('upload') }}";
-        };
-
-        document.getElementById('logs-btn').onclick = function() {
-            // Redireciona para a página de logs
-            window.location.href = "{{ url_for('logs') }}";
-        };
-
-        document.getElementById('edit-btn').onclick = function() {
-            // Redireciona para a página de logs
-            window.location.href = "{{ url_for('edit') }}";
-        };
-
-        document.getElementById('upload-mult-btn').onclick = function() {
-            // Redireciona para a página de logs
-            window.location.href = "{{ url_for('mult_upload') }}";
-        };
-
-        // Função para mostrar notificações
-        function showNotifications(messages) {
-            const notificationsContainer = document.getElementById('notifications');
-            messages.reverse().forEach((message, index) => {
-                const notification = document.createElement('div');
-                notification.className = 'notification';
-                notification.innerHTML = `<p>${message}</p>`;
-                notificationsContainer.appendChild(notification);
+        document.addEventListener("DOMContentLoaded", function () {
+            let blackScreen = document.getElementById("black-screen");
+        
+            // Ao carregar a página, remove a tela preta após um tempo
+            setTimeout(() => {
+                blackScreen.classList.add("fade-out");
+            }, 500); // Tempo de espera para esconder a black-screen inicial
+        
+            function showBlackScreenAndRedirect(url) {
+                blackScreen.classList.remove("fade-out"); // Torna a tela preta visível novamente
+        
                 setTimeout(() => {
-                    notification.classList.add('show');
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 300);
-                    }, 3000 + index * 1000); // Delay entre notificações
-                }, index * 1000); // Delay entre notificações
-            });
-        }
+                    window.location.href = url;
+                }, 1000); // Espera a animação antes de redirecionar
 
-        // Verifica se existem notificações
-        const notifications = {{ notifications|tojson }};
-        if (notifications.length > 0) {
-            showNotifications(notifications);
-        }
+                setTimeout(() => {
+                    blackScreen.classList.add("fade-out");
+                }, 2000); // Tempo de espera antes da animação
+            }
+        
+            // Aplicar evento de clique nos botões
+            document.getElementById('settings-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('config') }}"); };
+            document.getElementById('updates-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('updates') }}"); };
+            document.getElementById('queue-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('queue') }}"); };
+            document.getElementById('logout-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('logout') }}"); };
+            document.getElementById('download-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('download') }}"); };
+            document.getElementById('upload-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('upload') }}"); };
+            document.getElementById('logs-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('logs') }}"); };
+            document.getElementById('edit-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('edit') }}"); };
+            document.getElementById('upload-mult-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('mult_upload') }}"); };
+            document.getElementById('create-btn').onclick = function() { showBlackScreenAndRedirect("{{ url_for('create_work') }}"); };
+        });
     </script>
+    <script>
+        const notificationsList = {{ notifications|tojson }};
+        if (notificationsList.length > 0) {
+            let delay = 0;
+            for (let i = 0; i < notificationsList.length; i++) {
+                setTimeout(() => {
+                    showNotifications([notificationsList[i]]);
+                }, delay);
+                delay += 1000; // 1 segundos de intervalo entre as notificações
+            }
+        }
+    </script>    
 </body>
 </html>

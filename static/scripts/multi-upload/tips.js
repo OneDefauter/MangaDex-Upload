@@ -7,11 +7,11 @@ const tipPrevBtn = document.getElementById('tip-prev-btn');
 const tipIndicators = document.getElementById('tip-indicators');
 
 const tips = [
-    { id: 'project', text: translations.project || 'Projeto: Identifique o projeto ao qual este upload pertence.', gif: '/static/tips/multi_upload/project.gif' },
-    { id: 'language', text: translations.language || 'Linguagem: Escolha o idioma do mangá.', gif: '/static/tips/multi_upload/language.gif' },
-    { id: 'parent-folder', text: translations.parent_folder || 'Pasta: Indique a pasta onde os capítulos estão armazenados.', gif: '/static/tips/multi_upload/folder.gif' },
-    { id: 'create-group', text: translations.create_group || 'Crie grupos para enviar capítulos.<br>Selecione capítulos com o botão esquerdo do mouse e use CTRL ou SHIFT para selecionar mais de um.', gif: '/static/tips/multi_upload/create_group.gif' },
-    { id: 'edit-group', text: translations.edit_group || 'Edite grupos selecionando um capítulo com grupo ou clique com o botão direito do mouse em um capítulo com grupo.', gif: '/static/tips/multi_upload/edit_group.gif' }
+    { id: 'project', text: t.modal.tip.tip_project, gif: '/static/tips/multi_upload/project.gif' },
+    { id: 'language', text: t.modal.tip.tip_language, gif: '/static/tips/multi_upload/language.gif' },
+    { id: 'parent-folder', text: t.modal.tip.tip_folder, gif: '/static/tips/multi_upload/folder.gif' },
+    { id: 'create-group', text: t.modal.tip.tip_create_group, gif: '/static/tips/multi_upload/create_group.gif' },
+    { id: 'edit-group', text: t.modal.tip.tip_edit_group, gif: '/static/tips/multi_upload/edit_group.gif' }
 ];
 
 let currentTipIndex = -1;
@@ -37,7 +37,7 @@ function showTip(index) {
         tipGif.src = tips[index].gif;
 
         tipPrevBtn.style.display = index > 0 ? 'inline-block' : 'none'; // Esconder "Voltar" na primeira dica
-        tipNextBtn.textContent = index < tips.length - 1 ? translations.next || 'Continuar' : translations.finish || 'Finalizar';
+        tipNextBtn.textContent = index < tips.length - 1 ? t.modal.tip.next : t.modal.tip.finish || 'Finalizar';
 
         updateIndicators();
     }

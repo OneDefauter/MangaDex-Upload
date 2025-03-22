@@ -78,13 +78,13 @@ class ConsoleStitchProcess:
                     quality=kwargs.get('lossy_quality'),
                 )
                 img_iteration += 1
-                print(
-                    '[{iteration}/{count}] {file} has been successfully saved'.format(
-                        iteration=dir_iteration,
-                        count=input_dirs_count,
-                        file=img_file_name,
-                    )
-                )
+                # print(
+                #     '[{iteration}/{count}] {file} has been successfully saved'.format(
+                #         iteration=dir_iteration,
+                #         count=input_dirs_count,
+                #         file=img_file_name,
+                #     )
+                # )
             dir_iteration += 1
             gc.collect()
         end_time = time()
