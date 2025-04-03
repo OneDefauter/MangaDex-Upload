@@ -161,7 +161,7 @@ class ImagePreprocessor:
 
             os.rename(old_path, new_path)
 
-        print(f"Imagens renomeadas em ordem no diretório {temp_dir}.")
+        print(f"Imagens renomeadas em ordem no diretório temporário: {temp_dir}")
 
     def check_and_compress_image(self, filepath, current_quality):
         """
@@ -558,7 +558,7 @@ class ImagePreprocessor:
 
         return True, None
 
-    def extract_archive(self, archive_path, extract_to):
+    def extract_archive(self, archive_path, extract_to, force_preprocess=False):
         max_workers = self.config.get("image_operations", 1)
         auto_adapt = self.config.get("auto_adapt_cutting_tool", False)
         cutting_tool = self.config.get("cutting_tool", "Pillow")
@@ -566,6 +566,9 @@ class ImagePreprocessor:
         upload_on_error = self.config.get('upload_on_error', False)
         failed = False
         msg = ""
+
+        if force_preprocess:
+            prex_ = True
 
         if auto_adapt:
             if self.long_strip:

@@ -57,10 +57,7 @@ def process_item(args):
                             return {'error': f"Extraction failed for {file_path.name}: {error_message}"}
 
                     else:
-                        temp_dir = tempfile.mkdtemp(prefix='MDU_')
-                        success, error_message = preprocessor.extract_archive(file_path, temp_dir)
-                        if not success:
-                            return {'error': f"Extraction failed for {file_path.name}: {error_message}"}
+                        temp_dir = None
 
                     scans = []
                     for scan in group_data['scans']:
@@ -99,7 +96,8 @@ def process_item(args):
                             "error": None
                         },
                         "others": {
-                            "ispre": ispre
+                            "ispre": ispre,
+                            "iszip": True
                         },
                         "pre_notif": {
                             "manga_title": manga_title,
@@ -195,7 +193,8 @@ def process_item(args):
                             "error": None
                         },
                         "others": {
-                            "ispre": ispre
+                            "ispre": ispre,
+                            "iszip": False
                         },
                         "pre_notif": {
                             "manga_title": manga_title,

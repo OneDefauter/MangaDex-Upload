@@ -1,3 +1,11 @@
+### Versão 1.1.1 (03/04/2025)
+
+- Correção sobre PATH nas configurações (android)
+
+- Correção no envio de arquivos CBZ ou ZIP sem pré-processar ativo
+
+- Adicionado uma simples página de erro
+
 ### Versão 1.1.0 (22/03/2025)
 
 #### Mudanças

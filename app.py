@@ -8,6 +8,7 @@ import shutil
 import markdown
 import requests
 import tempfile
+import traceback
 import webbrowser
 from pathlib import Path
 from functools import wraps
@@ -246,6 +247,11 @@ def add_cache_header(response):
     if request.path.startswith('/static/') and request.path.lower().endswith('.svg'):
         response.headers['Cache-Control'] = 'public, max-age=31536000'
     return response
+
+@app.errorhandler(500)
+def internal_error(error):
+    trace = traceback.format_exc()
+    return render_template("500.html", error=trace), 500
 
 @socket.on('progress_data_mult_upload')
 def handler_progress():
@@ -748,7 +754,7 @@ def config():
         output_image_quality = min(max(output_image_quality, 0), 100)
 
         if session['is_android']:
-            download_folder = android_path_download
+            download_folder = str(android_path_download)
 
         # Atualiza os dados de configuração
         config_data.update({

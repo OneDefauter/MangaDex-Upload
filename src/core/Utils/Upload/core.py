@@ -44,6 +44,7 @@ class UploadChapters():
         
         ## Others
         self.ispre = data['others']['ispre']
+        self.iszip = data['others']['iszip']
         
         ## Pre-Notif
         self.pre_notif = data['pre_notif']
@@ -629,21 +630,40 @@ class UploadChapters():
 
             if session_id:
                 if not self.ispre:
-                    self.temp_dir = tempfile.mkdtemp(prefix='MDU_')
-                    success, error_message = self.preprocessor.preprocess_image_folder(self.path, self.temp_dir)
-                    
-                    if self.status == 2:
-                        print("Upload cancelado.")
-                        self.pre_notif['status'] = 2
-                        self.pre_notif['detail'] = 'Cancelado pelo usuário'
-                        self.socket.emit('get_notification', self.pre_notif)
-                        return {'st': 3, 'e': None, 'd': 'Cancelado pelo usuário'}
+                    if not self.iszip:
+                        self.temp_dir = tempfile.mkdtemp(prefix='MDU_')
+                        success, error_message = self.preprocessor.preprocess_image_folder(self.path, self.temp_dir)
+                        
+                        if self.status == 2:
+                            print("Upload cancelado.")
+                            self.pre_notif['status'] = 2
+                            self.pre_notif['detail'] = 'Cancelado pelo usuário'
+                            self.socket.emit('get_notification', self.pre_notif)
+                            return {'st': 3, 'e': None, 'd': 'Cancelado pelo usuário'}
 
-                    if not success:
-                        self.pre_notif['status'] = 2
-                        self.pre_notif['detail'] = error_message
-                        self.socket.emit('get_notification', self.pre_notif)
-                        return {'st': 2, 'e': error_message, 'd': None}
+                        if not success:
+                            self.pre_notif['status'] = 2
+                            self.pre_notif['detail'] = error_message
+                            self.socket.emit('get_notification', self.pre_notif)
+                            return {'st': 2, 'e': error_message, 'd': None}
+                    
+                    else:
+                        self.temp_dir = tempfile.mkdtemp(prefix='MDU_')
+                        success, error_message = self.preprocessor.extract_archive(self.path, self.temp_dir, force_preprocess=self.iszip)
+
+                        if self.status == 2:
+                            print("Upload cancelado.")
+                            self.pre_notif['status'] = 2
+                            self.pre_notif['detail'] = 'Cancelado pelo usuário'
+                            self.socket.emit('get_notification', self.pre_notif)
+                            return {'st': 3, 'e': None, 'd': 'Cancelado pelo usuário'}
+
+                        if not success:
+                            self.pre_notif['status'] = 2
+                            self.pre_notif['detail'] = error_message
+                            self.socket.emit('get_notification', self.pre_notif)
+                            return {'st': 2, 'e': error_message, 'd': None}
+
                 else:
                     self.temp_dir = self.dir_tmp
 
