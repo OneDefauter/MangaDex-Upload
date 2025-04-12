@@ -101,7 +101,12 @@ document.addEventListener('DOMContentLoaded', function () {
             mainResult.innerHTML = html;
         }
 
-        if (data.md_search_results && data.md_search_results.length > 0) {
+        if (
+            data.obra_existe &&
+            data?.attributes?.links?.mu &&
+            data.obra_existe.data?.attributes?.links?.mu &&
+            data.attributes.links.mu === data.obra_existe.data.attributes.links.mu
+        ) {
             let htmlList = '';
             data.md_search_results.forEach(function (manga) {
                 if (data.obra_existe && manga.data.attributes.links.mu === data.obra_existe.data.attributes.links.mu) {
