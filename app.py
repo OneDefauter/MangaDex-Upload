@@ -587,11 +587,8 @@ def search_project_manga_updates(data):
 
     md_search_results = MANGA.search_manga_candidates(extracted["title"], extracted["associated"])
 
-    if len(md_search_results) == 0:
-        ...
-
     for manga in md_search_results:
-        mu = manga.get('data', {}).get('attributes', {}).get('links', {}).get('mu', None)
+        mu = (((manga.get('data') or {}).get('attributes') or {}).get('links') or {}).get('mu')
         if mu:
             final_url = get_final_url(mu)  # Como no exemplo anterior
             if final_url and is_same_series(url_input, final_url):

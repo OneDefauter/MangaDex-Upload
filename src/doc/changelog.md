@@ -1,3 +1,7 @@
+### Versão 1.1.2 (12/04/2025)
+
+- Uma pequena correção ao buscar obras
+
 ### Versão 1.1.1 (03/04/2025)
 
 - Correção sobre PATH nas configurações (android)
