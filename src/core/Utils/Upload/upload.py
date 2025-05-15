@@ -5,7 +5,6 @@ from time import sleep
 class UploadQueue():
     def __init__(self, socket, QUEUE_CORE) -> None:
         self.UPLOAD_QUEUE = queue.Queue()
-        self.queue_upload = {}
         self.SOCKET = socket
         self.QUEUE_CORE = QUEUE_CORE
         self.CURRENT_QUEUE = None
@@ -86,7 +85,6 @@ class UploadQueue():
 
         while True:
             try:
-                self.load_queue_uploads()
                 upload_core = self.get_prioritized_item()
                 if upload_core:
                     queue_upload_id = self.QUEUE_CORE.get_by_id(upload_core.id)
@@ -166,13 +164,12 @@ class UploadQueue():
                         self.SOCKET.emit('check_queue_data')
                         self.UPLOAD_QUEUE.task_done()
                         self.CURRENT_QUEUE = None
-                        sleep(0.2)
 
                 else:
-                    sleep(0.2)
+                    continue
 
             except queue.Empty:
-                sleep(0.2)
+                continue
 
     def add(self, core):
         with self.lock:
@@ -223,10 +220,3 @@ class UploadQueue():
                     return None
 
             return prioritized_item
-
-    def load_queue_uploads(self):
-        """
-        Carrega os uploads pendentes da `QUEUE_CORE` e adiciona na fila de processamento.
-        """
-        data = self.QUEUE_CORE.load()  # Obtém os uploads armazenados
-        self.queue_upload = data.get("uploads", {})

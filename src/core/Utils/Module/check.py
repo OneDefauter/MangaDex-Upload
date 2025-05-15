@@ -38,7 +38,8 @@ required_modules = [
     'flask-session2',
     'flask-socketio',
     'bs4',
-    'opencv-python'
+    'apsw',
+    'scipy'
 ]
 
 # Mapeamento de módulos com nomes alternativos para importação
@@ -46,8 +47,7 @@ alternate_imports = {
     'Pillow': ['PIL'],
     'pycryptodome': ['Crypto', 'Cryptodome'],
     'flask-session2': ['flask_session'],
-    'flask-socketio': ['flask_socketio'],
-    'opencv-python': ['cv2']
+    'flask-socketio': ['flask_socketio']
 }
 
 lib, path_ = lib_path()

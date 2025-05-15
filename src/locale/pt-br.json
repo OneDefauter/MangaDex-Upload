@@ -355,21 +355,47 @@
 
         "modal": {
             "tip": {
-                "tip": "Dica",
-                "tip_gif_alt": "GIF da dica",
-                "tip_default_text": "Use este formulário para enviar seu mangá. Preencha todos os campos obrigatórios antes de clicar em 'Enviar'.",
-                "previous": "Voltar",
+                "title": "Introdução",
+                "description": "Use este formulário para enviar um capítulo. Preencha todos os campos obrigatórios antes de clicar em 'Enviar'.",
                 "next": "Continuar",
+                "prev": "Voltar",
                 "finish": "Finalizar",
-                "tip_project": "Projeto: Identifique o projeto ao qual este upload pertence.",
-                "tip_group": "Grupo: Selecione o grupo responsável por este mangá.",
-                "tip_language": "Linguagem: Escolha o idioma do mangá.",
-                "tip_title": "Título: Insira o título do capítulo, se houver.",
-                "tip_volume": "Volume: Insira o volume correspondente, se aplicável.",
-                "tip_chapter": "Capítulo: Número do capítulo que está sendo enviado.",
-                "tip_single_chapter": "Capítulo Único: Marque se este for um capítulo único.<br><strong>Aviso:</strong> Caso esteja marcada, tanto volume quanto o capítulo não serão enviados.",
-                "tip_folder": "Pasta: Indique a pasta onde as imagens estão armazenadas.",
-                "tip_datetime": "Data e Hora da publicação: Selecione quando a publicação deve ocorrer.<br><strong>Aviso:</strong> O tempo máximo aceito é de 2 semanas."
+
+                "tip_project_title": "Projeto",
+                "tip_project_img_alt": "Campo de projeto",
+                "tip_project_description": "Identifique o projeto ao qual este upload pertence. Você pode procurar pelo nome ou pelo UUID do projeto.",
+
+                "tip_group_title": "Grupo",
+                "tip_group_img_alt": "Campo do grupo responsável",
+                "tip_group_description": "Selecione o grupo responsável por este mangá. Se necessário, crie um novo grupo com o botão 'Criar Novo Grupo'.",
+
+                "tip_language_title": "Linguagem",
+                "tip_language_img_alt": "Campo de idioma",
+                "tip_language_description": "Escolha o idioma do mangá (ex: Português (Brasil), Inglês).",
+
+                "tip_title_title": "Título",
+                "tip_title_img_alt": "Campo do título do capítulo",
+                "tip_title_description": "Insira o título do capítulo, se houver. Esse campo é opcional.",
+
+                "tip_volume_title": "Volume",
+                "tip_volume_img_alt": "Campo do volume",
+                "tip_volume_description": "Insira o volume correspondente, se aplicável. Deixe em branco se não houver volume.",
+
+                "tip_chapter_title": "Capítulo",
+                "tip_chapter_img_alt": "Campo do capítulo",
+                "tip_chapter_description": "Número do capítulo que está sendo enviado. Esse campo é obrigatório, exceto se for um capítulo único.",
+
+                "tip_single_chapter_title": "Capítulo Único",
+                "tip_single_chapter_img_alt": "Campo para marcar capítulo único",
+                "tip_single_chapter_description": "Marque se este for um capítulo único.<br><strong>Aviso:</strong> Caso esteja marcada, tanto volume quanto o capítulo não serão enviados.",
+
+                "tip_folder_title": "Pasta",
+                "tip_folder_img_alt": "Campo de seleção de pasta",
+                "tip_folder_description": "Indique a pasta onde as imagens do capítulo estão armazenadas. Essa pasta será usada para processar o upload.",
+
+                "tip_datetime_title": "Data e Hora da Publicação",
+                "tip_datetime_img_alt": "Campo de agendamento",
+                "tip_datetime_description": "Selecione quando a publicação deve ocorrer.<br><strong>Aviso:</strong> O tempo máximo aceito é de 2 semanas."
             }
         },
 
@@ -380,6 +406,20 @@
             "console": {
                 "error_select_folder": "Erro ao selecionar a pasta: ",
                 "error_select_file": "Erro ao selecionar o arquivo: "
+            }
+        },
+
+        "script": {
+            "search_groups": {
+                "group_not_found": "Grupo não encontrado.",
+                "group_search_error": "Erro ao buscar grupo",
+                "group_already_added": "Grupo já adicionado!"
+            },
+            "search_projects": {
+                "long_strip_tag": "Projeto com a Tag Long Strip.",
+                "recommended_tool": "Recomendado o uso da ferramenta SmartStitch.",
+                "project_not_found": "Projeto não encontrado pela UUID",
+                "project_search_error": "Erro ao buscar projeto"
             }
         }
     },
@@ -761,7 +801,10 @@
 
         "socket": {
             "connect": "Conectado ao servidor",
-            "disconnect": "Desconectado do servidor"
+            "disconnect": "Desconectado do servidor",
+            "connect_error": "Erro ao conectar:",
+            "reconnect_attempt": "Tentando reconectar...",
+            "reconnect_success": "Reconectado após \"{attemptNumber}\" tentativas"
         }
     },
 

@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from json.decoder import JSONDecodeError
 
 from src.core.Utils.Others.folders import log_upload_folder
+from src.core.Utils.Others.LogColor import LogColor
 
 class UploadChapters():
     # def __init__(self, manga_id, manga_title, title, language, groups, volume, chapter, path, datetime, oneshot, status, dir_tmp, config, login, preprocessor, ispre, socket, pre_notif, key) -> None:
@@ -71,7 +72,7 @@ class UploadChapters():
             inicio = time.perf_counter()
             resultado = func(*args, **kwargs)
             fim = time.perf_counter()
-            print(f"{func.__name__} executado em {fim - inicio:.4f} segundos")
+            print(f"{LogColor.DEBUG}[DEBUG]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} {func.__name__} executado em {fim - inicio:.4f} segundos")
             return resultado
         return wrapper
 
@@ -118,7 +119,7 @@ class UploadChapters():
                 with open(metadata_file, "r", encoding="utf-8") as file:
                     metadata = json.load(file)
             except JSONDecodeError:
-                print(f"[ERRO] JSON corrompido: {metadata_file}. Criando um novo.")
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} JSON corrompido: {metadata_file}. Criando um novo.")
         
         # Adiciona a nova entrada e mantém a lista ordenada
         metadata["uploads"].append(new_entry)
@@ -166,29 +167,29 @@ class UploadChapters():
                 with open(log_path, "r", encoding="utf-8") as file:
                     logs.append(json.load(file))
             except JSONDecodeError:
-                print(f"[ERRO] Arquivo corrompido: {log_path}. Ignorando...")
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Arquivo corrompido: {log_path}. Ignorando...")
         return logs
 
     def delete_folder(self):
         try:
             shutil.rmtree(self.temp_dir)
         except FileNotFoundError:
-            print(f"A pasta {self.temp_dir} não foi encontrada.")
+            print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} A pasta {self.temp_dir} não foi encontrada.")
         except PermissionError:
-            print(f"Permissão negada ao tentar remover a pasta {self.temp_dir}.")
+            print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Permissão negada ao tentar remover a pasta {self.temp_dir}.")
         except Exception as e:
-            print(f"Erro inesperado ao tentar remover {self.temp_dir}: {e}")
+            print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Erro inesperado ao tentar remover {self.temp_dir}: {e}")
 
         if self.dir_tmp:
             try:
                 if os.path.exists(self.dir_tmp) and self.ispre:
                     shutil.rmtree(self.dir_tmp)
             except FileNotFoundError:
-                print(f"A pasta {self.dir_tmp} não foi encontrada.")
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} A pasta {self.dir_tmp} não foi encontrada.")
             except PermissionError:
-                print(f"Permissão negada ao tentar remover a pasta {self.dir_tmp}.")
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Permissão negada ao tentar remover a pasta {self.dir_tmp}.")
             except Exception as e:
-                print(f"Erro inesperado ao tentar remover {self.dir_tmp}: {e}")
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Erro inesperado ao tentar remover {self.dir_tmp}: {e}")
 
         self.socket.emit('get_folder_size')
 
@@ -208,16 +209,16 @@ class UploadChapters():
                     return session_id
 
             except requests.exceptions.Timeout:
-                print(f"Tentativa {attempt + 1}: Erro ao obter a sessão de upload.")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Tentativa {attempt + 1}: Erro ao obter a sessão de upload.")
                 time.sleep(2)
             
             except:
                 time.sleep(2)
 
         if r.status_code == (401, 403, 404):
-            print("Não autorizado") if r.status_code == 401 else None
-            print("Token expirado") if r.status_code == 403 else None
-            print("Token não encontrado") if r.status_code == 404 else None
+            print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Não autorizado") if r.status_code == 401 else None
+            print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Token expirado") if r.status_code == 403 else None
+            print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Token não encontrado") if r.status_code == 404 else None
             return None
     
     def delete_upload_session(self, session_id):
@@ -293,10 +294,10 @@ class UploadChapters():
                     }
 
             except requests.exceptions.Timeout:
-                print("Timeout: O servidor demorou muito para responder.")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Timeout: O servidor demorou muito para responder.")
 
             except Exception as e:
-                print(f"Tentativa {attempt + 1}: Ocorreu um erro ao criar a sessão de upload: {e}")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Tentativa {attempt + 1}: Ocorreu um erro ao criar a sessão de upload: {e}")
 
             # Espera 5 segundos antes de tentar novamente
             time.sleep(5)
@@ -318,9 +319,9 @@ class UploadChapters():
                 return access_token
             
             else:
-                print("Não autorizado") if access_token == 401 else None
-                print("Token expirado") if access_token == 403 else None
-                print("Token não encontrado") if access_token == 404 else None
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Não autorizado") if access_token == 401 else None
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Token expirado") if access_token == 403 else None
+                print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Token não encontrado") if access_token == 404 else None
                 return None
 
     def upload_image(self, session_id, filename, temp_dir):
@@ -404,6 +405,9 @@ class UploadChapters():
 
         for attempt in range(self.config['retry']):
             try:
+                if self.status == 2:
+                    return None, filename
+                
                 with open(filepath, "rb") as file:
                     files = {
                         'file': (filename, file, mime_type)
@@ -429,19 +433,19 @@ class UploadChapters():
 
                         return file_id, filename
                     else:
-                        print(f"Tentativa {attempt + 1}: Erro ao fazer upload de {filename}: {r.json()}")
+                        print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Tentativa {attempt + 1}: Erro ao fazer upload de {filename}: {r.json()}")
 
             except requests.exceptions.Timeout:
-                print(f"Timeout: O servidor demorou muito para responder ao enviar {filename}.")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Timeout: O servidor demorou muito para responder ao enviar {filename}.")
 
             except Exception as e:
-                print(f"Tentativa {attempt + 1}: Erro ao fazer upload de {filename}: {e}")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Tentativa {attempt + 1}: Erro ao fazer upload de {filename}: {e}")
 
             # Espera 5 segundos antes da próxima tentativa
             time.sleep(5)
 
         # Se todas as tentativas falharem, retorna None
-        print(f"Falha ao fazer upload de {filename} após {self.config['retry']} tentativas.")
+        print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Falha ao fazer upload de {filename} após {self.config['retry']} tentativas.")
         return None, filename
 
     @cronometro
@@ -518,7 +522,7 @@ class UploadChapters():
 
             for filename in filenames:
                 if len(os.listdir(temp_dir)) == 0:
-                    print(f"Nenhuma imagem encontrada (problema ao copiar ou converter).")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Nenhuma imagem encontrada (problema ao copiar ou converter).")
                     self.pre_notif['status'] = 2
                     self.pre_notif['detail'] = "Nenhuma imagem encontrada (problema ao copiar ou converter)."
                     self.socket.emit('get_notification', self.pre_notif)
@@ -528,7 +532,7 @@ class UploadChapters():
 
                 futures[executor.submit(self.upload_image, session_id, filename, temp_dir)] = filename
 
-            for future in tqdm(as_completed(futures), total=len(futures), desc="Uploading images"):
+            for future in tqdm(as_completed(futures), total=len(futures), desc=f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Uploading images"):
                 file_id, filename = future.result()
                 if file_id:
                     successful.append((file_id, filename))
@@ -574,18 +578,19 @@ class UploadChapters():
 
                 if r.ok:
                     self.chapter_id_post = r.json()["data"]["id"]
-                    print("Sessão de upload enviada com sucesso, ID do capítulo é:", r.json()["data"]["id"])
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Sessão de upload enviada com sucesso, ID do capítulo é:", r.json()["data"]["id"])
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Link do capítulo (pode demorar um pouco para carregar):", f"https://mangadex.org/chapter/{r.json()['data']['id']}\n")
                     return
                 else:
-                    print("Ocorreu um erro ao enviar a sessão de upload.")
-                    print("Status Code:", r.status_code)
+                    print(f"{LogColor.ERROR}[ERROR]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Ocorreu um erro ao enviar a sessão de upload.")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Status Code:", r.status_code)
                     print(r.json())
 
             except requests.exceptions.Timeout:
-                print(f"Timeout: O servidor demorou muito para responder.")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Timeout: O servidor demorou muito para responder.")
 
             except Exception as e:
-                print(f"Tentativa {attempt + 1}: Ocorreu um erro ao enviar a sessão de upload: {e}")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Tentativa {attempt + 1}: Ocorreu um erro ao enviar a sessão de upload: {e}")
             
             # Espera 10 segundos antes da próxima tentativa
             time.sleep(10)
@@ -596,7 +601,7 @@ class UploadChapters():
         self.socket.emit('get_notification', self.pre_notif)
 
         if self.status == 2:
-            print("Upload cancelado.")
+            print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
             self.pre_notif['status'] = 2
             self.pre_notif['detail'] = 'Cancelado pelo usuário'
             self.socket.emit('get_notification', self.pre_notif)
@@ -605,7 +610,7 @@ class UploadChapters():
         self.access_token = self.get_access_token()
 
         if self.status == 2:
-            print("Upload cancelado.")
+            print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
             self.pre_notif['status'] = 2
             self.pre_notif['detail'] = 'Cancelado pelo usuário'
             self.socket.emit('get_notification', self.pre_notif)
@@ -618,7 +623,7 @@ class UploadChapters():
                 session_id = None
 
             if self.status == 2:
-                print("Upload cancelado.")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                 self.pre_notif['status'] = 2
                 self.pre_notif['detail'] = 'Cancelado pelo usuário'
                 self.socket.emit('get_notification', self.pre_notif)
@@ -635,7 +640,7 @@ class UploadChapters():
                         success, error_message = self.preprocessor.preprocess_image_folder(self.path, self.temp_dir)
                         
                         if self.status == 2:
-                            print("Upload cancelado.")
+                            print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                             self.pre_notif['status'] = 2
                             self.pre_notif['detail'] = 'Cancelado pelo usuário'
                             self.socket.emit('get_notification', self.pre_notif)
@@ -652,7 +657,7 @@ class UploadChapters():
                         success, error_message = self.preprocessor.extract_archive(self.path, self.temp_dir, force_preprocess=self.iszip)
 
                         if self.status == 2:
-                            print("Upload cancelado.")
+                            print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                             self.pre_notif['status'] = 2
                             self.pre_notif['detail'] = 'Cancelado pelo usuário'
                             self.socket.emit('get_notification', self.pre_notif)
@@ -668,7 +673,7 @@ class UploadChapters():
                     self.temp_dir = self.dir_tmp
 
                 if self.status == 2:
-                    print("Upload cancelado.")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                     self.pre_notif['status'] = 2
                     self.pre_notif['detail'] = 'Cancelado pelo usuário'
                     self.socket.emit('get_notification', self.pre_notif)
@@ -677,17 +682,17 @@ class UploadChapters():
                 successful, failed = self.upload_images(session_id, self.temp_dir)
 
                 if self.status == 2:
-                    print("Upload cancelado.")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                     self.pre_notif['status'] = 2
                     self.pre_notif['detail'] = 'Cancelado pelo usuário'
                     self.socket.emit('get_notification', self.pre_notif)
                     return {'st': 3, 'e': None, 'd': 'Cancelado pelo usuário'}
 
-                print(f"Imagens enviadas com sucesso: {len(successful)}")
-                print(f"Imagens com falha: {len(failed)}")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Imagens enviadas com sucesso: {len(successful)}")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Imagens com falha: {len(failed)}")
 
                 if len(failed) >= 1 and self.config['upload_on_error'] is False:
-                    print("Upload cancelado.")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                     self.delete_upload_session(session_id)
                     self.delete_folder()
                     msg = "1 imagem falhou" if len(failed) == 1 else f"{len(failed)} imagens falharam"
@@ -697,13 +702,13 @@ class UploadChapters():
                     return {'st': 3, 'e': None, 'd': msg}
                 
                 elif len(successful) == 0 and len(failed) == 0:
-                    print("Nenhuma imagem encontrada.")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Nenhuma imagem encontrada.")
                     self.delete_upload_session(session_id)
                     self.delete_folder()
                     return {'st': 3, 'e': 'Nenhuma imagem encontrada', 'd': None}
 
                 if self.status == 2:
-                    print("Upload cancelado.")
+                    print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                     self.pre_notif['status'] = 2
                     self.pre_notif['detail'] = 'Cancelado pelo usuário'
                     self.socket.emit('get_notification', self.pre_notif)
@@ -719,5 +724,5 @@ class UploadChapters():
                 return {'st': 1, 'e': None, 'd': None}
 
             else:
-                print("Upload cancelado.")
+                print(f"{LogColor.INFO}[INFO]{LogColor.UPLOAD}[UPLOAD]{LogColor.RESET} Upload cancelado.")
                 return {'st': 2, 'e': 'Occoreu um erro ao criar a sessão de upload.', 'd': None}

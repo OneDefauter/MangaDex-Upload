@@ -1,5 +1,4 @@
 import os
-import cv2
 import shutil
 import zipfile
 import tempfile
@@ -8,7 +7,7 @@ from PIL import Image
 from time import sleep
 from pathlib import Path
 from natsort import natsorted
-from collections import defaultdict
+from scipy.fftpack import dct as scipy_dct
 from concurrent.futures import ThreadPoolExecutor
 from src.core.Utils.SmartStitch.process import ConsoleStitchProcess
 
@@ -33,7 +32,7 @@ class ImagePreprocessor:
         img_size = hash_size * highfreq_factor
         image = image.convert("L").resize((img_size, img_size), Image.LANCZOS)
         pixels = np.array(image, dtype=np.float32)
-        dct = cv2.dct(pixels)
+        dct = scipy_dct(scipy_dct(pixels, axis=0, norm='ortho'), axis=1, norm='ortho')
         dct_lowfreq = dct[:hash_size, :hash_size]
         # Excluindo o coeficiente DC se desejar
         med = np.median(dct_lowfreq[1:, 1:])

@@ -1,3 +1,15 @@
+### Versão 1.1.3 (14/05/2025)
+
+- Correções sobre a fila
+
+- Corrigido comportamente para android no PC na página de multi upload
+
+- Adicionado atualização em tempo real enquanto estiver no filtro da fila
+
+- Correção ao criar obra na parte de mostrar os resultados encontrados
+
+- Alteração de biblioteca do **opencv** para **scipy**
+
 ### Versão 1.1.2 (12/04/2025)
 
 - Uma pequena correção ao buscar obras

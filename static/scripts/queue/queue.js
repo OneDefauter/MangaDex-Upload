@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector("button[onclick='showSection(\"uploads\")']").addEventListener('click', () => showSection('uploads'));
 });
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (event.shiftKey && event.key === 'D') {
         window.location.href = "/download";
     }
 });
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (event.shiftKey && event.key === 'U') {
         window.location.href = "/upload";
     }
@@ -51,7 +51,7 @@ function toggleAutoScroll() {
         if (inProgressItem) {
             inProgressItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        
+
     } else {
         autoScrollBtn.classList.remove('auto-scroll-on');
         autoScrollBtn.classList.add('auto-scroll-off');
@@ -59,8 +59,8 @@ function toggleAutoScroll() {
 }
 
 // Verifica a fila
-socket.on("connect", function() { socket.emit('get_queue_data'); });
-socket.on("check_queue_data", function() { socket.emit('get_queue_data'); });
+socket.on("connect", function () { socket.emit('get_queue_data'); });
+socket.on("check_queue_data", function () { socket.emit('get_queue_data'); });
 
 socket.on("queue_data_send", function (data) {
     const downloadList = document.getElementById('download-list');
@@ -111,6 +111,9 @@ socket.on("queue_data_send", function (data) {
     // Reaplicar os filtros após a atualização da lista
     filterItems();
 
+    // Atualiza os contadores dos checkboxes no modal em tempo real
+    populateFilterStatuses();
+
     // Rolar para o item que está em progresso se o auto-scroll estiver ativado e visível
     if (isAutoScrollEnabled) {
         const inProgressItems = document.querySelectorAll('li[data-type][class="Processando"]');
@@ -123,7 +126,7 @@ socket.on("queue_data_send", function (data) {
     }
 });
 
-socket.on("send_progress_update", function(data) {
+socket.on("send_progress_update", function (data) {
     const li = document.querySelector(`li[data-key="${data.key}"]`);
     if (li) {
         const progressBar = li.querySelector('.progress-bar');
@@ -187,14 +190,14 @@ function removeItem(type, key) {
         },
         body: JSON.stringify({ type: type, key: key })
     })
-    .then(response => {
-        if (response.ok) {
-            socket.emit('get_queue_data');
-        } else {
-            alert(translations.queue.console_and_alert.alert.error_delete_item);
-        }
-    })
-    .catch(error => console.error(translations.queue.console_and_alert.console.delete_item_error, error));
+        .then(response => {
+            if (response.ok) {
+                socket.emit('get_queue_data');
+            } else {
+                alert(translations.queue.console_and_alert.alert.error_delete_item);
+            }
+        })
+        .catch(error => console.error(translations.queue.console_and_alert.console.delete_item_error, error));
 }
 
 function showSection(sectionId) {
@@ -271,21 +274,32 @@ function populateFilterNames() {
 }
 
 function populateFilterStatuses() {
-    let statusCounts = { "Aguardando": 0, "Concluído": 0, "Cancelado": 0, "Erro": 0 }; 
+    let statusCounts = {
+        "Aguardando": 0,
+        "Processando": 0,
+        "Concluído": 0,
+        "Cancelado": 0,
+        "Erro": 0
+    };
 
-    // Percorre os status na lista e conta quantas vezes aparecem (exceto "Processando")
+    // Conta os status visíveis
     document.querySelectorAll(".item-list li").forEach(item => {
-        let status = item.classList[0]; // A primeira classe define o status
+        let status = item.classList[0]; // A primeira classe é o status
         if (statusCounts.hasOwnProperty(status)) {
             statusCounts[status]++;
         }
     });
 
-    // Atualiza os checkboxes do modal de status com a contagem
+    // Atualiza apenas o texto ao lado da checkbox sem recriar o input
     document.querySelectorAll(".filter-status").forEach(checkbox => {
-        let status = checkbox.value;
-        if (status in statusCounts) {
-            checkbox.parentElement.innerHTML = `<input type='checkbox' class='filter-status' value='${status}'> ${status} (${statusCounts[status]})`;
+        const label = checkbox.parentElement;
+        const status = checkbox.value;
+        const count = statusCounts[status] ?? 0;
+
+        // Atualiza o texto mantendo o checkbox intacto
+        const textNode = label.childNodes[1];
+        if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+            textNode.nodeValue = ` ${status} (${count})`;
         }
     });
 }
@@ -358,3 +372,49 @@ function filterItems() {
         }
     });
 }
+
+// --------------------------------------------------
+// Função de teste de barra de progresso via console
+// --------------------------------------------------
+// Exemplo: testProgressBar('minha-chave', 'download', 200, 5);
+window.testProgressBar = function (
+    key = 'teste',       // chave única do item (data-key)
+    type = 'download',   // 'download' ou 'upload'
+    stepMs = 300,        // intervalo entre updates (ms)
+    stepPct = 10         // incremento de % por passo
+) {
+    // 1) Prepara dados mínimos para criar o <li>
+    const dummy = {
+        status: { type: 'Processando', progress: 0 },
+        chapter: {
+            language: 'pt-br',
+            chapter: 'X',
+            volume: null,
+            groups: [{ name: 'Teste' }]
+        },
+        project: { manga_title: 'Título de Teste' }
+    };
+
+    // 2) Cria e anexa o <li> ao container correspondente
+    const listEl = document.getElementById(type + '-list');
+    const li = createListItem(key, dummy, type);
+    listEl.appendChild(li);
+    li.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // 3) Simula o progresso
+    let pct = 0;
+    const timer = setInterval(() => {
+        pct = Math.min(100, pct + stepPct);
+        const bar = li.querySelector('.progress-bar');
+        if (bar) bar.style.width = pct + '%';
+
+        if (pct === 100) {
+            clearInterval(timer);
+            // opcional: remove GIF+barra após 1s
+            setTimeout(() => {
+                const wrapper = li.querySelector('.progress-wrapper');
+                if (wrapper) wrapper.remove();
+            }, 1000);
+        }
+    }, stepMs);
+};

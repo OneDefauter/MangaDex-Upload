@@ -102,14 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (
-            data.obra_existe &&
-            data?.attributes?.links?.mu &&
-            data.obra_existe.data?.attributes?.links?.mu &&
-            data.attributes.links.mu === data.obra_existe.data.attributes.links.mu
+            data.md_search_results
         ) {
             let htmlList = '';
             data.md_search_results.forEach(function (manga) {
-                if (data.obra_existe && manga.data.attributes.links.mu === data.obra_existe.data.attributes.links.mu) {
+                if (data.obra_existe) {
                     return;
                 }
                 htmlList += `

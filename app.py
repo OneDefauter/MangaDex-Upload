@@ -94,7 +94,7 @@ app = Flask(__name__)
 # Configuração do Flask-Session
 app.config['SESSION_TYPE'] = 'filesystem'  # Armazena as sessões no sistema de arquivos local
 app.config['SESSION_PERMANENT'] = True
-app.config['SESSION_FILE_DIR'] = './flask_session'  # Diretório onde os dados serão armazenados
+app.config['SESSION_FILE_DIR'] = './session_data'  # Diretório onde os dados serão armazenados
 Session(app)
 app.secret_key = 'sua_chave_secreta'
 socket = SocketIO(app, async_mode='threading')
@@ -461,7 +461,7 @@ def send_queue(data):
     config = config_core.load_config()
     uploads = data.get('uploads', {})
     if not uploads:
-        QUEUE_CORE.reset()
+        QUEUE_CORE._reset()
         socket.emit('close_modal_for_confirmation')
         return
 
@@ -1124,11 +1124,13 @@ def download_chapters():
             # Mantém apenas os resultados que não foram pulados
             filtered_result[unique_id] = upload_data
 
-    # Carregar as filas atuais
-    queues = QUEUE_CORE.load()
+    queues = {'downloads': {}}
 
     # Atualizar `queues` com os resultados que não foram pulados
     queues['downloads'].update(filtered_result)
+
+    # Salvar as atualizações no arquivo
+    QUEUE_CORE.merge_and_save(queues)
 
     # Ordenar os downloads com base em manga_title e chapter usando natsorted
     sorted_downloads = dict(
@@ -1141,7 +1143,10 @@ def download_chapters():
         )
     )
 
-    # Adicionar os resultados ao UP_Q.queue_upload e inicializar os uploads
+    # Criar uma lista temporária para armazenar os objetos antes de adicionar à fila
+    download_objects = []
+
+    # Adicionar os resultados ao UP_Q.queue_upload e inicializar os downloads
     for unique_id, upload_data in sorted_downloads.items():
 
         # Criação do objeto DownloadChapters
@@ -1153,10 +1158,9 @@ def download_chapters():
             login=login_core
         )
 
-        DW_Q.add(download_core)
+        download_objects.append(download_core)  # Armazena na lista temporária
 
-    # Salvar as atualizações no arquivo
-    QUEUE_CORE.save(queues)
+    DW_Q.add(download_objects)
 
     # Verificar a lista de status de uploads
     socket.emit("check_queue_data")
@@ -1351,7 +1355,7 @@ def submit():
 
     temp_dir = None
     ispre = False
-    result = {}
+    iszip = False
     
     preprocessor = ImagePreprocessor(config)
         
@@ -1378,6 +1382,8 @@ def submit():
                 
                 if config['preprocess_images']:
                     ispre = True
+                
+                iszip = True
             else:
                 return jsonify(success=False, message=translate.get('unsupported_file_format', 'Formato de arquivo não suportado.'))
         
@@ -1483,66 +1489,63 @@ def submit():
                 'name': name
             })
 
-        # Adiciona ou atualiza o resultado na estrutura desejada
-        result[unique_id] = {
-            "project": {
-                "manga_id": manga['id'],
-                "manga_title": manga.get('attributes', {}).get('title', {}).get('en') or next(iter(manga.get('attributes', {}).get('title', {}).values()), 'Título não encontrado')
-            },
-            "chapter": {
-                "title": title,
-                "language": data['language'],
-                "groups": scans,
-                "chapter": chapter,
-                "volume": volume,
-                "oneshot": data['singleChapter'],
-                "datetime": publish_date_str,
-                "path": {
-                    "main": str(path),
-                    "temp": str(temp_dir) if temp_dir else None
+        queues = {'uploads': {
+                                f"{unique_id}": {
+                                        "project": {
+                                        "manga_id": manga['id'],
+                                        "manga_title": manga.get('attributes', {}).get('title', {}).get('en') or next(iter(manga.get('attributes', {}).get('title', {}).values()), 'Título não encontrado')
+                                    },
+                                    "chapter": {
+                                        "title": title,
+                                        "language": data['language'],
+                                        "groups": scans,
+                                        "chapter": chapter,
+                                        "volume": volume,
+                                        "oneshot": data['singleChapter'],
+                                        "datetime": publish_date_str,
+                                        "path": {
+                                            "main": str(path),
+                                            "temp": str(temp_dir) if temp_dir else None
+                                        }
+                                    },
+                                    "status": {
+                                        "type": translate.get('waiting', 'Aguardando'),
+                                        "value": 0,
+                                        "skipped": 0,
+                                        "showing": 1,
+                                        "notif": False,
+                                        "detail": None,
+                                        "error": None
+                                    },
+                                    "others": {
+                                        "ispre": ispre,
+                                        "iszip": iszip
+                                    },
+                                    "pre_notif": {
+                                        "manga_title": manga.get('attributes', {}).get('title', {}).get('en') or next(iter(manga.get('attributes', {}).get('title', {}).values()), 'Título não encontrado'),
+                                        "chapter": chapter,
+                                        "status": 0,
+                                        "detail": None,
+                                        "error": None
+                                    }
+                                }
+                            }
                 }
-            },
-            "status": {
-                "type": translate.get('waiting', 'Aguardando'),
-                "value": 0,
-                "skipped": 0,
-                "showing": 1,
-                "notif": False,
-                "detail": None,
-                "error": None
-            },
-            "others": {
-                "ispre": ispre
-            },
-            "pre_notif": {
-                "manga_title": manga.get('attributes', {}).get('title', {}).get('en') or next(iter(manga.get('attributes', {}).get('title', {}).values()), 'Título não encontrado'),
-                "chapter": chapter,
-                "status": 0,
-                "detail": None,
-                "error": None
-            }
-        }
 
-        # Carregar as filas atuais
-        queues = QUEUE_CORE.load()
-        
-        # Atualizar `queues` com os resultados que não foram pulados
-        queues['uploads'].update(result)
+        # Salvar as atualizações no arquivo
+        QUEUE_CORE.merge_and_save(queues)
 
         # Criação do objeto UploadChapters
         upload_core = UploadChapters(
             id=unique_id,
-            data=result[unique_id],
+            data=queues['uploads'][unique_id],
             socket=socket,
             preprocessor=preprocessor,
             config=config_core,
             login=login_core
         )
-        
+
         UP_Q.add(upload_core)
-        
-        # Salvar as atualizações no arquivo
-        QUEUE_CORE.save(queues)
         
         # Verificar a lista de status de uploads
         socket.emit("check_queue_data")
@@ -2206,7 +2209,6 @@ def mult_upload_send_socket(data):
     """
 
     config = config_core.load_config()
-    queues = QUEUE_CORE.load()
     translate = session.get('TRANSLATE', {})
     global progress_data
 
@@ -2245,10 +2247,10 @@ def mult_upload_send_socket(data):
     items = natsorted(os.listdir(folderpath))
     
     # Gera IDs únicos para cada item
-    unique_ids = [QUEUE_CORE.generate_unique_id(queues) for _ in items]
+    unique_ids = [QUEUE_CORE.generate_unique_id() for _ in items]
 
     # Prepara os argumentos com os IDs já gerados
-    args = [(item, folderpath, groups, config, preprocessor, language, SCAN, queues, QUEUE_CORE, manga_id, manga_title, unique_id, translate, socket)
+    args = [(item, folderpath, groups, config, preprocessor, language, SCAN, QUEUE_CORE, manga_id, manga_title, unique_id, translate, socket)
             for item, unique_id in zip(items, unique_ids)]
 
 
@@ -2295,12 +2297,14 @@ def mult_upload_send_socket(data):
             # Mantém apenas os resultados que não foram pulados
             filtered_result[unique_id] = upload_data
 
-    # Carregar as filas atuais
-    queues = QUEUE_CORE.load()
+    queues = {'uploads': {}}
 
     # Atualizar `queues` com os resultados que não foram pulados
     queues['uploads'].update(filtered_result)
-    
+
+    # Salvar as atualizações no arquivo
+    QUEUE_CORE.merge_and_save(queues)
+
     # Ordenar os uploads com base em manga_title e chapter usando natsorted
     sorted_uploads = dict(
         natsorted(
@@ -2332,9 +2336,6 @@ def mult_upload_send_socket(data):
 
     # Agora adiciona todos os objetos de uma vez na fila
     UP_Q.add(upload_objects)
-
-    # Salvar as atualizações no arquivo
-    QUEUE_CORE.save(queues)
 
     # Atualizar os dados de progresso
     progress_data = {

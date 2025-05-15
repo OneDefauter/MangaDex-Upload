@@ -1,5 +1,10 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
+
+* {
     font-family: 'Signika Negative', sans-serif;
+}
+
+body {
     margin: 0;
     padding: 0 10px; /* Adiciona um pequeno padding para espaçamento */
     min-height: 100vh;

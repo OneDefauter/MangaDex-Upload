@@ -12,16 +12,196 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/notification.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/black-screen.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal_tip.css') }}">
 
     <script> const translations = {{ translations|tojson }}; </script>
+    <script src="{{ url_for('static', filename='scripts/modal_tip.js') }}" defer></script>
     <script src="{{ url_for('static', filename='scripts/home/socket.js') }}" defer></script>
     <script src="{{ url_for('static', filename='scripts/background.js') }}" defer></script>
     <script src="{{ url_for('static', filename='scripts/black-screen.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="{{ url_for('static', filename='scripts/socket-init.js') }}"></script>
+    <script> let tipName = 'upload_page'; </script>
 </head>
 <body>
     <div class="black-screen" id="black-screen"></div>
+
+    <!-- Modal Tip Universal -->
+    <div id="tipModal" class="tip-modal">
+        <div class="tip-modal-content">
+            <!-- Botão "X" para fechar -->
+            <span class="tip-close">&times;</span>
+
+            <!-- Página 1: Introdução -->
+            <div class="tip-page" id="tipPage1">
+                <h2>{{ translations['upload']['modal']['tip']['title'] }}</h2>
+                <p>{{ translations['upload']['modal']['tip']['description'] }}</p>
+
+                <div class="tip-navigation">
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 2: Projeto -->
+            <div class="tip-page" id="tipPage2" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_project_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/project.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_project_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_project_description'] | safe }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 3: Grupo -->
+            <div class="tip-page" id="tipPage3" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_group_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/group.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_group_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_group_description'] }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 4: Idioma -->
+            <div class="tip-page" id="tipPage4" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_language_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/language.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_language_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_language_description'] }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 5: Título -->
+            <div class="tip-page" id="tipPage5" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_title_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/title.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_title_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_title_description'] }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 6: Volume -->
+            <div class="tip-page" id="tipPage6" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_volume_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/volume.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_volume_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_volume_description'] }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 7: Capítulo -->
+            <div class="tip-page" id="tipPage7" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_chapter_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/chapter.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_chapter_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_chapter_description'] }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 8: Capítulo Único -->
+            <div class="tip-page" id="tipPage8" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_single_chapter_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/single_chapter.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_single_chapter_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_single_chapter_description'] | safe }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 9: Pasta -->
+            <div class="tip-page" id="tipPage9" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_folder_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/folder.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_folder_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_folder_description'] }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(9) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-next">{{ translations['upload']['modal']['tip']['next'] }}</button>
+                </div>
+            </div>
+
+            <!-- Página 10: Data e Hora -->
+            <div class="tip-page" id="tipPage10" style="display: none;">
+                <h2>{{ translations['upload']['modal']['tip']['tip_datetime_title'] }}</h2>
+                <img src="{{ url_for('static', filename='/tips/upload/datetime.gif') }}" alt="{{ translations['upload']['modal']['tip']['tip_datetime_img_alt'] }}" />
+                <p>{{ translations['upload']['modal']['tip']['tip_datetime_description'] | safe }}</p>
+
+                <div class="tip-navigation">
+                    <button class="tip-prev">{{ translations['upload']['modal']['tip']['prev'] }}</button>
+                    <div class="tip-steps">
+                        {% for i in range(10) %}
+                            <span class="dot" data-step="{{ i }}"></span>
+                        {% endfor %}
+                    </div>
+                    <button class="tip-finish">{{ translations['upload']['modal']['tip']['finish'] }}</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <div class="container">
         <h2>{{ translations['upload']['upload_manga'] }}</h2>
@@ -29,6 +209,7 @@
             <div>
                 <label for="project">{{ translations['upload']['project'] }}</label>
                 <input type="text" id="project" name="project" autocomplete="off">
+                <input type="hidden" id="project-id" name="project-id">
                 <ul id="project-suggestions" class="suggestions-list"></ul>
             </div>
             <div>
@@ -80,20 +261,6 @@
         </form>
     </div>
 
-    <!-- Overlay de Dicas -->
-    <div id="tip-overlay" class="tip-overlay">
-        <div class="tip-content">
-            <h3>{{ translations['upload']['modal']['tip']['tip'] }}</h3>
-            <img id="tip-gif" src="" alt="{{ translations['upload']['modal']['tip']['tip_gif_alt'] }}" class="tip-gif">
-            <p id="tip-text">{{ translations['upload']['modal']['tip']['tip_default_text'] }}</p>
-            <div class="tip-navigation">
-                <button id="tip-prev-btn">{{ translations['upload']['modal']['tip']['previous'] }}</button>
-                <button id="tip-next-btn">{{ translations['upload']['modal']['tip']['next'] }}</button>
-            </div>
-            <div id="tip-indicators" class="tip-indicators"></div>
-        </div>
-    </div>
-
     <!-- Tela de carregamento -->
     <div id="loading-screen" class="loading-screen" style="display: none;">
         <div class="loading-spinner"></div>
@@ -117,6 +284,8 @@
     <script>
         const isAndroid = {{ session['is_android'] | tojson }}
     </script>
+    <script src="{{ url_for('static', filename='scripts/upload/search_group.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/upload/search_project.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/upload/upload.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/notification.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/debug.js') }}"></script>

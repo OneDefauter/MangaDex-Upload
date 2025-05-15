@@ -4,11 +4,12 @@ import traceback
 
 def process_item(args):
     try:
-        item, folderpath, groups, config, preprocessor, language, SCAN, queues, QUEUE_CORE, manga_id, manga_title, unique_id, translate, socket = args
+        item, folderpath, groups, config, preprocessor, language, SCAN, QUEUE_CORE, manga_id, manga_title, unique_id, translate, socket = args
         file_path = folderpath / item
         result = {}
         ispre = False
         temp_dir = None
+        queues = QUEUE_CORE.load()
 
         if file_path.suffix in [".zip", ".cbz"]:
             for group_name, group_data in groups.items():

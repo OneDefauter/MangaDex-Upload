@@ -355,21 +355,47 @@
 
         "modal": {
             "tip": {
-                "tip": "Tip",
-                "tip_gif_alt": "Tip GIF",
-                "tip_default_text": "Use this form to upload your manga. Fill in all required fields before clicking 'Submit'.",
-                "previous": "Back",
-                "next": "Next",
+                "title": "Introduction",
+                "description": "Use this form to submit a chapter. Fill in all required fields before clicking 'Submit'.",
+                "next": "Continue",
+                "prev": "Back",
                 "finish": "Finish",
-                "tip_project": "Project: Identify the project to which this upload belongs.",
-                "tip_group": "Group: Select the group responsible for this manga.",
-                "tip_language": "Language: Choose the language of the manga.",
-                "tip_title": "Title: Enter the chapter title, if applicable.",
-                "tip_volume": "Volume: Enter the corresponding volume, if applicable.",
-                "tip_chapter": "Chapter: The chapter number being uploaded.",
-                "tip_single_chapter": "Single Chapter: Check this if it's a single chapter.<br><strong>Note:</strong> If checked, both volume and chapter will not be sent.",
-                "tip_folder": "Folder: Indicate the folder where the images are stored.",
-                "tip_datetime": "Publication Date and Time: Select when the publication should occur.<br><strong>Note:</strong> The maximum allowed time is 2 weeks."
+
+                "tip_project_title": "Project",
+                "tip_project_img_alt": "Project field",
+                "tip_project_description": "Identify the project to which this upload belongs. You can search by name or by the project's UUID.",
+
+                "tip_group_title": "Group",
+                "tip_group_img_alt": "Responsible group field",
+                "tip_group_description": "Select the group responsible for this manga. If needed, create a new group using the 'Create New Group' button.",
+
+                "tip_language_title": "Language",
+                "tip_language_img_alt": "Language field",
+                "tip_language_description": "Choose the language of the manga (e.g., Portuguese (Brazil), English).",
+
+                "tip_title_title": "Title",
+                "tip_title_img_alt": "Chapter title field",
+                "tip_title_description": "Enter the title of the chapter, if any. This field is optional.",
+
+                "tip_volume_title": "Volume",
+                "tip_volume_img_alt": "Volume field",
+                "tip_volume_description": "Enter the corresponding volume, if applicable. Leave it blank if there is no volume.",
+
+                "tip_chapter_title": "Chapter",
+                "tip_chapter_img_alt": "Chapter field",
+                "tip_chapter_description": "Number of the chapter being submitted. This field is required unless it is a one-shot.",
+
+                "tip_single_chapter_title": "One-Shot Chapter",
+                "tip_single_chapter_img_alt": "Checkbox for one-shot chapter",
+                "tip_single_chapter_description": "Check this if it is a one-shot chapter.<br><strong>Note:</strong> If checked, both volume and chapter will not be submitted.",
+
+                "tip_folder_title": "Folder",
+                "tip_folder_img_alt": "Folder selection field",
+                "tip_folder_description": "Specify the folder where the chapter images are stored. This folder will be used to process the upload.",
+
+                "tip_datetime_title": "Publish Date and Time",
+                "tip_datetime_img_alt": "Scheduling field",
+                "tip_datetime_description": "Select when the chapter should be published.<br><strong>Note:</strong> The maximum allowed scheduling time is 2 weeks."
             }
         },
 
@@ -380,6 +406,20 @@
             "console": {
                 "error_select_folder": "Error selecting folder: ",
                 "error_select_file": "Error selecting file: "
+            }
+        },
+
+        "script": {
+            "search_groups": {
+                "group_not_found": "Group not found.",
+                "group_search_error": "Error searching for group",
+                "group_already_added": "Group already added!"
+            },
+            "search_projects": {
+                "long_strip_tag": "Project with Long Strip Tag.",
+                "recommended_tool": "Recommended tool: SmartStitch.",
+                "project_not_found": "Project not found by UUID",
+                "project_search_error": "Error searching for project"
             }
         }
     },
@@ -761,7 +801,10 @@
 
         "socket": {
             "connect": "Connected to server",
-            "disconnect": "Disconnected from server"
+            "disconnect": "Disconnected from server",
+            "connect_error": "Connection error:",
+            "reconnect_attempt": "Attempting to reconnect...",
+            "reconnect_success": "Reconnected after \"{attemptNumber}\" attempts"
         }
     },
 

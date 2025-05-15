@@ -9,6 +9,7 @@ log_upload_folder = os.path.join(settings_dir, "upload_log")
 queues = os.path.join(settings_dir, "queues")
 queues_uploads = os.path.join(queues, "uploads")
 queues_downloads = os.path.join(queues, "downloads")
+queues_db = os.path.join(settings_dir, "queues.db")
 path_download = os.path.join(os.path.expanduser("~"), "Downloads", "Mangadex Upload (downloads)")
 
 # FileDialog

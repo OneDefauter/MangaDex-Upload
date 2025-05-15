@@ -1,24 +1,30 @@
 import queue
+import threading
 from time import sleep
 
 class DownloadQueue():
     def __init__(self, socket, QUEUE_CORE) -> None:
         self.DOWNLOAD_QUEUE = queue.Queue()
-        self.queue_download = {}
         self.SOCKET = socket
         self.QUEUE_CORE = QUEUE_CORE
         self.CURRENT_QUEUE = None
         self.PRIORITY_LIST = []
+        self.lock = threading.Lock()
 
     def download(self):
         while True:
             try:
-                self.load_queue_downloads()
                 download_core = self.get_prioritized_item()
                 if download_core:
                     queue_download_id = self.QUEUE_CORE.get_by_id(download_core.id)
                     if queue_download_id:
                         self.CURRENT_QUEUE = download_core
+                        
+                        if queue_download_id['status']['value'] == 3:
+                            self.DOWNLOAD_QUEUE.task_done()
+                            self.CURRENT_QUEUE = None
+                            continue
+                        
                         self.QUEUE_CORE.update_field(
                             unique_id=download_core.id,
                             section="downloads",
@@ -87,12 +93,20 @@ class DownloadQueue():
                         self.SOCKET.emit('check_queue_data')
                         self.DOWNLOAD_QUEUE.task_done()
                         self.CURRENT_QUEUE = None
-                        sleep(0.5)
+                        continue
+                else:
+                    continue
             except:
                 sleep(1)
 
     def add(self, core):
-        self.DOWNLOAD_QUEUE.put(core)
+        with self.lock:
+            if isinstance(core, list):
+                for item in core:
+                    self.DOWNLOAD_QUEUE.put(item)
+            else:
+                self.DOWNLOAD_QUEUE.put(core)
+            sleep(0.2)
 
     def get(self):
         fila = list(self.DOWNLOAD_QUEUE.queue)
@@ -133,10 +147,3 @@ class DownloadQueue():
                 return None
 
         return prioritized_item
-
-    def load_queue_downloads(self):
-        """
-        Carrega os downloads pendentes da `QUEUE_CORE` e adiciona na fila de processamento.
-        """
-        data = self.QUEUE_CORE.load()  # Obtém os downloads armazenados
-        self.queue_upload = data.get("downloads", {})

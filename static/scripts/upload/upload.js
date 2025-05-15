@@ -1,77 +1,4 @@
 window.onload = function() {
-    const tipOverlay = document.getElementById('tip-overlay');
-    const tipText = document.getElementById('tip-text');
-    const tipGif = document.getElementById('tip-gif');
-    const tipNextBtn = document.getElementById('tip-next-btn');
-    const tipPrevBtn = document.getElementById('tip-prev-btn');
-    const tipIndicators = document.getElementById('tip-indicators');
-
-    const tips = [
-        { id: 'project', text: translations.upload.modal.tip.tip_project, gif: '/static/tips/upload/project.gif' },
-        { id: 'group', text: translations.upload.modal.tip.tip_group, gif: '/static/tips/upload/group.gif' },
-        { id: 'language', text: translations.upload.modal.tip.tip_language, gif: '/static/tips/upload/language.gif' },
-        { id: 'title', text: translations.upload.modal.tip.tip_title, gif: '/static/tips/upload/title.gif' },
-        { id: 'volume', text: translations.upload.modal.tip.tip_volume, gif: '/static/tips/upload/volume.gif' },
-        { id: 'chapter', text: translations.upload.modal.tip.tip_chapter, gif: '/static/tips/upload/chapter.gif' },
-        { 
-            id: 'single_chapter', 
-            text: translations.upload.modal.tip.tip_single_chapter, 
-            gif: '/static/tips/upload/single_chapter.gif' 
-        },
-        { id: 'folder-path', text: translations.upload.modal.tip.tip_folder, gif: '/static/tips/upload/folder.gif' },
-        { 
-            id: 'datetime', 
-            text: translations.upload.modal.tip.tip_datetime, 
-            gif: '/static/tips/upload/datetime.gif' 
-        },
-    ];
-
-    let currentTipIndex = -1;
-
-    // Verificar se a dica já foi vista
-    fetch('/api/check_tip_seen?tip_name=upload_page')
-        .then(response => response.json())
-        .then(data => {
-            if (!data.tip_seen) {
-                showTipOverlay();
-            } else {
-                tipOverlay.style.display = 'none';
-            }
-        });
-
-    function updateIndicators() {
-        tipIndicators.innerHTML = ''; // Limpar os indicadores
-        for (let i = 0; i < tips.length; i++) {
-            const indicator = document.createElement('span');
-            if (i === currentTipIndex) {
-                indicator.classList.add('active');
-            }
-            tipIndicators.appendChild(indicator);
-        }
-    }
-
-    function showTip(index) {
-        if (index >= 0 && index < tips.length) {
-            const currentField = document.getElementById(tips[index].id);
-            if (currentField) {
-                currentField.classList.add('highlight');
-            }
-            tipText.innerHTML = tips[index].text;
-            tipGif.src = tips[index].gif;
-
-            tipPrevBtn.style.display = index > 0 ? 'inline-block' : 'none'; // Esconder "Voltar" na primeira dica
-            tipNextBtn.textContent = index < tips.length - 1 ? translations.upload.modal.tip.next : translations.upload.modal.tip.finish;
-
-            updateIndicators();
-        }
-    }
-
-    function showTipOverlay() {
-        tipOverlay.style.display = 'flex'; // Mostrar as dicas
-        currentTipIndex = 0;
-        showTip(currentTipIndex);
-    }
-
     if (isAndroid) {
         const folderBtn = document.getElementById('folder-btn');
         const lb_folder = document.querySelector('label[for="folder"]');
@@ -80,45 +7,6 @@ window.onload = function() {
         folderBtn.style = 'display: none;'
         folderBtn.classList.add('disabled'); // Opcional: Adicione uma classe para estilização
     }
-
-    tipNextBtn.addEventListener('click', function() {
-        if (currentTipIndex >= 0) {
-            const previousField = document.getElementById(tips[currentTipIndex].id);
-            if (previousField) {
-                previousField.classList.remove('highlight');
-            }
-        }
-
-        currentTipIndex++;
-        if (currentTipIndex < tips.length) {
-            showTip(currentTipIndex);
-        } else {
-            fetch('/api/mark_tip_as_seen', { // Marcar como vista ao finalizar
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ tip_name: 'upload_page' })
-            }).then(() => {
-                tipOverlay.style.display = 'none'; // Fechar as dicas
-            });
-        }
-    });
-
-    tipPrevBtn.addEventListener('click', function() {
-        if (currentTipIndex > 0) {
-            const previousField = document.getElementById(tips[currentTipIndex].id);
-            if (previousField) {
-                previousField.classList.remove('highlight');
-            }
-            currentTipIndex--;
-            showTip(currentTipIndex);
-        }
-    });
-
-    // Inicia com a primeira dica
-    currentTipIndex = 0;
-    showTip(currentTipIndex);
 
     document.getElementById('folder-btn').addEventListener('click', function () {
         if (isAndroid) {
@@ -226,95 +114,6 @@ window.onload = function() {
     }    
 };
 
-document.getElementById('project').addEventListener('input', function () {
-    const query = this.value;
-    if (query.length > 2) {
-        fetch(`/search_projects?query=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                const suggestions = data.results.slice(0, 10);
-                const suggestionsList = document.getElementById('project-suggestions');
-                suggestionsList.innerHTML = '';
-
-                suggestions.forEach(item => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `${item.title} (${item.id})`;
-                    listItem.addEventListener('click', function () {
-                        document.getElementById('project').value = listItem.textContent;
-                        suggestionsList.innerHTML = '';
-                    });
-                    suggestionsList.appendChild(listItem);
-                });
-            });
-    }
-});
-
-document.getElementById('group').addEventListener('input', function () {
-    const query = this.value.trim();
-    if (query.length > 2) {
-        fetch(`/search_groups?query=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                const suggestions = data.results.slice(0, 10);
-                const suggestionsList = document.getElementById('group-suggestions');
-                suggestionsList.innerHTML = '';
-
-                suggestions.forEach(item => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `${item.name} (${item.id})`;
-                    listItem.addEventListener('click', function () {
-                        addGroupTag(item.name, item.id);
-                        document.getElementById('group').value = '';
-                        suggestionsList.innerHTML = '';
-                    });
-                    suggestionsList.appendChild(listItem);
-                });
-            });
-    }
-});
-
-document.getElementById('group').addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Previne o comportamento padrão do Enter
-        const query = this.value.trim();
-        if (query) {
-            const match = query.match(/^(.*?)\s*\((.*?)\)$/);
-            const name = match ? match[1] : null;
-            const id = match ? match[2] : query;
-
-            addGroupTag(name, id);
-            this.value = ''; // Limpa o campo de entrada
-        }
-    }
-});
-
-function addGroupTag(name, id) {
-    const tagContainer = document.getElementById('selected-groups');
-    
-    // Verifica se o ID já está presente
-    const existingTags = Array.from(tagContainer.querySelectorAll('.tag span')).map(span => {
-        const text = span.textContent.trim();
-        const match = text.match(/^(.*?)\s*\((.*?)\)$/);
-        return match ? match[2] : text; // Retorna o ID da tag
-    });
-
-    if (existingTags.includes(id)) {
-        alert(translations.upload.console_and_alert.alert.group_already_added);
-        return; // Não adiciona duplicatas
-    }
-
-    const tag = document.createElement('div');
-    tag.className = 'tag';
-    tag.innerHTML = `<span>${name ? `${name} (${id})` : id}</span><i class="fi fi-rr-cross-small"></i>`;
-
-    // Adiciona o evento de clique para remover a tag
-    tag.querySelector('i').addEventListener('click', function () {
-        tagContainer.removeChild(tag);
-    });
-
-    tagContainer.appendChild(tag);
-}
-
 function incrementarCapitulo(chapter) {
     const match = chapter.match(/^(\d+)(\.\d+)?$/);
     if (match) {
@@ -335,19 +134,11 @@ function incrementarCapitulo(chapter) {
 }
 
 document.getElementById('submit-btn').addEventListener('click', function () {
-    const projectInput = document.getElementById('project').value.trim();
+    const projectTitle = document.getElementById('project').value.trim();
+    const projectId = document.getElementById('project-id').value.trim();
     const title = document.getElementById('title').value.trim();
-    
-    let projectTitle = null;
-    let projectId = null;
 
     showLoadingScreen();
-
-    if (projectInput.includes('(')) {
-        [projectTitle, projectId] = projectInput.match(/^(.*?)\s*\((.*?)\)$/).slice(1, 3);
-    } else {
-        projectId = projectInput;
-    }
 
     const groups = Array.from(document.querySelectorAll('.tags-container .tag span')).map(span => {
         const text = span.textContent.trim();

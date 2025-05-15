@@ -866,6 +866,11 @@ document.getElementById('continue-btn').addEventListener('click', function () {
                 itemsList.innerHTML = ''; // Limpa a lista
                 let tipName = 'multi_upload_page_2';
                 if (isAndroid) {
+                    loadScript('/static/scripts/multi-upload/shortcut_android.js').then(() => {
+                        // O script foi carregado, agora você pode usar suas funções
+                    }).catch((err) => {
+                        console.error(err);
+                    });
                     updateModalTipAndroid();
                 } else {
                     updateModalTipPC();
