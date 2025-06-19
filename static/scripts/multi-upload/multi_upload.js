@@ -831,7 +831,7 @@ document.addEventListener('keydown', function (event) {
 // Lógica para enviar o caminho da pasta e carregar os itens
 document.getElementById('continue-btn').addEventListener('click', function () {
     const project = document.getElementById('project-id').value.trim();
-    const folderPath = document.getElementById('parent-folder').value.trim();
+    let folderPath = document.getElementById('parent-folder').value.trim();
     const sendButton = document.getElementById('upload-btn'); // Botão Enviar Todos
     const noItemsMessage = document.getElementById('no-items-message'); // Mensagem vazia
     const isAndroid = document.getElementById('parent-folder').getAttribute('data-is-android') === 'true';
@@ -844,6 +844,10 @@ document.getElementById('continue-btn').addEventListener('click', function () {
     if (!folderPath) {
         alert(t.script.main.need_valid_path);
         return;
+    }
+
+    if (isAndroid) {
+        folderPath = '/storage/emulated/0/Download/Mangadex Upload (uploads)';
     }
 
     // Enviar o caminho para o back-end
