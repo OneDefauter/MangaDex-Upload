@@ -1,7 +1,3 @@
-### Versão 1.1.4 (19/07/2025)
-
-- Correção ao selecionar pasta no android no multi upload
-
 ### Versão 1.1.3 (14/05/2025)
 
 - Correções sobre a fila
