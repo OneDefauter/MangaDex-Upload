@@ -1,0 +1,12 @@
+.tour-help-btn {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1089;
+    border: none;
+    border-radius: 999px;
+    padding: .6rem .75rem;
+    background: var(--bs-primary);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+}

@@ -1,0 +1,34 @@
+.pill {
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.6rem;
+    background: #6c757d;
+    cursor: grab;
+}
+.pill.fixed {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.pill:hover {
+    background: linear-gradient(135deg, #5a6268, #495057);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.pill.inactive {
+    opacity: 0.6;
+}
+.toggle {
+    cursor: pointer;
+    margin-left: 0.4rem;
+    font-weight: 700;
+    color: #333;
+}
+#parts li.off {
+    opacity: 0.55;
+    text-decoration: line-through;
+}
+#parts li {
+    cursor: grab;
+}
+#parts li.fixed {
+    cursor: not-allowed;
+}

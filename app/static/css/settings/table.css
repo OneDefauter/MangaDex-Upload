@@ -1,0 +1,13 @@
+/* linha de contadores compacta */
+.stats-compact { gap: .35rem !important; flex-wrap: wrap; }
+.stats-compact .badge {
+  font-size: 1.20rem;
+  padding: .15rem .45rem;
+  line-height: 1;
+  border-radius: .35rem;
+}
+.stats-compact .btn {
+  --bs-btn-padding-y: .15rem;
+  --bs-btn-padding-x: .45rem;
+  --bs-btn-font-size: .75rem;
+}

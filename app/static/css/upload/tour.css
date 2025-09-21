@@ -1,0 +1,47 @@
+/* === Onboarding tour (mobile-friendly) === */
+.tour-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  z-index:2200;
+  /* permite rolar a página por baixo no mobile */
+  pointer-events:none;
+}
+
+.tour-highlight{
+  position:fixed; z-index:2201; pointer-events:none;
+  border-radius:12px;
+  box-shadow:
+    0 0 0 3px var(--bs-primary),
+    0 0 0 10px rgba(var(--bs-primary-rgb,13,110,253),.25),
+    0 12px 40px rgba(0,0,0,.35);
+  transition:all .15s ease;
+}
+
+.tour-tip{
+  position:fixed; z-index:2202; max-width:360px;
+  background:var(--bs-body-bg); color:var(--bs-body-color);
+  border:1px solid var(--bs-border-color);
+  border-radius:.75rem; padding:.75rem .9rem;
+  box-shadow:0 12px 40px rgba(0,0,0,.25);
+}
+.tour-tip .title{ font-weight:600; margin-bottom:.25rem; }
+.tour-tip .desc{ font-size:.95rem; color:var(--bs-secondary-color); }
+.tour-controls{ display:flex; gap:.5rem; justify-content:flex-end; margin-top:.75rem; }
+.tour-badge{ font-size:.75rem; color:var(--bs-secondary-color); }
+
+/* --- Layout “bottom card” no mobile --- */
+@media (max-width: 576px){
+  .tour-highlight{
+    border-radius:10px;
+    box-shadow:
+      0 0 0 2px var(--bs-primary),
+      0 0 0 6px rgba(var(--bs-primary-rgb,13,110,253),.25),
+      0 6px 24px rgba(0,0,0,.28);
+  }
+  .tour-tip.tour-tip-mobile{
+    left:12px; right:12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    top:auto !important; /* garante que não “suba” */
+    max-width:none;
+  }
+  .tour-controls .btn{ padding:.5rem .75rem; }
+}

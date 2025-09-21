@@ -1,0 +1,260 @@
+{
+  "login": {
+    "flash": {
+      "success": "Login realizado com sucesso."
+    },
+    "errors": {
+      "missing_fields": "username, password, client_id e client_secret são obrigatórios",
+      "provider_connection": "Erro de conexão com o provedor: {error}",
+      "auth_failed": "Falha na autenticação ({status}): {desc}",
+      "invalid_json_response": "Resposta inválida do provedor (não é JSON).",
+      "missing_access_token": "Resposta sem access_token."
+    },
+    "api": {
+      "success_message": "Login realizado com sucesso"
+    }
+  },
+
+  "errors": {
+    "mangadex": "Erro MangaDex",
+    "network": "Erro de rede MangaDex",
+    "changelog_unavailable": "Não foi possível carregar o changelog agora. Tente novamente mais tarde."
+  },
+
+  "upload": {
+    "errors": {
+      "project_required": "Projeto obrigatório.",
+      "lang_required": "Idioma obrigatório.",
+      "chapter_required": "Capítulo obrigatório quando não for one-shot.",
+      "prepare_failed": "Falha ao preparar os arquivos para upload. Detalhes: {error}",
+      "too_tall_use_pillow": "Imagens muito altas. Ative o corte via Pillow (ferramenta recomendada) e tente novamente.",
+      "invalid_date_format": "Formato de data inválido.",
+      "past_date": "A data de agendamento não pode estar no passado.",
+      "clamped": "Data ajustada para o limite máximo permitido."
+    }
+  },
+
+  "routes": {
+    "registered": "Rotas registradas"
+  },
+
+  "logger": {
+    "initialized": "Logger inicializado"
+  },
+
+  "api": {
+    "registered": "APIs registradas"
+  },
+
+  "sockets": {
+    "registered": "Sockets registrados",
+    "client_connected": "Cliente conectado",
+    "client_disconnected": "Cliente desconectado"
+  },
+
+  "hostname": {
+    "fallback_warning": "Não foi possível determinar o IP local, usando o endereço padrão {ip} ({error})",
+    "access_address": "Endereço de acesso: http://127.0.0.1:5008 ou http://{ip}:5008"
+  },
+
+  "dependence": {
+    "errors": {
+      "file_not_found": "Arquivo {file} não encontrado."
+    },
+    "preparing_pip": "➜ Preparando pip no interpretador atual...",
+    "ensurepip_fail": "⚠ Não foi possível inicializar pip via ensurepip: {error}",
+    "using_aux_installer": "➜ Usando instalador auxiliar encontrado: {path}",
+    "aux_fail": "⚠ Falhou o instalador auxiliar: {error}",
+    "no_pip_available": "✖ Ainda sem pip disponível no Python atual.",
+    "apt_hint": "  Dica (Ubuntu/Debian): sudo apt update && sudo apt install -y python3-pip",
+    "updating_tools": "➜ Atualizando pip/setuptools/wheel...",
+    "update_tools_fail": "⚠ Falha ao atualizar pip/setuptools/wheel (seguindo mesmo assim): {error}",
+
+    "special_requirement": "● Requisito especial detectado (pip resolverá): {req}",
+    "installed": "✔ {name} ({version}) já está instalado.",
+    "missing": "✖ Dependência ausente: {req}",
+    "all_installed": "✔ Todas as dependências estão instaladas corretamente.\n",
+    "missing_detected": "\nDependências ausentes detectadas:",
+    "hint_install": "\nVocê pode instalá-las com: python -m pip install -r {file}",
+    "detected_venv": "\n➜ Detectado ambiente virtual: {path}",
+    "running_global": "\n➜ Executando fora de venv (global).",
+    "installing": "\nInstalando dependências ausentes com pip...",
+    "install_complete": "✔ Instalação concluída.\n",
+    "install_error": "✖ Erro ao instalar dependências: {error}",
+    "apsw_hint": "\nDica para 'apsw': pode exigir compilação. Tente:\n  sudo apt update && sudo apt install -y build-essential python3-dev\nDepois rode novamente o instalador."
+  },
+
+  "api": {
+    "download": {
+      "errors": {
+        "missing_fields": "manga_id e chapter_ids são obrigatórios.",
+        "fetch_failed": "Erro ao buscar capítulos no MangaDex"
+      },
+      "warn": {
+        "missing_ids": "MangaDex não retornou alguns IDs (inválidos/restritos?)"
+      },
+      "notify": {
+        "added": "Adicionados {count} capítulos para download.",
+        "skipped": "{count} capítulos já estavam na fila e foram ignorados."
+      }
+    },
+
+    "edit": {
+      "errors": {
+        "user_id_unavailable": "ID de usuário indisponível.",
+        "groups_list_uuid": "“groups” deve ser uma lista de UUIDs.",
+        "groups_required": "Informe ao menos um grupo.",
+        "groups_max3": "No máximo 3 grupos.",
+        "no_fields": "Nenhum campo para atualizar.",
+        "chapter_not_found": "Capítulo não encontrado.",
+        "version_unavailable": "Versão indisponível.",
+        "unauthorized": "Não autorizado.",
+        "forbidden": "Sem permissão.",
+        "version_conflict": "Conflito de versão (atualize a página).",
+        "unexpected": "Falha inesperada.",
+        "groups_invalid": "Valor inválido para “groups”."
+      },
+      "logs": {
+        "list_error": "Erro ao listar capítulos para edição",
+        "update_error": "Erro ao atualizar capítulo",
+        "update_groups_error": "Erro ao atualizar grupos do capítulo",
+        "delete_error": "Erro ao excluir capítulo"
+      }
+    },
+
+    "logs": {
+      "read_fail": "Falha ao ler o arquivo de log: {path} ({error})"
+    },
+
+    "queue": {
+      "errors": {
+        "invalid_table": "Tabela inválida",
+        "invalid_pagination": "Parâmetros de paginação inválidos (limit/offset)",
+        "no_valid_status": "Nenhum status válido para remoção"
+      }
+    },
+
+    "updates": {
+      "apply": {
+        "ok": "Atualização aplicada",
+        "failed": "Falha ao aplicar atualização",
+        "exception": "erro em apply-update"
+      }
+    }
+  },
+
+  "socket": {
+    "queue": {
+      "errors": {
+        "table_invalid": "Tabela inválida",
+        "action_invalid": "Ação inválida",
+        "job_not_found": "Job não encontrado",
+        "cannot_remove_running": "Não é possível remover um job em execução; cancele primeiro"
+      },
+      "log": {
+        "job_action_failed": "Falha em job_action"
+      }
+    }
+  },
+
+  "utils": {
+    "update": {
+      "fetch_failed": "Erro ao buscar versão remota ({status})",
+      "connection_error": "Erro de conexão: não foi possível verificar atualizações.",
+      "timeout": "Erro: tempo limite excedido.",
+      "unexpected_error": "Erro inesperado: {error}"
+    },
+
+    "restart": {
+      "queue_unavailable": "Fila de reinicialização não disponível (get_restart_queue() retornou None)",
+      "enqueue_failed": "Falha ao enviar 'restart' para a fila: {error}"
+    }
+  },
+
+  "workers": {
+    "core": {
+      "table": {
+        "downloads": "Download",
+        "uploads": "Upload"
+      },
+      "notify": {
+        "started": "{table} iniciado\nID: {id}\nWorker: {worker}\nProjeto: {project}\nCapítulo: {chapter}",
+        "finished": "{table} concluído\nID: {id}\nWorker: {worker}\nProjeto: {project}\nCapítulo: {chapter}",
+        "canceled": "{table} cancelado\nID: {id}\nWorker: {worker}\nProjeto: {project}\nCapítulo: {chapter}",
+        "failed": "{table} falhou\nID: {id}\nWorker: {worker}\nProjeto: {project}\nCapítulo: {chapter}"
+      },
+      "log": {
+        "started": "Worker {worker} iniciado para a tabela {table}",
+        "no_job_sleep": "Worker {worker} não encontrou job na tabela {table}; dormindo por {seconds}s",
+        "claimed": "Worker {worker} assumiu o job {job} da tabela {table}",
+        "cancelled_or_lease_lost": "Worker {worker}: job {job} cancelado ou lease perdido",
+        "failed_with_error": "Worker {worker}: job {job} falhou com erro: {error}",
+        "concurrency_resolved": "Concorrência definida para a tabela {table} usando a chave {key}: {n}",
+        "starting_thread": "Iniciando thread do worker nome={name} tabela={table} worker_id={num}"
+      }
+    },
+
+    "downloads": {
+      "errors": {
+        "athome_unexpected": "Resposta inesperada do At-Home: {data}",
+        "final_failure": "Falha definitiva após {attempts} tentativas ao baixar {url}",
+        "retry_warning": "Tentativa {attempt}/{max} falhou ao baixar {url}: {error}. Retentando em {delay}s..."
+      },
+      "debug": {
+        "fetching_manifest": "Buscando manifesto para o capítulo {chapter_id} de {url}",
+        "manifest_cache_hit": "Cache de manifesto do capítulo {chapter_id}: base_url={base_url} hash={hash} arquivos={files}",
+        "manifest_cache_miss": "Cache de manifesto do capítulo {chapter_id} ausente; buscando",
+        "manifest_fetched": "Manifesto do capítulo {chapter_id} obtido: base_url={base_url} hash={hash} arquivos={files}",
+        "target_directory": "Diretório de destino do capítulo {chapter_id}: {target_dir}",
+        "downloading_chunk": "Baixando parte {idx}/{total} do capítulo {chapter_id} de {url} para {dest}"
+      }
+    },
+
+    "uploads": {
+      "logs": {
+        "started": "Upload iniciado",
+        "old_session_found": "Sessão de upload anterior encontrada — removendo",
+        "session_created": "Sessão de upload criada",
+        "images_ready": "Imagens preparadas",
+        "upload_image_failed": "Falha ao enviar imagem",
+        "marked_canceled": "Upload marcado como 'canceled' por falhas de imagem",
+        "sending_commit": "Enviando commit",
+        "commit_done": "Commit concluído",
+        "cleanup_done": "Limpeza de temporários concluída"
+      },
+      "errors": {
+        "auth_failed": "Falha de autenticação",
+        "auth_failed_detail": "Falha de autenticação: {error}",
+        "query_session": "Falha ao consultar sessão de upload (HTTP {status}). {detail}",
+        "unauthorized": "Não autorizado. {detail}",
+        "forbidden": "Proibido/expirado. {detail}",
+        "not_found": "Recurso não encontrado. {detail}",
+        "http": "HTTP {status}",
+        "create_session_http": "Falha ao criar sessão (HTTP {status})",
+        "timeout_begin": "Tempo esgotado criando sessão",
+        "missing_project_id_session": "projeto_id ausente para criar sessão de upload",
+        "begin_session_failed": "Não foi possível abrir sessão de upload",
+        "workdir_invalid": "Falha ao preparar imagens (work_dir inválido).",
+        "size_limit_log": "Tamanho total do capítulo excede o limite",
+        "size_limit_user": "Tamanho total do capítulo excede {limit_mb}MB",
+        "no_images": "Nenhuma imagem encontrada",
+        "policy_blocked": "Falhas de upload e política não permite continuar",
+        "images_failed_count": "{count} imagem(ns) falharam no upload",
+        "commit_failed_log": "Commit falhou",
+        "commit_failed_user": "Commit falhou (HTTP {status}): {body}"
+      }
+    }
+  },
+
+  "services": {
+    "upload_preparer": {
+      "errors": {
+        "invalid_path": "Caminho inválido (precisa ser diretório ou .zip/.cbz).",
+        "no_supported_images": "Nenhuma imagem suportada encontrada (JPEG/JPG/PNG/GIF/WEBP).",
+        "no_files": "Nenhum arquivo enviado.",
+        "files_no_supported_images": "Arquivos enviados não contêm imagens suportadas (JPEG/JPG/PNG/GIF/WEBP).",
+        "prepare_failed": "Falha ao preparar upload: {error}"
+      }
+    }
+  }
+}

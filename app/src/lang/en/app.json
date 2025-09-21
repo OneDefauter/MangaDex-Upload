@@ -1,0 +1,260 @@
+{
+  "login": {
+    "flash": {
+      "success": "Login successful."
+    },
+    "errors": {
+      "missing_fields": "username, password, client_id and client_secret are required",
+      "provider_connection": "Provider connection error: {error}",
+      "auth_failed": "Authentication failed ({status}): {desc}",
+      "invalid_json_response": "Invalid provider response (not JSON).",
+      "missing_access_token": "Response without access_token."
+    },
+    "api": {
+      "success_message": "Login successful"
+    }
+  },
+
+  "errors": {
+    "mangadex": "MangaDex Error",
+    "network": "MangaDex network error",
+    "changelog_unavailable": "Could not load the changelog now. Please try again later."
+  },
+
+  "upload": {
+    "errors": {
+      "project_required": "Project is required.",
+      "lang_required": "Language is required.",
+      "chapter_required": "Chapter is required when not a one-shot.",
+      "prepare_failed": "Failed to prepare files for upload. Details: {error}",
+      "too_tall_use_pillow": "Images are too tall. Enable cropping via Pillow (recommended tool) and try again.",
+      "invalid_date_format": "Invalid date format.",
+      "past_date": "The scheduled date cannot be in the past.",
+      "clamped": "Date adjusted to the maximum allowed limit."
+    }
+  },
+
+  "routes": {
+    "registered": "Routes registered"
+  },
+
+  "logger": {
+    "initialized": "Logger initialized"
+  },
+
+  "api": {
+    "registered": "APIs registered"
+  },
+
+  "sockets": {
+    "registered": "Sockets registered",
+    "client_connected": "Client connected",
+    "client_disconnected": "Client disconnected"
+  },
+
+  "hostname": {
+    "fallback_warning": "Unable to determine local IP, using fallback {ip} ({error})",
+    "access_address": "Access address: http://127.0.0.1:5008 or http://{ip}:5008"
+  },
+
+  "dependence": {
+    "errors": {
+      "file_not_found": "File {file} not found."
+    },
+    "preparing_pip": "➜ Preparing pip on the current interpreter...",
+    "ensurepip_fail": "⚠ Could not initialize pip via ensurepip: {error}",
+    "using_aux_installer": "➜ Using found auxiliary installer: {path}",
+    "aux_fail": "⚠ Auxiliary installer failed: {error}",
+    "no_pip_available": "✖ Still no pip available on the current Python.",
+    "apt_hint": "  Hint (Ubuntu/Debian): sudo apt update && sudo apt install -y python3-pip",
+    "updating_tools": "➜ Updating pip/setuptools/wheel...",
+    "update_tools_fail": "⚠ Failed to update pip/setuptools/wheel (continuing anyway): {error}",
+
+    "special_requirement": "● Special requirement detected (pip will resolve): {req}",
+    "installed": "✔ {name} ({version}) is already installed.",
+    "missing": "✖ Missing dependency: {req}",
+    "all_installed": "✔ All dependencies are installed correctly.\n",
+    "missing_detected": "\nMissing dependencies detected:",
+    "hint_install": "\nYou can install them with: python -m pip install -r {file}",
+    "detected_venv": "\n➜ Detected virtual environment: {path}",
+    "running_global": "\n➜ Running outside venv (global).",
+    "installing": "\nInstalling missing dependencies with pip...",
+    "install_complete": "✔ Installation completed.\n",
+    "install_error": "✖ Error installing dependencies: {error}",
+    "apsw_hint": "\nHint for 'apsw': it may require compilation. Try:\n  sudo apt update && sudo apt install -y build-essential python3-dev\nThen run the installer again."
+  },
+
+  "api": {
+    "download": {
+      "errors": {
+        "missing_fields": "manga_id and chapter_ids are required.",
+        "fetch_failed": "Failed to fetch chapters from MangaDex"
+      },
+      "warn": {
+        "missing_ids": "MangaDex did not return some IDs (invalid/restricted?)"
+      },
+      "notify": {
+        "added": "Added {count} chapters for download.",
+        "skipped": "{count} chapters were already in the queue and were skipped."
+      }
+    },
+
+    "edit": {
+      "errors": {
+        "user_id_unavailable": "User ID unavailable.",
+        "groups_list_uuid": "“groups” must be a list of UUIDs.",
+        "groups_required": "Provide at least one group.",
+        "groups_max3": "Maximum of 3 groups.",
+        "no_fields": "No field to update.",
+        "chapter_not_found": "Chapter not found.",
+        "version_unavailable": "Version unavailable.",
+        "unauthorized": "Unauthorized.",
+        "forbidden": "Forbidden.",
+        "version_conflict": "Version conflict (refresh the page).",
+        "unexpected": "Unexpected failure.",
+        "groups_invalid": "Invalid value for “groups”."
+      },
+      "logs": {
+        "list_error": "Error listing chapters for editing",
+        "update_error": "Error updating chapter",
+        "update_groups_error": "Error updating chapter groups",
+        "delete_error": "Error deleting chapter"
+      }
+    },
+
+    "logs": {
+      "read_fail": "Failed to read log file: {path} ({error})"
+    },
+
+    "queue": {
+      "errors": {
+        "invalid_table": "Invalid table",
+        "invalid_pagination": "Invalid pagination parameters (limit/offset)",
+        "no_valid_status": "No valid status for removal"
+      }
+    },
+
+    "updates": {
+      "apply": {
+        "ok": "Update applied",
+        "failed": "Failed to apply update",
+        "exception": "error in apply-update"
+      }
+    }
+  },
+
+  "socket": {
+    "queue": {
+      "errors": {
+        "table_invalid": "Invalid table",
+        "action_invalid": "Invalid action",
+        "job_not_found": "Job not found",
+        "cannot_remove_running": "Cannot remove a running job; cancel it first"
+      },
+      "log": {
+        "job_action_failed": "Job action failed"
+      }
+    }
+  },
+
+  "utils": {
+    "update": {
+      "fetch_failed": "Failed to fetch remote version ({status})",
+      "connection_error": "Connection error: could not check for updates.",
+      "timeout": "Error: timeout exceeded.",
+      "unexpected_error": "Unexpected error: {error}"
+    },
+
+    "restart": {
+      "queue_unavailable": "Restart queue unavailable (get_restart_queue() returned None)",
+      "enqueue_failed": "Failed to send 'restart' to queue: {error}"
+    }
+  },
+
+  "workers": {
+    "core": {
+      "table": {
+        "downloads": "Download",
+        "uploads": "Upload"
+      },
+      "notify": {
+        "started": "{table} started\nID: {id}\nWorker: {worker}\nProject: {project}\nChapter: {chapter}",
+        "finished": "{table} finished\nID: {id}\nWorker: {worker}\nProject: {project}\nChapter: {chapter}",
+        "canceled": "{table} canceled\nID: {id}\nWorker: {worker}\nProject: {project}\nChapter: {chapter}",
+        "failed": "{table} failed\nID: {id}\nWorker: {worker}\nProject: {project}\nChapter: {chapter}"
+      },
+      "log": {
+        "started": "Worker {worker} started for table {table}",
+        "no_job_sleep": "Worker {worker} found no job for table {table}; sleeping {seconds}s",
+        "claimed": "Worker {worker} claimed job {job} from table {table}",
+        "cancelled_or_lease_lost": "Worker {worker} job {job} cancelled or lease lost",
+        "failed_with_error": "Worker {worker} job {job} failed with error: {error}",
+        "concurrency_resolved": "Resolved concurrency for table {table} using key {key}: {n}",
+        "starting_thread": "Starting worker thread name={name} table={table} worker_id={num}"
+      }
+    },
+
+    "downloads": {
+      "errors": {
+        "athome_unexpected": "Unexpected At-Home response: {data}",
+        "final_failure": "Definitive failure after {attempts} attempts while downloading {url}",
+        "retry_warning": "Attempt {attempt}/{max} failed while downloading {url}: {error}. Retrying in {delay}s..."
+      },
+      "debug": {
+        "fetching_manifest": "Fetching manifest for chapter {chapter_id} from {url}",
+        "manifest_cache_hit": "Chapter {chapter_id} manifest cache hit: base_url={base_url} hash={hash} files={files}",
+        "manifest_cache_miss": "Chapter {chapter_id} manifest cache miss; fetching",
+        "manifest_fetched": "Chapter {chapter_id} manifest fetched: base_url={base_url} hash={hash} files={files}",
+        "target_directory": "Chapter {chapter_id} target directory: {target_dir}",
+        "downloading_chunk": "Chapter {chapter_id} downloading chunk {idx}/{total} from {url} to {dest}"
+      }
+    },
+
+    "uploads": {
+      "logs": {
+        "started": "Upload started",
+        "old_session_found": "Previous upload session found — removing",
+        "session_created": "Upload session created",
+        "images_ready": "Images prepared",
+        "upload_image_failed": "Failed to upload image",
+        "marked_canceled": "Upload marked as 'canceled' due to image failures",
+        "sending_commit": "Sending commit",
+        "commit_done": "Commit completed",
+        "cleanup_done": "Temporary cleanup completed"
+      },
+      "errors": {
+        "auth_failed": "Authentication failed",
+        "auth_failed_detail": "Authentication failed: {error}",
+        "query_session": "Failed to query upload session (HTTP {status}). {detail}",
+        "unauthorized": "Unauthorized. {detail}",
+        "forbidden": "Forbidden/expired. {detail}",
+        "not_found": "Resource not found. {detail}",
+        "http": "HTTP {status}",
+        "create_session_http": "Failed to create session (HTTP {status})",
+        "timeout_begin": "Timeout creating session",
+        "missing_project_id_session": "project_id missing to create upload session",
+        "begin_session_failed": "Could not open upload session",
+        "workdir_invalid": "Failed to prepare images (invalid work_dir).",
+        "size_limit_log": "Total chapter size exceeds the limit",
+        "size_limit_user": "Total chapter size exceeds {limit_mb}MB",
+        "no_images": "No images found",
+        "policy_blocked": "Upload failures and policy does not allow continuation",
+        "images_failed_count": "{count} image(s) failed to upload",
+        "commit_failed_log": "Commit failed",
+        "commit_failed_user": "Commit failed (HTTP {status}): {body}"
+      }
+    }
+  },
+
+  "services": {
+    "upload_preparer": {
+      "errors": {
+        "invalid_path": "Invalid path (must be a directory or .zip/.cbz).",
+        "no_supported_images": "No supported images found (JPEG/JPG/PNG/GIF/WEBP).",
+        "no_files": "No files sent.",
+        "files_no_supported_images": "Uploaded files do not contain supported images (JPEG/JPG/PNG/GIF/WEBP).",
+        "prepare_failed": "Failed to prepare upload: {error}"
+      }
+    }
+  }
+}

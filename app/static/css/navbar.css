@@ -1,0 +1,5 @@
+@media (min-width: 768px) {
+  #navcol-4 { flex: 1 1 auto; min-width: 0; }
+  #mainNavList { flex-wrap: nowrap; min-width: 0; }
+  #mainNavList > li.nav-overflow { display: none !important; } /* itens derramados */
+}

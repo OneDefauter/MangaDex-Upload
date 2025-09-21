@@ -1,0 +1,67 @@
+/* chips, utilidades */
+.chip{display:inline-flex;align-items:center;gap:.5rem;background:var(--bs-secondary-bg);border-radius:999px;padding:.25rem .5rem;margin:.125rem .25rem}
+.chip .x{cursor:pointer;opacity:.7}
+.truncate{max-width:520px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.table-sm input.form-control{height:32px;padding:.125rem .375rem}
+.badge-assigned{font-weight:600}
+.sticky-tools{position:sticky;top:0;z-index:2;background:var(--bs-body-bg);padding:.5rem 0}
+
+/* ---------- Autocomplete menu (project & batch groups) ---------- */
+
+/* Aparência base (sem posicionamento) */
+.ac-menu{
+  border:1px solid var(--bs-border-color);
+  background:var(--bs-body-bg);
+  border-radius:.5rem;
+  box-shadow:0 0.5rem 1rem rgba(0,0,0,.08);
+  max-height:340px;
+  overflow:auto;
+  margin-top:.25rem;
+}
+
+/* PROJECT: fica ancorado sob o input (absoluto dentro do wrapper .position-relative) */
+#projectMenu.ac-menu{
+  position:absolute;     /* <<< só o project usa absoluto */
+  left:0;
+  right:0;
+  z-index:20;
+}
+
+/* MODAIS (edit e upload complex): menus ficam no fluxo, largura total */
+#batchGroupMenu.ac-menu,
+#grpMenu.ac-menu{
+  position:static;       /* <<< não flutuam */
+  width:100%;
+}
+
+/* Conteúdo */
+.ac-menu .ac-header{
+  padding:.5rem .75rem;
+  font-size:.8rem;
+  color:var(--bs-secondary-color);
+  border-bottom:1px solid var(--bs-border-color);
+  background:var(--bs-secondary-bg);
+  border-top-left-radius:.5rem;
+  border-top-right-radius:.5rem;
+}
+.ac-menu .ac-item{
+  display:flex;
+  flex-direction:column;
+  gap:.25rem;
+  padding:.5rem .75rem;
+  cursor:pointer;
+}
+.ac-menu .ac-item + .ac-item{ border-top:1px solid var(--bs-border-color); }
+.ac-menu .ac-item:hover{ background:var(--bs-secondary-bg); }
+.ac-menu .title{ font-weight:600; }
+.ac-menu .meta{
+  display:flex; align-items:center; gap:.5rem;
+  font-size:.8rem; color:var(--bs-secondary-color);
+}
+.ac-menu .meta .id{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  padding:.05rem .4rem; border-radius:.25rem; background:var(--bs-secondary-bg);
+}
+.ac-menu .empty{
+  padding:.75rem; color:var(--bs-secondary-color); text-align:center;
+}

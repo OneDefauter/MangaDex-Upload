@@ -1,0 +1,322 @@
+{
+  "tour": {
+    "buttons": {
+      "prev": "Voltar",
+      "skip": "Pular",
+      "next": "Próximo",
+      "finish": "Concluir"
+    },
+    "help": {
+      "title": "Ajuda",
+      "text": "Ajuda"
+    },
+    "steps": {
+      "settings": {
+        "title": "Configurações",
+        "text": "Ajuste preferências, paths, filtros e comportamento do app."
+      },
+      "upload": {
+        "title": "Enviar",
+        "text": "Envie um capítulo individual com validações e autocomplete."
+      },
+      "upload_many": {
+        "title": "Enviar vários",
+        "text": "Envie múltiplos capítulos de uma vez."
+      },
+      "queue": {
+        "title": "Fila",
+        "text": "Acompanhe progresso, estados e priorize tarefas."
+      },
+      "download": {
+        "title": "Baixar",
+        "text": "Busque títulos e baixe capítulos com filtros por idioma/volume."
+      },
+      "edit": {
+        "title": "Editar",
+        "text": "Edite projetos existentes."
+      },
+      "create": {
+        "title": "Criar projeto",
+        "text": "Crie um novo projeto/título que ainda não existe."
+      },
+      "logs": {
+        "title": "Registro",
+        "text": "Consulte histórico de envios e detalhes."
+      },
+      "updates": {
+        "title": "Atualizações",
+        "text": "Veja novidades e mudanças do aplicativo."
+      }
+    }
+  },
+
+  "common": {
+    "enabled": "Ativado",
+    "disabled": "Desativado",
+    "saved": "Configurações salvas.",
+    "saved_short": "Configurações salvas (Ctrl+S).",
+    "save_error": "Erro ao salvar: ",
+    "restored": "Configurações restauradas.",
+    "restore_error": "Erro ao restaurar: ",
+    "searching": "Buscando…",
+    "search_error": "Erro ao buscar grupos.",
+    "no_results_for": "Nenhum resultado para “{q}”.",
+    "unknown_error": "Erro desconhecido",
+    "remove": "Remover",
+    "edit": "Editar"
+  },
+  "settings": {
+    "storage": { "cleared": "Limpeza concluída." },
+    "search": { "sort": { "desc": "Decrescente" } },
+    "navbar": {
+      "drag": "Arraste",
+      "label": "Rótulo",
+      "visible": "Visíveis:",
+      "none": "Nenhum item visível",
+      "restored": "Navegação restaurada."
+    },
+    "queue": {
+      "confirm_purge": "Confirmar limpeza da fila? Itens em execução NÃO serão removidos.",
+      "removed_n": "Removidos {n} item(ns) de {table}.",
+      "err_fetch": "Erro ao buscar contagens: ",
+      "err_purge": "Erro ao limpar: ",
+      "pool_restarted": "O pool de workers foi reiniciado.",
+      "nothing_to_purge": "Não há itens para remover."
+    }
+  },
+
+  "search": {
+    "type_min_chars": "Digite pelo menos 3 caracteres...",
+    "loading": "Carregando...",
+    "load_more": "Carregar mais",
+    "prev": "Anterior",
+    "next": "Próximo",
+    "page_prefix": "Página",
+    "no_results": "Nenhum resultado.",
+    "error_generic": "Erro ao buscar."
+  },
+
+  "updates": {
+    "meta_failed": "Falha ao carregar o changelog.",
+    "meta_last_update": "Última atualização: {datetime}",
+    "meta_source": "fonte: {source}",
+    "meta_app_version": "app v{version}",
+    "checking": "Verificando…",
+    "check_label": "Verificar atualizações",
+    "apply_label": "Atualizar",
+    "applying": "Atualizando…",
+    "toast_available": "Nova atualização disponível!",
+    "toast_latest": "Você já está na última versão.",
+    "toast_check_error": "Não foi possível verificar atualizações.",
+    "toast_apply_success": "Atualização aplicada com sucesso.",
+    "toast_restart_hint": "O aplicativo será reiniciado em breve.",
+    "toast_apply_error": "Falha ao aplicar atualização."
+  },
+
+  "download": {
+    "desc": {
+      "more": "Mostrar mais",
+      "less": "Mostrar menos"
+    },
+    "queue": {
+      "error": "Falha ao enfileirar downloads. Tente novamente."
+    },
+    "no": {
+      "chapters": {
+        "lang": "Não há capítulos para {lang}.",
+        "volume": "Sem capítulos para o volume {volume} ({lang})."
+      }
+    },
+    "btn": {
+      "adding": "Adicionando..."
+    }
+  },
+
+  "edit": {
+    "placeholder": {
+      "chapter": "ex.: 10.5",
+      "volume": "ex.: 3",
+      "title": "Título opcional"
+    },
+    "btn": {
+      "save": "Salvar",
+      "groups": "Grupos…",
+      "read": "Ler",
+      "delete": "Excluir"
+    },
+    "toast": {
+      "save_error": "Falha ao salvar: {{error}}",
+      "saved": "Capítulo atualizado.",
+      "network_save_error": "Erro de rede ao salvar.",
+      "delete_error": "Falha ao excluir: {{error}}",
+      "deleted": "Capítulo excluído.",
+      "network_delete_error": "Erro de rede ao excluir.",
+      "load_error": "Erro ao carregar capítulos ({{error}})"
+    },
+    "confirm": {
+      "delete": "Tem certeza que deseja excluir o capítulo {{what}}? Essa ação não pode ser desfeita."
+    },
+    "pager": {
+      "status": "Página {{page}} / {{pages}}",
+      "total": "{{count}} capítulo(s)"
+    },
+    "groups": {
+      "chip": {
+        "remove": "Remover"
+      },
+      "menu": {
+        "loading": "Buscando…",
+        "error": "Erro ao buscar grupos.",
+        "empty": "Nenhum resultado para “{{q}}”."
+      },
+      "toast": {
+        "search_error": "Falha ao buscar grupos ({{error}})",
+        "require_one": "Informe ao menos um grupo.",
+        "save_error": "Erro ao salvar grupos: {{error}}",
+        "saved": "Grupos atualizados.",
+        "network_save_error": "Erro de rede ao salvar grupos."
+      }
+    }
+  },
+
+  "logs": {
+    "app": {
+      "pageinfo": "Página {page}/{pages} — {total} linha(s)",
+      "load_error_row": "Falha ao carregar logs.",
+      "ts_fallback": "—",
+      "path_label": "Arquivo: {path}"
+    },
+    "upload": {
+      "pageinfo": "Página {page}/{pages} — {total} registro(s)",
+      "load_error_row": "Falha ao carregar logs.",
+      "ts_fallback": "—",
+      "json_btn": "ver",
+      "json_btn_title": "Ver dados JSON"
+    }
+  },
+
+  "upload": {
+    "ch_vl_os": {
+      "leading_zero_chapter": "Capítulo não pode começar com 0.",
+      "leading_zero_volume": "Volume não pode começar com 0.",
+      "required_chapter": "Informe o número do capítulo."
+    },
+    "date": {
+      "max_two_weeks": "Agendamento máximo é de 2 semanas."
+    },
+    "group": {
+      "limit": "Limite de 10 grupos.",
+      "uuid_not_found": "UUID de grupo não encontrada.",
+      "remove": "Remover"
+    },
+    "project": {
+      "uuid_not_found": "ID de projeto não encontrado.",
+      "verify_error": "Erro ao verificar ID do projeto."
+    },
+    "send": {
+      "select_project": "Selecione um projeto.",
+      "added_to_queue": "Capítulo adicionado à fila.",
+      "error_prefix": "Erro:"
+    },
+    "tour": {
+      "buttons": {
+        "prev": "Voltar",
+        "skip": "Pular",
+        "next": "Próximo",
+        "finish": "Concluir"
+      },
+      "steps": {
+        "project": {
+          "title": "Projeto",
+          "text": "Digite o nome do projeto e selecione nos resultados. Se preferir, cole o ID (UUID) direto."
+        },
+        "groups": {
+          "title": "Grupos",
+          "text": "Adicione até 10 grupos. Digite para ver sugestões ou cole o ID."
+        },
+        "lang": {
+          "title": "Idioma",
+          "text": "Selecione o idioma."
+        },
+        "title": {
+          "title": "Título",
+          "text": "Informe o título do capítulo caso houver."
+        },
+        "chapter": {
+          "title": "Capítulo",
+          "text": "Informe o número do capítulo (não pode começar com 0)."
+        },
+        "volume": {
+          "title": "Volume",
+          "text": "Opcional. Também não deve começar com 0."
+        },
+        "oneshot": {
+          "title": "Capítulo único",
+          "text": "Ativando isso, “Capítulo” e “Volume” ficam desativados."
+        },
+        "date": {
+          "title": "Data",
+          "text": "Agende a publicação (máx. 2 semanas à frente) ou deixe em branco para enviar agora."
+        },
+        "source": {
+          "title": "Pasta/Arquivo",
+          "text": "Selecione as imagens, uma pasta, ou informe um caminho. Você pode alternar os modos acima."
+        },
+        "submit": {
+          "title": "Enviar",
+          "text": "Pronto! Clique aqui para adicionar o capítulo à fila."
+        }
+      }
+    }
+  },
+
+  "upload_complex": {
+    "errors": {
+      "select_at_least_one": "Selecione ao menos uma subpasta para agrupar.",
+      "add_at_least_one_group": "Adicione ao menos um grupo (scan).",
+      "pick_folder_first": "Selecione uma pasta primeiro.",
+      "subfolder_not_found": "Subpasta não encontrada.",
+      "chapter_missing_in": "Capítulo ausente em \"{path}\".",
+      "select_project": "Selecione um projeto.",
+      "select_language": "Selecione um idioma.",
+      "no_assigned_subfolders": "Nenhuma subpasta atribuída a grupos."
+    },
+
+    "scan": {
+      "found_entries": "Encontradas {n} entrada(s) (subpastas e .zip/.cbz)."
+    },
+
+    "status": {
+      "idle": "Idle",
+      "done": "done",
+      "sending": "enviando…",
+      "ok": "ok",
+      "error_prefix": "erro: "
+    },
+
+    "done_all": "Envios finalizados (veja a fila).",
+
+    "table": {
+      "title_ph": "título (opcional)",
+      "chapter_ph": "ex.: 1, 10.5",
+      "unassign_hint": "Clique para remover a atribuição",
+      "group_label": "Grupo: ",
+      "subfolders_suffix": "subpasta(s)"
+    },
+
+    "modal": {
+      "name": {
+        "placeholder": "Ex.: Grupo 1"
+      }
+    },
+
+    "batch": {
+      "volume_label": "Volume: ",
+      "schedule_label": "Agendamento: ",
+      "groups_label": "Grupos: ",
+      "reassign": "Reatribuir",
+      "reassign_tip": "Selecione subpastas na lista e clique novamente para reatribuir.",
+      "reassigned_n": "Reatribuído(s) {n} item(ns) para “{name}”."
+    }
+  }
+}

@@ -1,0 +1,511 @@
+{
+  "login": {
+    "title": "Login",
+    "form": {
+      "username": {
+        "label": "Username",
+        "placeholder": "Your username"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Your password"
+      },
+      "client_id": {
+        "label": "Client ID",
+        "placeholder": "OAuth Client ID"
+      },
+      "client_secret": {
+        "label": "Client Secret",
+        "placeholder": "OAuth Client Secret"
+      },
+      "submit": "Login"
+    }
+  },
+
+  "app": {
+    "title": "MangaDex Upload"
+  },
+
+  "navbar": {
+    "brand": "MangaDex Uploader",
+    "toggle": "Toggle navigation",
+    "logout": "Logout",
+    "more": "More",
+    "items": {
+      "home": "Home",
+      "settings": "Settings",
+      "queue": "Queue",
+      "upload": "Upload",
+      "upload-complex": "Bulk upload",
+      "download": "Download",
+      "edit": "Edit",
+      "logs": "Logs",
+      "updates": "Updates"
+    }
+  },
+
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Automatic"
+  },
+
+  "home": {
+    "welcome_prefix": "Welcome,",
+    "lead": "Explore the options below to get started: configure preferences, upload files, monitor your upload queue, create new projects, and more."
+  },
+
+  "cards": {
+    "settings": {
+      "title": "Settings",
+      "text": "Adjust preferences, integrations, and app options."
+    },
+    "queue": {
+      "title": "Queue",
+      "text": "View pending items, track progress, and prioritize tasks."
+    },
+    "upload": {
+      "title": "Upload",
+      "text": "Quickly upload individual chapters to the system."
+    },
+    "upload_many": {
+      "title": "Upload many",
+      "text": "Easily upload multiple chapters at once."
+    },
+    "download": {
+      "title": "Download",
+      "text": "Download project chapters."
+    },
+    "edit": {
+      "title": "Edit",
+      "text": "Edit existing projects."
+    },
+    "create": {
+      "title": "Create project",
+      "text": "Create projects that haven’t been added yet."
+    },
+    "logs": {
+      "title": "Upload logs",
+      "text": "View the history of uploads and check details."
+    },
+    "updates": {
+      "title": "Updates",
+      "text": "See what’s new and follow the app’s latest changes."
+    }
+  },
+
+  "settings": {
+    "filters": {
+      "all": "All",
+      "download": "Download",
+      "upload": "Upload",
+      "cover": "Cover",
+      "search": "Search",
+      "api": "API",
+      "other": "Others"
+    },
+    "download": {
+      "title": "Download chapters",
+      "purge_btn": "Clear queue (except running)",
+      "simultaneous": { "label": "Download simultaneously (parallel chapters):" },
+      "path": { "label": "Downloaded chapters folder:" },
+      "scheme": {
+        "label": "Folder scheme for downloaded chapters:",
+        "parts": {
+          "lang": "Language",
+          "title": "Title",
+          "volume": "Volume",
+          "group": "Group",
+          "chapter": "Chapter"
+        }
+      },
+      "preview": "Preview:"
+    },
+    "upload": {
+      "title": "Upload chapters",
+      "purge_btn": "Clear queue (except running)",
+      "simultaneous": { "label": "Upload simultaneously (parallel images):" },
+      "retries": { "label": "Maximum attempts:" },
+      "accept_errors": { "label": "Upload chapters with image issues:" },
+      "prefetch": {
+        "label": "Preprocess images before adding to upload queue:",
+        "size_label": "Space occupied by preprocessing:"
+      },
+      "raw": { "size_label": "Space occupied by temporary uploads:" }
+    },
+    "covers": {
+      "title": "Covers",
+      "quality": {
+        "label": "Cover quality:",
+        "opt_original": "Original",
+        "opt_reduced": "Reduced",
+        "opt_very_reduced": "Very reduced"
+      }
+    },
+    "search": {
+      "title": "Search",
+      "max_results": "Maximum number of results:",
+      "per_page": "Results per page:",
+      "filters": {
+        "title": "Search filter:",
+        "status": {
+          "title": "Status",
+          "progress": "In progress",
+          "complete": "Complete",
+          "paused": "Paused",
+          "canceled": "Canceled"
+        },
+        "languages": {
+          "title": "Available Languages",
+          "en": "English (en)",
+          "ptbr": "Portuguese (pt-br)"
+        },
+        "demography": {
+          "title": "Demographic",
+          "shounen": "Shounen",
+          "shoujo": "Shoujo",
+          "josei": "Josei",
+          "seinen": "Seinen"
+        },
+        "content": {
+          "title": "Content Rating",
+          "safe": "Safe",
+          "suggestive": "Suggestive",
+          "erotic": "Erotic",
+          "pornographic": "Pornographic"
+        }
+      },
+      "sort": {
+        "title": "Sort by",
+        "asc": "Ascending",
+        "preview": "Sort: —",
+        "fields": {
+          "title": "Title",
+          "year": "Year",
+          "createdAt": "Creation Date",
+          "updatedAt": "Update Date",
+          "lastChapter": "Last Chapter",
+          "followers": "Followers Count",
+          "relevance": "Relevance"
+        }
+      }
+    },
+    "api": {
+      "title": "API",
+      "url": { "label": "API URL:", "placeholder": "API URL" },
+      "auth": { "label": "Auth URL:", "placeholder": "API Auth URL" },
+      "langdetect": { "label": "Language Detection API:", "placeholder": "token" }
+    },
+    "other": {
+      "title": "Others",
+      "tools_cut": { "label": "Cutting Tool:", "pillow": "Pillow" },
+      "ext_out": { "label": "Output File Extension:", "jpg": "JPG", "png": "PNG" },
+      "quality_image": "Output Image Quality:",
+      "sm_image": "Number of Processes for Images:"
+    },
+    "navbar": { "title": "Navigation bar" },
+    "modal": {
+      "title": "Confirm changes",
+      "lead": "The following changes will be applied:",
+      "no_changes": "No changes detected."
+    }
+  },
+  "common": {
+    "save": "Save",
+    "restore_defaults": "Restore default",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "disabled": "Disabled",
+    "change": "Change",
+    "select": "Select"
+  },
+
+  "search": {
+    "heading": "Search Manga",
+    "placeholder": "Enter the title (e.g.: fuufu ijou)",
+    "prev": "Previous",
+    "next": "Next",
+    "page_default": "Page 1"
+  },
+
+  "updates": {
+    "title": "Updates",
+    "version_prefix": "v",
+    "meta_loading": "Loading changelog…",
+    "check_button": "Check updates",
+    "apply_button": "Update",
+    "loading": "Loading…",
+    "error_box": "Could not load the changelog now. Please try again later."
+  },
+
+  "download": {
+    "breadcrumb": {
+      "search": "Search"
+    },
+    "header": {
+      "download_all": "Download all",
+      "view_on_mdx": "View on MangaDex"
+    },
+    "meta": {
+      "author": "Author(s):",
+      "artist": "Artist(s):",
+      "status": "Status",
+      "year": "Year",
+      "demographic": "Demo",
+      "rating": "Rating"
+    },
+    "desc": {
+      "show_more": "Show more"
+    },
+    "alert": {
+      "none": "No chapters found."
+    },
+    "volume": "Volume",
+    "download_volume": "Download volume",
+    "chapter": {
+      "prefix": "Ch.",
+      "groups": "Group(s):",
+      "read": "Read",
+      "read_tt": "Read on MangaDex",
+      "download": "Download",
+      "download_tt": "Download chapter"
+    }
+  },
+
+  "edit": {
+    "title": "{{title}} — Edit chapters",
+    "breadcrumb": {
+      "search": "Search"
+    },
+    "btn": {
+      "view_on_md": "View on MangaDex"
+    },
+    "meta": {
+      "status": "Status",
+      "year": "Year",
+      "demo": "Demo",
+      "content": "Rating"
+    },
+    "no": {
+      "languages": "No languages available."
+    },
+    "table": {
+      "hint": "Showing your uploaded chapters. Max. 100 per page.",
+      "th": {
+        "chapter": "Chapter",
+        "volume": "Volume",
+        "title": "Title",
+        "groups": "Groups",
+        "published": "Published",
+        "actions": "Actions"
+      }
+    },
+    "pager": {
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "modal": {
+      "groups": {
+        "title": "Edit chapter groups",
+        "input": {
+          "placeholder": "Enter the name or paste the UUID and press ENTER"
+        },
+        "clear": "Clear",
+        "hint": "Hint: you can paste a valid UUID and press ENTER."
+      },
+      "close": "Close",
+      "cancel": "Cancel",
+      "save": "Save"
+    }
+  },
+
+  "logs": {
+    "title": "Logs",
+    "tabs": {
+      "app": "App",
+      "uploads": "Uploads"
+    },
+    "app": {
+      "toolbar": {
+        "search_placeholder": "Search message…",
+        "levels_label": "Levels:",
+        "level_labels": {
+          "debug": "debug",
+          "info": "info",
+          "warning": "warning",
+          "error": "error",
+          "critical": "critical"
+        },
+        "refresh": "Refresh",
+        "clear": "Clear filters",
+        "path_hint": ""
+      },
+      "table": {
+        "th": {
+          "datetime": "Date/Time",
+          "level": "Level",
+          "message": "Message"
+        }
+      },
+      "pager": {
+        "prev": "« Previous",
+        "next": "Next »",
+        "pageinfo": ""
+      }
+    },
+    "uploads": {
+      "toolbar": {
+        "upload_id_placeholder": "upload_id (UUID hex) — optional",
+        "search_placeholder": "Search message…",
+        "levels_label": "Levels:",
+        "level_labels": {
+          "debug": "debug",
+          "info": "info",
+          "warning": "warning",
+          "error": "error",
+          "critical": "critical"
+        },
+        "stages_placeholder": "stages (e.g.: prepare,upload,publish)",
+        "since": "Since",
+        "until": "Until",
+        "refresh": "Refresh",
+        "clear": "Clear filters"
+      },
+      "table": {
+        "th": {
+          "datetime": "Date/Time",
+          "level": "Level",
+          "stage": "Stage",
+          "code": "Code",
+          "message": "Message",
+          "upload_id": "Upload ID",
+          "data": "Data"
+        }
+      },
+      "pager": {
+        "prev": "« Previous",
+        "next": "Next »",
+        "pageinfo": ""
+      }
+    }
+  },
+
+  "upload": {
+    "title": "Upload chapter",
+    "help": {
+      "required": "Fields marked with * are required"
+    },
+    "project": {
+      "label": "Project",
+      "placeholder": "Enter the project name or paste the project ID",
+      "hint": "Type to search. UUIDs are accepted directly.",
+      "chip": {
+        "clear_title": "Change"
+      }
+    },
+    "groups": {
+      "label": "Groups",
+      "placeholder": "Enter the group name or paste the group ID and press ENTER",
+      "hint": "Maximum 10. UUIDs are accepted."
+    },
+    "lang": {
+      "label": "Language",
+      "select_placeholder": "Select…",
+      "invalid": "Select a language."
+    },
+    "chapter_title": {
+      "label": "Chapter title",
+      "placeholder": "Optional"
+    },
+    "chap": {
+      "label": "Chapter",
+      "placeholder": "e.g.: 1, 10.5",
+      "hint": "Cannot start with 0."
+    },
+    "vol": {
+      "label": "Volume",
+      "placeholder": "e.g.: 1, 2",
+      "hint": "Cannot start with 0."
+    },
+    "oneshot": {
+      "label": "One-shot chapter",
+      "hint": "Enabling this disables chapter and volume."
+    },
+    "date": {
+      "label": "Publication date",
+      "hint": "Maximum 2 weeks ahead. Leave blank to publish now."
+    },
+    "source": {
+      "label": "Folder/File",
+      "mode": {
+        "files": "Select files",
+        "folder": "Select folder",
+        "path": "Enter path"
+      },
+      "path_placeholder": "e.g.: C:\\mangas\\cap_001",
+      "invalid": "Select files/folder or provide the path."
+    },
+    "actions": {
+      "help": "Help",
+      "clear": "Clear",
+      "submit": "Add to queue"
+    }
+  },
+
+  "upload_complex": {
+    "title": "Multi-upload by subfolders",
+    "subtitle": "Select the parent folder; subfolders with compatible images will be listed.",
+    "project": {
+      "label": "Project",
+      "placeholder": "Enter the project name or paste the project ID",
+      "help": "Type to search. UUIDs are accepted.",
+      "menu_aria": "Project results"
+    },
+    "lang": {
+      "label": "Language"
+    },
+    "parent": {
+      "label": "Root folder (where chapters are located)",
+      "help": "We scan subfolders with images (jpg/jpeg/png/gif/webp)."
+    },
+    "tools": {
+      "scan": "Scan",
+      "select_all": "Select all",
+      "select_none": "Clear selection",
+      "create_batch": "Create upload group",
+      "send_all": "Send groups"
+    },
+    "table": {
+      "folder": "Folder",
+      "images": "Images",
+      "title": "Title",
+      "chapter": "Chapter",
+      "assign_status": "Assignment / Status"
+    },
+    "groups": {
+      "title": "Created groups",
+      "help": "Only subfolders assigned to a group will be uploaded."
+    },
+    "modal": {
+      "title": "Configure upload group",
+      "name": {
+        "label": "Group name (internal)",
+        "placeholder": "e.g.: Group 1"
+      },
+      "volume": {
+        "label": "Volume",
+        "placeholder": "e.g.: 1, 2"
+      },
+      "schedule": {
+        "label": "Publication date (optional)"
+      },
+      "scan_groups": {
+        "title": "Groups (scan)",
+        "placeholder": "Enter the name or paste the UUID and press ENTER",
+        "hint": "Hint: you can paste a valid UUID and press ENTER."
+      }
+    }
+  }
+}

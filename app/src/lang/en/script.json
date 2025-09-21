@@ -1,0 +1,322 @@
+{
+  "tour": {
+    "buttons": {
+      "prev": "Back",
+      "skip": "Skip",
+      "next": "Next",
+      "finish": "Finish"
+    },
+    "help": {
+      "title": "Help",
+      "text": "Help"
+    },
+    "steps": {
+      "settings": {
+        "title": "Settings",
+        "text": "Adjust preferences, paths, filters, and app behavior."
+      },
+      "upload": {
+        "title": "Upload",
+        "text": "Upload an individual chapter with validations and autocomplete."
+      },
+      "upload_many": {
+        "title": "Upload many",
+        "text": "Upload multiple chapters at once."
+      },
+      "queue": {
+        "title": "Queue",
+        "text": "Track progress, statuses, and prioritize tasks."
+      },
+      "download": {
+        "title": "Download",
+        "text": "Search titles and download chapters with language/volume filters."
+      },
+      "edit": {
+        "title": "Edit",
+        "text": "Edit existing projects."
+      },
+      "create": {
+        "title": "Create project",
+        "text": "Create a new project/title that doesn’t exist yet."
+      },
+      "logs": {
+        "title": "Log",
+        "text": "View upload history and details."
+      },
+      "updates": {
+        "title": "Updates",
+        "text": "See app news and changes."
+      }
+    }
+  },
+
+  "common": {
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "saved": "Settings saved.",
+    "saved_short": "Settings saved (Ctrl+S).",
+    "save_error": "Error saving: ",
+    "restored": "Settings restored.",
+    "restore_error": "Error restoring: ",
+    "searching": "Searching…",
+    "search_error": "Error fetching groups.",
+    "no_results_for": "No results for “{q}”.",
+    "unknown_error": "Unknown error",
+    "remove": "Remove",
+    "edit": "Edit"
+  },
+  "settings": {
+    "storage": { "cleared": "Cleanup completed." },
+    "search": { "sort": { "desc": "Descending" } },
+    "navbar": {
+      "drag": "Drag",
+      "label": "Label",
+      "visible": "Visible:",
+      "none": "No item visible",
+      "restored": "Navigation restored."
+    },
+    "queue": {
+      "confirm_purge": "Confirm queue cleanup? Running items will NOT be removed.",
+      "removed_n": "Removed {n} item(s) from {table}.",
+      "err_fetch": "Error fetching counts: ",
+      "err_purge": "Error clearing: ",
+      "pool_restarted": "Worker pool restarted.",
+      "nothing_to_purge": "There are no item(s) to remove."
+    }
+  },
+
+  "search": {
+    "type_min_chars": "Type at least 3 characters...",
+    "loading": "Loading...",
+    "load_more": "Load more",
+    "prev": "Previous",
+    "next": "Next",
+    "page_prefix": "Page",
+    "no_results": "No results.",
+    "error_generic": "Error searching."
+  },
+
+  "updates": {
+    "meta_failed": "Failed to load changelog.",
+    "meta_last_update": "Last update: {datetime}",
+    "meta_source": "source: {source}",
+    "meta_app_version": "app v{version}",
+    "checking": "Checking…",
+    "check_label": "Check updates",
+    "apply_label": "Update",
+    "applying": "Updating…",
+    "toast_available": "New update available!",
+    "toast_latest": "You’re already on the latest version.",
+    "toast_check_error": "Could not check for updates.",
+    "toast_apply_success": "Update applied successfully.",
+    "toast_restart_hint": "The application will restart shortly.",
+    "toast_apply_error": "Failed to apply update."
+  },
+
+  "download": {
+    "desc": {
+      "more": "Show more",
+      "less": "Show less"
+    },
+    "queue": {
+      "error": "Failed to enqueue downloads. Try again."
+    },
+    "no": {
+      "chapters": {
+        "lang": "No chapters for {lang}.",
+        "volume": "No chapters for volume {volume} ({lang})."
+      }
+    },
+    "btn": {
+      "adding": "Adding..."
+    }
+  },
+
+  "edit": {
+    "placeholder": {
+      "chapter": "e.g.: 10.5",
+      "volume": "e.g.: 3",
+      "title": "Optional title"
+    },
+    "btn": {
+      "save": "Save",
+      "groups": "Groups…",
+      "read": "Read",
+      "delete": "Delete"
+    },
+    "toast": {
+      "save_error": "Failed to save: {{error}}",
+      "saved": "Chapter updated.",
+      "network_save_error": "Network error while saving.",
+      "delete_error": "Failed to delete: {{error}}",
+      "deleted": "Chapter deleted.",
+      "network_delete_error": "Network error while deleting.",
+      "load_error": "Error loading chapters ({{error}})"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete chapter {{what}}? This action cannot be undone."
+    },
+    "pager": {
+      "status": "Page {{page}} / {{pages}}",
+      "total": "{{count}} chapter(s)"
+    },
+    "groups": {
+      "chip": {
+        "remove": "Remove"
+      },
+      "menu": {
+        "loading": "Searching…",
+        "error": "Error fetching groups.",
+        "empty": "No results for “{{q}}”."
+      },
+      "toast": {
+        "search_error": "Failed to fetch groups ({{error}})",
+        "require_one": "Provide at least one group.",
+        "save_error": "Error saving groups: {{error}}",
+        "saved": "Groups updated.",
+        "network_save_error": "Network error while saving groups."
+      }
+    }
+  },
+
+  "logs": {
+    "app": {
+      "pageinfo": "Page {page}/{pages} — {total} line(s)",
+      "load_error_row": "Failed to load logs.",
+      "ts_fallback": "—",
+      "path_label": "File: {path}"
+    },
+    "upload": {
+      "pageinfo": "Page {page}/{pages} — {total} record(s)",
+      "load_error_row": "Failed to load logs.",
+      "ts_fallback": "—",
+      "json_btn": "view",
+      "json_btn_title": "View JSON data"
+    }
+  },
+
+  "upload": {
+    "ch_vl_os": {
+      "leading_zero_chapter": "Chapter cannot start with 0.",
+      "leading_zero_volume": "Volume cannot start with 0.",
+      "required_chapter": "Provide the chapter number."
+    },
+    "date": {
+      "max_two_weeks": "Maximum scheduling is 2 weeks."
+    },
+    "group": {
+      "limit": "Limit of 10 groups.",
+      "uuid_not_found": "Group UUID not found.",
+      "remove": "Remove"
+    },
+    "project": {
+      "uuid_not_found": "Project ID not found.",
+      "verify_error": "Error verifying project ID."
+    },
+    "send": {
+      "select_project": "Select a project.",
+      "added_to_queue": "Chapter added to queue.",
+      "error_prefix": "Error:"
+    },
+    "tour": {
+      "buttons": {
+        "prev": "Back",
+        "skip": "Skip",
+        "next": "Next",
+        "finish": "Finish"
+      },
+      "steps": {
+        "project": {
+          "title": "Project",
+          "text": "Type the project name and select from results. Or paste the ID (UUID) directly."
+        },
+        "groups": {
+          "title": "Groups",
+          "text": "Add up to 10 groups. Type to see suggestions or paste the ID."
+        },
+        "lang": {
+          "title": "Language",
+          "text": "Select the language."
+        },
+        "title": {
+          "title": "Title",
+          "text": "Enter the chapter title if any."
+        },
+        "chapter": {
+          "title": "Chapter",
+          "text": "Enter the chapter number (cannot start with 0)."
+        },
+        "volume": {
+          "title": "Volume",
+          "text": "Optional. Should also not start with 0."
+        },
+        "oneshot": {
+          "title": "One-shot",
+          "text": "Enabling this disables “Chapter” and “Volume”."
+        },
+        "date": {
+          "title": "Date",
+          "text": "Schedule the publication (max 2 weeks ahead) or leave blank to send now."
+        },
+        "source": {
+          "title": "Folder/File",
+          "text": "Select images, a folder, or provide a path. You can switch modes above."
+        },
+        "submit": {
+          "title": "Submit",
+          "text": "Done! Click here to add the chapter to the queue."
+        }
+      }
+    }
+  },
+
+  "upload_complex": {
+    "errors": {
+      "select_at_least_one": "Select at least one subfolder to group.",
+      "add_at_least_one_group": "Add at least one group (scan).",
+      "pick_folder_first": "Select a folder first.",
+      "subfolder_not_found": "Subfolder not found.",
+      "chapter_missing_in": "Chapter missing in \"{path}\".",
+      "select_project": "Select a project.",
+      "select_language": "Select a language.",
+      "no_assigned_subfolders": "No subfolders assigned to groups."
+    },
+
+    "scan": {
+      "found_entries": "Found {n} entry(ies) (subfolders and .zip/.cbz)."
+    },
+
+    "status": {
+      "idle": "Idle",
+      "done": "done",
+      "sending": "sending…",
+      "ok": "ok",
+      "error_prefix": "error: "
+    },
+
+    "done_all": "Uploads completed (see queue).",
+
+    "table": {
+      "title_ph": "title (optional)",
+      "chapter_ph": "e.g.: 1, 10.5",
+      "unassign_hint": "Click to remove assignment",
+      "group_label": "Group: ",
+      "subfolders_suffix": "subfolder(s)"
+    },
+
+    "modal": {
+      "name": {
+        "placeholder": "e.g.: Group 1"
+      }
+    },
+
+    "batch": {
+      "volume_label": "Volume: ",
+      "schedule_label": "Schedule: ",
+      "groups_label": "Groups: ",
+      "reassign": "Reassign",
+      "reassign_tip": "Select subfolders in the list and click again to reassign.",
+      "reassigned_n": "Reassigned {n} item(s) to “{name}”."
+    }
+  }
+}
