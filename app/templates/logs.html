@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="{{ i18n_lang }}">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>{{ _t('app.title') }}</title>
+  <link rel="icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/static/css/login/Login-Form-Basic-icons.min.css" />
+  <link rel="stylesheet" href="/static/css/Comic%20Neue.css?" />
+  <link rel="stylesheet" href="/static/css/navbar.css" />
+  <link rel="stylesheet" href="/static/css/styles.min.css" />
+  <link rel="stylesheet" href="/static/css/notification.css" />
+  <style>
+    .table-fixed-header thead th { position: sticky; top: 0; z-index: 1; background: var(--bs-body-bg); }
+    .log-level-badge { text-transform: uppercase; font-size: .75rem; }
+    .text-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .pre-wrap { white-space: pre-wrap; word-break: break-word; }
+    .chip { display:inline-flex; align-items:center; gap:.25rem; padding:.2rem .5rem; border-radius:999px; background:var(--bs-secondary-bg); color:var(--bs-secondary-color); font-size:.75rem; }
+    .toolbar .form-control, .toolbar .form-select { height: 36px; }
+    .toolbar .btn { height: 36px; }
+    .small-muted { font-size:.85rem; color:var(--bs-secondary-color); }
+    .nowrap { white-space: nowrap; }
+    tr.detail-row td { background: var(--bs-tertiary-bg); }
+  </style>
+
+  <script src="/static/js/theme.js"></script>
+
+  <script src="/static/js/nav.seed.js"></script>
+  <script src="/static/js/nav.render.js" defer></script>
+
+  <script>
+    window.I18N_LANG = {{ i18n_lang|tojson }};
+    window.I18N_WEB = {{ i18n_web|tojson }};
+    window.I18N_SCRIPT = {{ i18n_script|tojson }};
+  </script>
+</head>
+<body>
+  <!-- Start: Navbar Centered Brand -->
+  <nav class="navbar navbar-expand-md bg-body py-3">
+      <div class="container">
+          <a class="navbar-brand d-flex align-items-center me-3" href="/">
+              <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-house-door">
+                      <path
+                          d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"
+                      ></path>
+                  </svg>
+              </span>
+              <span>{{ _t('navbar.brand') }}</span>
+          </a>
+          <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-4"><span class="visually-hidden">{{ _t('navbar.toggle') }}</span><span class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="navcol-4">
+              <ul class="navbar-nav me-auto" id="mainNavList"></ul>
+              <div class="d-md-none my-2">
+                  <div class="theme-switcher dropdown mb-4"><a class="dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill mb-1">
+                              <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                          </svg></a>
+                      <div class="dropdown-menu"><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="light" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill opacity-50 me-2">
+                                  <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                              </svg>{{ _t('theme.light') }}</a><a class="dropdown-item d-flex align-items-center active" href="#" data-bs-theme-value="dark" aria-pressed="true"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-moon-stars-fill opacity-50 me-2">
+                                  <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278"></path>
+                                  <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path>
+                              </svg>{{ _t('theme.dark') }}</a><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="auto" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-circle-half opacity-50 me-2">
+                                  <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"></path>
+                              </svg>{{ _t('theme.auto') }}</a></div>
+                  </div>
+                  <a href="/logout" class="btn btn-light me-2">{{ _t('navbar.logout') }}</a>
+              </div>
+          </div>
+          <div class="d-none d-md-flex align-items-center gap-4">
+              <div class="theme-switcher dropdown"><a class="dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill mb-1">
+                      <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                  </svg></a>
+              <div class="dropdown-menu"><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="light" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill opacity-50 me-2">
+                          <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                      </svg>{{ _t('theme.light') }}</a><a class="dropdown-item d-flex align-items-center active" href="#" data-bs-theme-value="dark" aria-pressed="true"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-moon-stars-fill opacity-50 me-2">
+                          <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278"></path>
+                          <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path>
+                      </svg>{{ _t('theme.dark') }}</a><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="auto" aria-pressed="false"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-circle-half opacity-50 me-2">
+                          <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"></path>
+                      </svg>{{ _t('theme.auto') }}</a></div>
+              </div>
+              <a href="/logout" class="btn btn-light me-2">{{ _t('navbar.logout') }}</a>
+          </div>
+      </div>
+  </nav>
+  <!-- End: Navbar Centered Brand -->
+
+  <div class="container my-4">
+    <h1 class="h3 mb-3">{{ _t('logs.title') }}</h1>
+
+    <ul class="nav nav-tabs" id="logsTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="tab-app-btn" data-bs-toggle="tab" data-bs-target="#tab-app" type="button" role="tab">
+          {{ _t('logs.tabs.app') }}
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tab-upl-btn" data-bs-toggle="tab" data-bs-target="#tab-upl" type="button" role="tab">
+          {{ _t('logs.tabs.uploads') }}
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content pt-3">
+      <!-- Aba: App -->
+      <div class="tab-pane fade show active" id="tab-app" role="tabpanel" aria-labelledby="tab-app-btn">
+        <div class="card p-3">
+          <div class="toolbar d-flex flex-wrap gap-2 align-items-center mb-2">
+            <input id="app-q" class="form-control" placeholder="{{ _t('logs.app.toolbar.search_placeholder') }}" style="min-width:240px;">
+            <div class="d-flex align-items-center gap-2">
+              <label class="form-check-label me-1 small">{{ _t('logs.app.toolbar.levels_label') }}</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input app-lv" type="checkbox" value="debug" id="app-lv-debug">
+                <label class="form-check-label" for="app-lv-debug">{{ _t('logs.app.toolbar.level_labels.debug') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input app-lv" type="checkbox" value="info" id="app-lv-info" checked>
+                <label class="form-check-label" for="app-lv-info">{{ _t('logs.app.toolbar.level_labels.info') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input app-lv" type="checkbox" value="warning" id="app-lv-warning" checked>
+                <label class="form-check-label" for="app-lv-warning">{{ _t('logs.app.toolbar.level_labels.warning') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input app-lv" type="checkbox" value="error" id="app-lv-error" checked>
+                <label class="form-check-label" for="app-lv-error">{{ _t('logs.app.toolbar.level_labels.error') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input app-lv" type="checkbox" value="critical" id="app-lv-critical" checked>
+                <label class="form-check-label" for="app-lv-critical">{{ _t('logs.app.toolbar.level_labels.critical') }}</label>
+              </div>
+            </div>
+            <select id="app-limit" class="form-select" style="width: auto;">
+              <option>50</option><option selected>100</option><option>200</option><option>500</option>
+            </select>
+            <button id="app-refresh" class="btn btn-primary">{{ _t('logs.app.toolbar.refresh') }}</button>
+            <button id="app-clear" class="btn btn-outline-secondary">{{ _t('logs.app.toolbar.clear') }}</button>
+            <span class="ms-auto small-muted" id="app-path"></span>
+          </div>
+
+          <div class="table-responsive table-fixed-header" style="max-height: 60vh;">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 210px;">{{ _t('logs.app.table.th.datetime') }}</th>
+                  <th style="width: 110px;">{{ _t('logs.app.table.th.level') }}</th>
+                  <th>{{ _t('logs.app.table.th.message') }}</th>
+                </tr>
+              </thead>
+              <tbody id="app-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="small-muted" id="app-pageinfo"></div>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary btn-sm" id="app-prev">{{ _t('logs.app.pager.prev') }}</button>
+              <button class="btn btn-outline-secondary btn-sm" id="app-next">{{ _t('logs.app.pager.next') }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aba: Uploads -->
+      <div class="tab-pane fade" id="tab-upl" role="tabpanel" aria-labelledby="tab-upl-btn">
+        <div class="card p-3">
+          <div class="toolbar d-flex flex-wrap gap-2 align-items-center mb-2">
+            <input id="upl-upload-id" class="form-control" placeholder="{{ _t('logs.uploads.toolbar.upload_id_placeholder') }}" style="min-width:220px;">
+            <input id="upl-q" class="form-control" placeholder="{{ _t('logs.uploads.toolbar.search_placeholder') }}" style="min-width:220px;">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <label class="form-check-label me-1 small">{{ _t('logs.uploads.toolbar.levels_label') }}</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input upl-lv" type="checkbox" value="debug" id="upl-lv-debug">
+                <label class="form-check-label" for="upl-lv-debug">{{ _t('logs.uploads.toolbar.level_labels.debug') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input upl-lv" type="checkbox" value="info" id="upl-lv-info" checked>
+                <label class="form-check-label" for="upl-lv-info">{{ _t('logs.uploads.toolbar.level_labels.info') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input upl-lv" type="checkbox" value="warning" id="upl-lv-warning" checked>
+                <label class="form-check-label" for="upl-lv-warning">{{ _t('logs.uploads.toolbar.level_labels.warning') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input upl-lv" type="checkbox" value="error" id="upl-lv-error" checked>
+                <label class="form-check-label" for="upl-lv-error">{{ _t('logs.uploads.toolbar.level_labels.error') }}</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input upl-lv" type="checkbox" value="critical" id="upl-lv-critical" checked>
+                <label class="form-check-label" for="upl-lv-critical">{{ _t('logs.uploads.toolbar.level_labels.critical') }}</label>
+              </div>
+            </div>
+            <input id="upl-stages" class="form-control" placeholder="{{ _t('logs.uploads.toolbar.stages_placeholder') }}" style="min-width:240px;">
+            <input id="upl-since" type="datetime-local" class="form-control" aria-label="{{ _t('logs.uploads.toolbar.since') }}">
+            <input id="upl-until" type="datetime-local" class="form-control" aria-label="{{ _t('logs.uploads.toolbar.until') }}">
+            <select id="upl-limit" class="form-select" style="width: auto;">
+              <option>50</option><option selected>100</option><option>200</option><option>500</option>
+            </select>
+            <button id="upl-refresh" class="btn btn-primary">{{ _t('logs.uploads.toolbar.refresh') }}</button>
+            <button id="upl-clear" class="btn btn-outline-secondary">{{ _t('logs.uploads.toolbar.clear') }}</button>
+          </div>
+
+          <div class="table-responsive table-fixed-header" style="max-height: 60vh;">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 210px;">{{ _t('logs.uploads.table.th.datetime') }}</th>
+                  <th style="width: 110px;">{{ _t('logs.uploads.table.th.level') }}</th>
+                  <th style="width: 120px;">{{ _t('logs.uploads.table.th.stage') }}</th>
+                  <th style="width: 120px;">{{ _t('logs.uploads.table.th.code') }}</th>
+                  <th>{{ _t('logs.uploads.table.th.message') }}</th>
+                  <th style="width: 220px;">{{ _t('logs.uploads.table.th.upload_id') }}</th>
+                  <th style="width: 60px;">{{ _t('logs.uploads.table.th.data') }}</th>
+                </tr>
+              </thead>
+              <tbody id="upl-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="small-muted" id="upl-pageinfo"></div>
+            <div class="btn-group">
+              <button class="btn btn-outline-secondary btn-sm" id="upl-prev">{{ _t('logs.uploads.pager.prev') }}</button>
+              <button class="btn btn-outline-secondary btn-sm" id="upl-next">{{ _t('logs.uploads.pager.next') }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastStack" style="z-index: 1080;"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="/static/js/socketio.js"></script>
+
+  <script src="/static/js/logs/app-logs.js"></script>
+  <script src="/static/js/logs/upload-logs.js"></script>
+  <script src="/static/js/notification.js"></script>
+</body>
+</html>

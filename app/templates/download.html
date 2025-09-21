@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="{{ i18n_lang }}">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+        <title>{{ manga.title }} — Download</title>
+        <link rel="icon" href="/favicon.ico">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/static/css/Comic%20Neue.css?" />
+        <link rel="stylesheet" href="/static/css/download/main.css" />
+        <link rel="stylesheet" href="/static/css/login/Login-Form-Basic-icons.min.css" />
+        <link rel="stylesheet" href="/static/css/navbar.css" />
+        <link rel="stylesheet" href="/static/css/notification.css" />
+        <link rel="stylesheet" href="/static/css/styles.min.css" />
+        <script src="/static/js/theme.js"></script>
+        <script src="/static/js/nav.seed.js"></script>
+        <script src="/static/js/nav.render.js" defer></script>
+        <script>
+            window.I18N_LANG = {{ i18n_lang|tojson }};
+            window.I18N_WEB = {{ i18n_web|tojson }};
+            window.I18N_SCRIPT = {{ i18n_script|tojson }};
+        </script>
+    </head>
+    <body>
+        <!-- Start: Navbar Centered Brand -->
+        <nav class="navbar navbar-expand-md bg-body py-3">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center me-3" href="/">
+                    <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-house-door">
+                            <path
+                                d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"
+                                ></path>
+                        </svg>
+                    </span>
+                    <span>{{ _t('navbar.brand') }}</span>
+                </a>
+                <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-4"><span class="visually-hidden">{{ _t('navbar.toggle') }}</span><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navcol-4">
+                    <ul class="navbar-nav me-auto" id="mainNavList"></ul>
+                    <div class="d-md-none my-2">
+                        <div class="theme-switcher dropdown mb-4">
+                            <a class="dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill mb-1">
+                                    <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                                </svg>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="light" aria-pressed="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill opacity-50 me-2">
+                                        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                                    </svg>
+                                    {{ _t('theme.light') }}
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center active" href="#" data-bs-theme-value="dark" aria-pressed="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-moon-stars-fill opacity-50 me-2">
+                                        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278"></path>
+                                        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path>
+                                    </svg>
+                                    {{ _t('theme.dark') }}
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="auto" aria-pressed="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-circle-half opacity-50 me-2">
+                                        <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"></path>
+                                    </svg>
+                                    {{ _t('theme.auto') }}
+                                </a>
+                            </div>
+                        </div>
+                        <a href="/logout" class="btn btn-light me-2">{{ _t('navbar.logout') }}</a>
+                    </div>
+                </div>
+                <div class="d-none d-md-flex align-items-center gap-4">
+                    <div class="theme-switcher dropdown">
+                        <a class="dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill mb-1">
+                                <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                            </svg>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="light" aria-pressed="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill opacity-50 me-2">
+                                    <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+                                </svg>
+                                {{ _t('theme.light') }}
+                            </a>
+                            <a class="dropdown-item d-flex align-items-center active" href="#" data-bs-theme-value="dark" aria-pressed="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-moon-stars-fill opacity-50 me-2">
+                                    <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278"></path>
+                                    <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path>
+                                </svg>
+                                {{ _t('theme.dark') }}
+                            </a>
+                            <a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="auto" aria-pressed="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-circle-half opacity-50 me-2">
+                                    <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"></path>
+                                </svg>
+                                {{ _t('theme.auto') }}
+                            </a>
+                        </div>
+                    </div>
+                    <a href="/logout" class="btn btn-light me-2">{{ _t('navbar.logout') }}</a>
+                </div>
+            </div>
+        </nav>
+        <!-- End: Navbar Centered Brand -->
+        <div class="page-wrap container">
+        <!-- Breadcrumb / voltar -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/search?mode=download">{{ _t('download.breadcrumb.search') }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ manga.title }}</li>
+            </ol>
+        </nav>
+        <!-- Header -->
+        <div class="row g-4">
+            <!-- Coluna esquerda: capa + ações -->
+            <div class="col-12 col-lg-4">
+                <div class="sticky-col">
+                    <div class="card p-3">
+                        <img class="cover-img" src="{{ manga.cover_url }}" alt="{{ manga.title }}" loading="eager" decoding="async" />
+                        <div class="d-grid gap-2 mt-3">
+                            <button id="btnDownloadLang" class="btn btn-primary">
+                            {{ _t('download.header.download_all') }} (<span id="btnLangLabel">...</span>)
+                            </button>
+                            <a class="btn btn-ghost" href="https://mangadex.org/title/{{ manga.id }}" target="_blank" rel="noopener">
+                            {{ _t('download.header.view_on_mdx') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Coluna direita: informações + capítulos -->
+            <div class="col-12 col-lg-8">
+                <div class="card p-4">
+                    <h1 class="h3 mb-2">{{ manga.title }}</h1>
+                    <!-- Autores / artistas -->
+                    <div class="mb-2 small text-dim">
+                        {% if manga.authors and manga.authors|length %}
+                        <span class="me-3"><strong>{{ _t('download.meta.author') }}</strong> {{ manga.authors|join(", ") }}</span>
+                        {% endif %}
+                        {% if manga.artists and manga.artists|length %}
+                        <span><strong>{{ _t('download.meta.artist') }}</strong> {{ manga.artists|join(", ") }}</span>
+                        {% endif %}
+                    </div>
+                    <!-- Metadados -->
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        {% if manga.status %}<span class="badge badge-soft text-uppercase">{{ _t('download.meta.status') }}: {{ manga.status }}</span>{% endif %}
+                        {% if manga.year %}<span class="badge badge-soft">{{ _t('download.meta.year') }}: {{ manga.year }}</span>{% endif %}
+                        {% if manga.demographic %}<span class="badge badge-soft">{{ _t('download.meta.demographic') }}: {{ manga.demographic }}</span>{% endif %}
+                        {% if manga.contentRating %}<span class="badge badge-soft">{{ _t('download.meta.rating') }}: {{ manga.contentRating }}</span>{% endif %}
+                    </div>
+                    <!-- Tags -->
+                    {% if manga.tags and manga.tags|length %}
+                    <div class="mb-3">
+                        {% for t in manga.tags %}
+                        <span class="badge rounded-pill bg-secondary me-1 mb-1">{{ t }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <!-- Descrição com mostrar mais -->
+                    {% if manga.description %}
+                    <div class="mb-4">
+                        <div id="desc" class="truncate-2">{{ manga.description|safe }}</div>
+                        <button id="toggleDesc" class="btn btn-sm btn-ghost mt-2" type="button">{{ _t('download.desc.show_more') }}</button>
+                    </div>
+                    {% endif %}
+                    <!-- Abas por idioma -->
+                    {% set langs = chapters_by_lang.keys()|list %}
+                    {% if langs|length == 0 %}
+                    <div class="alert alert-secondary">{{ _t('download.alert.none') }}</div>
+                    {% else %}
+                    <ul class="nav nav-tabs" id="langTabs" role="tablist">
+                        {% for lang in langs %}
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link {% if lang == i18n_lang or (loop.first and i18n_lang not in langs) %}active{% endif %}"
+                                id="tab-{{ lang|replace('-','_') }}"
+                                data-bs-toggle="tab"
+                                data-bs-target="#pane-{{ lang|replace('-','_') }}"
+                                type="button"
+                                role="tab">
+                            {{ lang }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="tab-content pt-3">
+                        {# qual aba deve ficar ativa? prefere i18n_lang, senão a primeira #}
+                        {% set active_lang = i18n_lang if i18n_lang in chapters_by_lang else (chapters_by_lang|first) %}
+                        {% for lang, volumes in chapters_by_lang.items() %}
+                        {% set is_active = (lang == active_lang) %}
+                        <div class="tab-pane fade {% if is_active %}show active{% endif %}"
+                            id="pane-{{ lang|replace('-','_') }}"
+                            role="tabpanel"
+                            aria-labelledby="tab-{{ lang|replace('-','_') }}">
+                            <!-- Accordion por volume -->
+                            <div class="accordion" id="acc-{{ lang|replace('-','_') }}">
+                                {% for vol, chs in volumes.items() %}
+                                {% set collapse_id = "col-" ~ lang|replace('-','_') ~ "-" ~ (vol|string|replace('.','_')) %}
+                                {% set first_vol = loop.first %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="hd-{{ collapse_id }}">
+                                        <button
+                                            class="accordion-button with-controls {% if not (is_active and first_vol) %}collapsed{% endif %}"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#{{ collapse_id }}"
+                                            aria-expanded="{{ 'true' if (is_active and first_vol) else 'false' }}"
+                                            aria-controls="{{ collapse_id }}"
+                                            >
+                                        {{ _t('download.volume') }} {{ vol }}
+                                        <span class="ms-2 badge bg-secondary">{{ chs|length }}</span>
+                                        </button>
+                                        <button class="btn btn-sm btn-ghost download-volume-btn vol-dl-btn"
+                                            type="button"
+                                            data-lang="{{ lang }}"
+                                            data-volume="{{ vol }}">
+                                        {{ _t('download.download_volume') }}
+                                        </button>
+                                    </h2>
+                                    <div id="{{ collapse_id }}"
+                                        class="accordion-collapse collapse {% if (is_active and first_vol) %}show{% endif %}"
+                                        data-bs-parent="#acc-{{ lang|replace('-','_') }}">
+                                        <div class="accordion-body p-0">
+                                            <div class="list-group list-group-flush">
+                                                {% for c in chs %}
+                                                <div class="list-group-item d-flex align-items-center justify-content-between chapter-row">
+                                                    <div class="me-3 flex-grow-1">
+                                                        <div class="fw-semibold">
+                                                            {{ _t('download.chapter.prefix') }} {{ c.ch or "?" }}{% if c.title %} — {{ c.title }}{% endif %}
+                                                        </div>
+                                                        {% if c.groups and c.groups|length %}
+                                                        <div class="small text-dim">{{ _t('download.chapter.groups') }} {{ c.groups|join(", ") }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="d-flex gap-2">
+                                                        <a class="btn btn-sm btn-ghost"
+                                                            href="https://mangadex.org/chapter/{{ c.id }}"
+                                                            target="_blank" rel="noopener"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ _t('download.chapter.read_tt') }}">
+                                                        {{ _t('download.chapter.read') }}
+                                                        </a>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-sm btn-primary download-chapter-btn"
+                                                            data-id-chapter="{{ c.id }}"
+                                                            data-title="{{ c.title or '' }}"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ _t('download.chapter.download_tt') }}">
+                                                            {{ _t('download.chapter.download') }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastStack" style="z-index: 1080; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+        <script src="/static/js/socketio.js"></script>
+        <script id="chapters-json" type="application/json">
+            {{ chapters_by_lang|tojson }}
+        </script>
+        <script id="manga-json" type="application/json">
+            {{ manga|tojson }}
+        </script>
+        <script src="/static/js/navbar.js"></script>
+        <script src="/static/js/notification.js"></script>
+        <script src="/static/js/download/main.js"></script>
+        <script src="/static/js/download/download.js"></script>
+    </body>
+</html>

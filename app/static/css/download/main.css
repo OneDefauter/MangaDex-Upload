@@ -1,0 +1,109 @@
+/* =====================  THEME-AWARE APP TOKENS  ===================== */
+/* Light (ou padrão) herda do Bootstrap */
+:root,
+[data-bs-theme="light"]{
+  --app-bg: var(--bs-body-bg);
+  --app-card-bg: var(--bs-card-bg);
+  --app-border: var(--bs-border-color-translucent);
+  --app-soft-bg: var(--bs-secondary-bg);
+  --app-soft-fg: var(--bs-secondary-color);
+  --app-row-hover: rgba(0, 0, 0, .035);
+
+  --ghost-bg: rgba(0, 0, 0, .04);
+  --ghost-border: rgba(0, 0, 0, .12);
+  --ghost-fg: var(--bs-body-color);
+  --ghost-bg-hover: rgba(0, 0, 0, .08);
+  --ghost-fg-hover: var(--bs-emphasis-color);
+}
+
+/* Dark: só aqui definimos as cores “navy” que você queria */
+[data-bs-theme="dark"]{
+  --app-bg: #0f1222;
+  --app-card-bg: #171a2e;
+  --app-border: rgba(255,255,255,.06);
+  --app-soft-bg: rgba(255,255,255,.08);
+  --app-soft-fg: #cdd5e1;
+  --app-row-hover: rgba(255,255,255,.04);
+
+  --ghost-bg: rgba(255,255,255,.06);
+  --ghost-border: rgba(255,255,255,.10);
+  --ghost-fg: var(--bs-body-color);
+  --ghost-bg-hover: rgba(255,255,255,.12);
+  --ghost-fg-hover: #fff;
+}
+
+/* =====================  COMPONENTS  ===================== */
+body{ background: var(--app-bg); color: var(--bs-body-color); }
+.page-wrap{ padding-top:32px; padding-bottom:48px; }
+
+.bg-body{ background: var(--app-bg) !important; }
+
+.card{ background: var(--app-card-bg); border:1px solid var(--app-border); }
+
+.badge-soft{ background: var(--app-soft-bg); color: var(--app-soft-fg); }
+.text-dim{ color: var(--app-soft-fg); }
+
+.cover-img{ width:100%; border-radius:.75rem; object-fit:cover; }
+.sticky-col{ position:sticky; top:24px; }
+
+.btn-ghost{
+  background: var(--ghost-bg);
+  border: 1px solid var(--ghost-border);
+  color: var(--ghost-fg);
+}
+.btn-ghost:hover{
+  background: var(--ghost-bg-hover);
+  color: var(--ghost-fg-hover);
+}
+
+.chapter-row:hover{ background: var(--app-row-hover); }
+
+.truncate-2{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* âncora de posicionamento */
+.accordion-header{ position: relative; overflow: visible; }
+
+/* o botão do accordion vira uma camada “de fundo” */
+.accordion-button.with-controls{
+  padding-right: 7rem;          /* espaço pro botão + chevron */
+  position: relative;
+  z-index: 1;                   /* abaixo dos controles absolutos */
+}
+
+/* chevron fixo à direita, acima do botão do accordion */
+.accordion-button.with-controls::after{
+  position: absolute;
+  right: .75rem;
+  top: 50%;
+  transform: translateY(-50%);  /* o Bootstrap ainda cuida da rotação via .collapsed */
+  margin-left: 0;
+  z-index: 2;
+}
+
+/* botão “Baixar volume” – acima de tudo */
+.vol-dl-btn{
+  position: absolute;
+  top: 50%;
+  right: 2.75rem;               /* = .75rem (chevron) + ~2rem de gap */
+  transform: translateY(-50%);
+  white-space: nowrap;
+  z-index: 3;                   /* ✅ acima do ::after e do .accordion-button */
+  pointer-events: auto;         /* redundante, mas explícito */
+}
+
+/* responsivo */
+@media (max-width: 480px){
+  .accordion-button.with-controls{ padding-right: 2.25rem; }
+  .vol-dl-btn{
+    position: static;
+    transform: none;
+    margin: .5rem .75rem 0 auto;
+    display: inline-block;
+    z-index: auto;
+  }
+}

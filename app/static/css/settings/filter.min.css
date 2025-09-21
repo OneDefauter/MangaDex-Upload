@@ -1,0 +1,1 @@
+.filters-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(clamp(260px,45vw,440px),1fr))}.cfg-block{transition:opacity .18s}.cfg-block.is-animating{overflow:hidden;transition:height .28s,opacity .2s}

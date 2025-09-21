@@ -1,105 +1,89 @@
 import os
 import sys
-import shutil
-import hashlib
-import argparse
 import tempfile
 import subprocess
 from io import BytesIO
 from zipfile import ZipFile
 
-namespace = "OneDefauter"
-repo = f"https://api.github.com/repos/{namespace}/MangaDex-Upload/releases/latest"
+OWNER = "OneDefauter"
+REPO = "MangaDex-Upload"
+API_URL = f"https://api.github.com/repos/{OWNER}/{REPO}/releases/latest"
 
-def install_modules():
-    required_modules = [
-        'requests',
-        'natsort',
-        'Pillow',
-        'tqdm',
-        'flask',
-        'markupsafe',
-        'markdown',
-        'packaging',
-        'pycryptodome'
-    ]
+def ensure_requests():
+    try:
+        import requests  # noqa: F401
+    except ImportError:
+        print("[deps] Instalando 'requests'...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
 
-    for module in required_modules:
-        try:
-            if module == 'Pillow':
-                __import__('PIL')
-            else:
-                __import__(module)
-        except ImportError:
-            subprocess.run(['pip', 'install', module])
+def download_app(app_folder):
+    import requests
+    print("[dl] Consultando release mais recente...")
+    r = requests.get(API_URL, headers={"Accept": "application/vnd.github+json"})
+    if not r.ok:
+        raise SystemExit(f"Falha ao consultar release: {r.status_code}")
+    release = r.json()
+    zip_url = release.get("zipball_url")
+    if not zip_url:
+        raise SystemExit("zipball_url ausente na resposta da API")
 
-    os.system('cls' if os.name == 'nt' else 'clear')
+    print(f"[dl] Baixando de: {zip_url}")
+    z = requests.get(zip_url)
+    if not z.ok:
+        raise SystemExit(f"Falha no download: {z.status_code}")
 
-def calculate_sha1(filepath):
-    sha1 = hashlib.sha1()
-    with open(filepath, 'rb') as f:
-        while True:
-            data = f.read(65536)  # Lê o arquivo em blocos de 64KB
-            if not data:
+    with ZipFile(BytesIO(z.content)) as zf:
+        root_dir = None
+        for info in zf.infolist():
+            if info.is_dir():
+                root_dir = info.filename
                 break
-            sha1.update(data)
-    return sha1.hexdigest()
+        for info in zf.infolist():
+            if info.is_dir():
+                continue
+            rel_path = info.filename
+            if root_dir and rel_path.startswith(root_dir):
+                rel_path = rel_path[len(root_dir):]
+            if not rel_path.strip():
+                continue
+            target = os.path.join(app_folder, rel_path)
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            with zf.open(info) as src, open(target, "wb") as dst:
+                dst.write(src.read())
+    print(f"[dl] App baixado para: {app_folder}")
 
-def download_and_execute(delete_folder=False):
-    temp_folder = tempfile.gettempdir()
-    app_folder = os.path.join(temp_folder, "MangaDex Upload (APP)")
-    path_file = os.path.join(app_folder, "run.py")
-    
-    if delete_folder and os.path.exists(app_folder):
-        shutil.rmtree(app_folder)
-    
-    os.makedirs(app_folder, exist_ok=True)
-    os.chdir(app_folder)
-    sys.path.append(app_folder)
-    
-    if os.path.exists(path_file):
-        hash_ = calculate_sha1(path_file)
-        if hash_ != "78fb996cdf2dd82994620e793f1362ad59ab9a87":
-            os.remove(path_file)
-    
-    if os.path.exists(path_file):
-        if os.path.exists(os.path.join(app_folder, "__init__.py")):
-            with open(os.path.join(app_folder, "__init__.py"), 'r') as file:
-                for line in file:
-                    if line.startswith('__version__'):
-                        __version__ = line.split('=')[1].strip().strip('"\'')
-        else:
-            __version__ = "0.0" # Force update
+def main():
+    ensure_requests()
+    import requests  # garantido
+
+    app_folder = os.path.join(tempfile.gettempdir(), "MangaDex Upload (APP)")
+    run_py = os.path.join(app_folder, "run.py")
+
+    if not os.path.isfile(run_py):
+        print("[app] Aplicativo não encontrado. Baixando...")
+        if os.path.isdir(app_folder):
+            import shutil
+            shutil.rmtree(app_folder, ignore_errors=True)
+        os.makedirs(app_folder, exist_ok=True)
+        download_app(app_folder)
     else:
-        __version__ = "1.0" # Initial version
-    
-    if not os.path.exists(path_file) or __version__ == "0.0":
-        remote_release = requests.get(repo)
-        if remote_release.ok:
-            release = remote_release.json()
-            zip_resp = requests.get(release["zipball_url"])
-            if zip_resp.ok:
-                myzip = ZipFile(BytesIO(zip_resp.content))
-                zip_root = [z for z in myzip.infolist() if z.is_dir()][0].filename
-                zip_files = [z for z in myzip.infolist() if not z.is_dir()]
-            
-            if not os.path.exists(path_file):
-                for fileinfo in zip_files:
-                    filename = os.path.join(app_folder, fileinfo.filename.replace(zip_root, ""))
-                    dirname = os.path.dirname(filename)
-                    os.makedirs(dirname, exist_ok=True)
-                    file_data = myzip.read(fileinfo)
+        print("[app] Aplicativo já baixado. Iniciando...")
 
-                    with open(filename, "wb") as fopen:
-                        fopen.write(file_data)
+    # Inicia o aplicativo via "python -m run"
+    print(f"[run] Executando módulo: run (cwd={app_folder})")
+    os.chdir(app_folder)
+
+    env = os.environ.copy()
+    sep = ";" if os.name == "nt" else ":"
+    env["PYTHONPATH"] = (app_folder + sep + env.get("PYTHONPATH", "")) if env.get("PYTHONPATH") else app_folder
+
+    os.execve(sys.executable, [sys.executable, "-m", "run"], env)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="MangaDex Upload Script")
-    parser.add_argument('--delete-folder', '-d', '--remove-folder', action='store_true', help='Delete the app folder before starting')
-    args = parser.parse_args()
-
-    install_modules()
-    import requests
-    download_and_execute(delete_folder=args.delete_folder)
-    import run
-    
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n[exit] Interrompido pelo usuário.")
+    except Exception as e:
+        print(f"[erro] {e}")
+        sys.exit(1)

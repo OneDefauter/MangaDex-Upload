@@ -1,0 +1,10 @@
+.chip { display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .5rem; border-radius:999px; border:1px solid var(--bs-border-color); background:var(--bs-tertiary-bg); }
+.chip .x { cursor:pointer; }
+.ac-menu{ position:absolute; z-index:1080; left:0; right:0; top: calc(100% + .25rem);          /* abaixo do input */ max-height: 280px; overflow-y:auto; /* scroll se tiver muitos itens */ background:var(--bs-body-bg); border:1px solid var(--bs-border-color); border-radius:.5rem; box-shadow:0 6px 24px rgba(0,0,0,.15); }
+.ac-item { padding:.5rem .75rem; cursor:pointer; }
+.ac-item:hover, .ac-item.active { background:var(--bs-tertiary-bg); }
+.muted { color: var(--bs-secondary-color); font-size:.85em; }
+.required::after { content:" *"; color: var(--bs-danger); }
+.help { color: var(--bs-secondary-color); font-size:.875rem; }
+.small-gap { gap:.35rem; }
+.section-title { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem; }
