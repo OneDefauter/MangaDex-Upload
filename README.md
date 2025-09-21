@@ -25,8 +25,6 @@ Suporte para Windows, Linux, macOS e Android (via Pydroid3).
 - ⚡ Versão portátil para Windows (sem instalação).  
 - 📱 Compatível com Android usando Pydroid3.  
 
-> 💡 **Sugestão:** Adicione um GIF curto aqui mostrando o fluxo “abrir → acessar URL → enviar capítulo”.
-
 ---
 
 ## ⚙️ Requisitos
