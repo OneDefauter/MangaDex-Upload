@@ -196,7 +196,17 @@
 
     "downloads": {
       "errors": {
-        "athome_unexpected": "Resposta inesperada do At-Home: {data}"
+        "athome_unexpected": "Resposta inesperada do At-Home: {data}",
+        "final_failure": "Falha definitiva após {attempts} tentativas ao baixar {url}",
+        "retry_warning": "Tentativa {attempt}/{max} falhou ao baixar {url}: {error}. Retentando em {delay}s..."
+      },
+      "debug": {
+        "fetching_manifest": "Buscando manifesto para o capítulo {chapter_id} de {url}",
+        "manifest_cache_hit": "Cache de manifesto do capítulo {chapter_id}: base_url={base_url} hash={hash} arquivos={files}",
+        "manifest_cache_miss": "Cache de manifesto do capítulo {chapter_id} ausente; buscando",
+        "manifest_fetched": "Manifesto do capítulo {chapter_id} obtido: base_url={base_url} hash={hash} arquivos={files}",
+        "target_directory": "Diretório de destino do capítulo {chapter_id}: {target_dir}",
+        "downloading_chunk": "Baixando parte {idx}/{total} do capítulo {chapter_id} de {url} para {dest}"
       }
     },
 

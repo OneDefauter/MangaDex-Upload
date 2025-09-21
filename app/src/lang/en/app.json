@@ -196,7 +196,17 @@
 
     "downloads": {
       "errors": {
-        "athome_unexpected": "Unexpected At-Home response: {data}"
+        "athome_unexpected": "Unexpected At-Home response: {data}",
+        "final_failure": "Definitive failure after {attempts} attempts while downloading {url}",
+        "retry_warning": "Attempt {attempt}/{max} failed while downloading {url}: {error}. Retrying in {delay}s..."
+      },
+      "debug": {
+        "fetching_manifest": "Fetching manifest for chapter {chapter_id} from {url}",
+        "manifest_cache_hit": "Chapter {chapter_id} manifest cache hit: base_url={base_url} hash={hash} files={files}",
+        "manifest_cache_miss": "Chapter {chapter_id} manifest cache miss; fetching",
+        "manifest_fetched": "Chapter {chapter_id} manifest fetched: base_url={base_url} hash={hash} files={files}",
+        "target_directory": "Chapter {chapter_id} target directory: {target_dir}",
+        "downloading_chunk": "Chapter {chapter_id} downloading chunk {idx}/{total} from {url} to {dest}"
       }
     },
 

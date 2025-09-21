@@ -1,6 +1,55 @@
-### Versão 1.2.0 ()
+### Versão 1.2.0 (21/09/2025)
 
-- 
+## ✨ Novidades
+
+* **Painel de Fila (/queue)**: nova página com **Socket.IO em tempo real**, paginação, ordenação e ações para acompanhar **downloads** e **uploads**.
+* **Workers de fila**: processo em segundo plano para **downloads** e **uploads** com *heartbeat*, *lease* e recuperação de *jobs*.
+* **Configurações dinâmicas (/settings)**:
+
+  * Ajuste de **concorrência** (`dl.simultaneous`, `up.simultaneous`).
+  * **Máximo de tentativas** de upload (`up.max_retries`).
+  * Alterações críticas reiniciam os workers automaticamente.
+* **i18n reestruturado (namespaces)**:
+
+  * Novos arquivos em `app/src/lang/<lang>/{app,web,script}.json`.
+  * Persistência de idioma via arquivo (`MangaDex Upload Settings/lang.txt`) e suporte a `APP_LANG`.
+* **Agendamento**: utilitário `schedule_at` com normalização de ISO 8601, validações (“formato inválido”, “no passado”, *clamping*).
+* **Pré-processamento de upload**:
+
+  * Serviço `upload_preparer` com integração **SmartStitch** para corte/mescla de imagens.
+  * Uso de **Pillow** e **natsort**; preparação, compactação e verificação de limites.
+  * Emissão de eventos Socket.IO (progresso/erros).
+* **Monitor de armazenamento temporário**:
+
+  * `storage_usage` expõe uso de pastas `upload_prefetch_*` e `upload_raw_*` (bytes) para feedback na UI.
+* **Suporte atualizado de plataformas**:
+
+  * README renovado com *badges* e guia de uso em **Windows / Linux / macOS / Android**.
+  * **Versão portátil (Windows)**: `run.bat` sem instalação.
+  * Guia Android revisado (Pydroid3).
+
+## 🛠️ Melhorias
+
+* **README** totalmente revisado com passos de instalação, uso e créditos.
+* **Socket.IO** centralizado (`app/src/SocketIO`) e eventos de fila padronizados (`jobs_page`, `jobs_changed`).
+* **API da fila** (`/api/...`) para listar páginas da fila com ordenação e limites seguros.
+* **Templates/estilos**: novas folhas em `app/static/css/queue` e JS de controle em `app/static/js/queue`.
+* **Organização de código**:
+
+  * Novos módulos para **workers** (`app/src/workers/*`) e *runners* de **uploads**/**downloads**.
+  * Helpers de banco (`app/src/database/helpers/*`) e serviços de idioma (`app/src/services/language.py`).
+
+## 🐛 Correções
+
+* Tratamento robusto de **datas de agendamento** (mensagens de erro e *clamp* quando fora do limite).
+* Consolidação de tradução nas camadas **web/script/app** (evita chaves faltantes e *fallback* inconsistentes).
+* Emissão consistente de **toasts/erros** durante preparo de upload (incluindo exceções do SmartStitch/Pillow).
+
+## ♻️ Mudanças internas
+
+* **Estrutura de i18n**: arquivos antigos em `src/locale/*.json` foram **removidos** e substituídos por `app/src/lang/<lang>`.
+* **Assets estáticos**: limpeza de ícones/bandeiras e reorganização de CSS/JS para as novas páginas (queue/settings).
+* **Versão do app**: arquivo novo `__version__.py` com `VERSION = '1.2.0'`.
 
 ### Versão 1.1.3 (14/05/2025)
 
