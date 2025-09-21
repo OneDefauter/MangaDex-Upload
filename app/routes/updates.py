@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, Response, current_app, url_for, g
+from flask import Blueprint, render_template, Response, g
 import requests, time
 from __version__ import VERSION
 from app.src.services.language import t
@@ -7,7 +7,7 @@ updates_bp = Blueprint("updates", __name__)
 
 RAW_CHANGELOG_URL = (
     "https://raw.githubusercontent.com/OneDefauter/MangaDex-Upload/"
-    "refs/heads/main/src/doc/changelog.md"
+    "refs/heads/main/app/src/doc/changelog.md"
 )
 
 _CACHE = {"ts": 0.0, "body": ""}
